@@ -16,6 +16,7 @@
     "core-js": "^3.25.3",
     "lodash": "^4.17.21",
     "nuxt": "^2.15.8",
+    "secretjs": "^1.6.9",
     "vue": "^2.7.10",
     "vue-lodash": "^2.1.2",
     "vue-server-renderer": "^2.7.10",
