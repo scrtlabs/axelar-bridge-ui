@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Secret Network",
+    "chainId": "pulsar-2",
+    "rest": "http://testnet.securesecrets.org:1317",
+    "rpcUrl": "https://rpc.testnet.secretsaturn.net",
+    "hrp": "secret",
+    "coinType": 529,
+    "out_port": "wasm.secret1z5pc6g98zr6e5r63x6u3ejav2xmcju827esrtr",
+    "ICS_code_hash": "d41a88f84eb05452d2bd85a4128ec17bb155c79937e01032b7ce3ceb5e3c2099",
+    "out_channel": "channel-47",
+    "stakeCurrency": {
+      "coinDenom": "SCRT",
+      "coinMinimalDenom": "uscrt",
+      "coinDecimals": 6
+    },
+    "subChains": [
+      {
+        "name": "Secret Network",
+        "icon": "secret.logo.svg",
+        "tokens": [
+          {
+            "symbol": "sAXL",
+            "denom": "sAXL",
+            "coinDecimals": 6,
+            "icon": "uaxl.logo.svg",
+            "SNIP20_address": "secret13wj0wf9r5cpt8jnrrf2cg96n8ltggdagmkkkpq",
+            "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Axelar",
+    "chainId": "axelar-testnet-lisbon-3",
+    "rest": "https://axelartest-lcd.quantnode.tech",
+    "rpcUrl": "https://rpc-axelar-testnet.imperator.co:443",
+    "hrp": "axelar",
+    "coinType": 118,
+    "out_port": "transfer",
+    "ICS_code_hash": "",
+    "out_channel": "channel-151",    
+    "stakeCurrency": {
+      "coinDenom": "AXL",
+      "coinMinimalDenom": "uaxl",
+      "coinDecimals": 6
+    },
+    "subChains": [
+      {
+        "name": "Axelar",
+        "icon": "axelar.logo.svg",
+        "tokens": [
+          {
+            "symbol": "AXL",
+            "denom": "uaxl",
+            "coinDecimals": 6,
+            "icon": "uaxl.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          }
+        ]
+      },
+      {
+        "name": "Ethereum",
+        "icon": "ethereum.logo.svg",
+        "tokens": [
+          {
+            "symbol": "weth",
+            "denom": "weth",
+            "coinDecimals": 6,
+            "icon": "weth-wei.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
+            "symbol": "USDT",
+            "denom": "uusdt",
+            "coinDecimals": 6,
+            "icon": "uusdt.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          }
+        ]
+      },
+      {
+        "name": "Binance",
+        "icon": "binance.logo.svg",
+        "tokens": [
+          {
+            "symbol": "WBNB",
+            "denom": "WBNB",
+            "coinDecimals": 6,
+            "icon": "wbnb-wei.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          }
+        ]
+      }
+    ]    
+  }  
+]
