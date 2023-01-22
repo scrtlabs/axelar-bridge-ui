@@ -176,7 +176,7 @@ export default {
     getNormalizedCurrentBalance() {
       if (this.selectedToken) {
         if (this.selectedToken.SNIP20_address != "" && this.tokenBalance) {
-          return this.tokenBalance.balance.amount;
+          return (parseFloat(this.tokenBalance.balance.amount)/Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
         } else if (this.bankBalances.has(this.selectedToken.denom)) {
           return (parseFloat(this.bankBalances.get(this.selectedToken.denom)) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
         }
