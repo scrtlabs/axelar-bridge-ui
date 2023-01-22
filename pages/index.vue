@@ -174,12 +174,18 @@ export default {
       return null;
     },
     getNormalizedCurrentBalance() {
-      if (this.selectedToken) {
-        if (this.selectedToken.SNIP20_address != "" && this.tokenBalance) {
-          return (parseFloat(this.tokenBalance.balance.amount)/Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
-        } else if (this.bankBalances.has(this.selectedToken.denom)) {
-          return (parseFloat(this.bankBalances.get(this.selectedToken.denom)) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
+      try {
+        if (this.selectedToken) {
+          if (this.selectedToken.SNIP20_address != "" && this.tokenBalance) {
+            if (this.tokenBalance.balance) {
+              return (parseFloat(this.tokenBalance.balance.amount)/Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
+            }
+          } else if (this.bankBalances.has(this.selectedToken.denom)) {
+            return (parseFloat(this.bankBalances.get(this.selectedToken.denom)) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
+          }
         }
+      } catch (err) {
+        console.log(err);
       }
       return 0;
     },

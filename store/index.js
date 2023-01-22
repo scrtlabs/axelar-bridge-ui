@@ -190,6 +190,7 @@ export const mutations = {
     state.balance = balance;
   },
   updateBankBalances(state, balances) {
+    console.log(balances);
     state.bankBalances = balances;
   },
 }

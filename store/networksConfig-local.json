@@ -26,6 +26,30 @@
             "icon": "uaxl.logo.svg",
             "SNIP20_address": "secret13wj0wf9r5cpt8jnrrf2cg96n8ltggdagmkkkpq",
             "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
+          },
+          {
+            "symbol": "saUSDC",
+            "denom": "saUSDC",
+            "coinDecimals": 6,
+            "icon": "uausdc.logo.svg",
+            "SNIP20_address": "secret169h6qytpxaxcwmprcydgc0djfp6nf9q8t066u5",
+            "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
+          },
+          {
+            "symbol": "sWETH",
+            "denom": "sWETH",
+            "coinDecimals": 18,
+            "icon": "weth-wei.logo.svg",
+            "SNIP20_address": "secret1wzq4vsyaslu4k6f484fv5tzvhwpvzs2a2mh6la",
+            "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
+          },
+          {
+            "symbol": "sWBNB",
+            "denom": "sWBNB",
+            "coinDecimals": 18,
+            "icon": "wbnb-wei.logo.svg",
+            "SNIP20_address": "secret1c5vgq3szpm2jj3sdjslxhea245vu9tnlycczsj",
+            "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
           }
         ]
       }
@@ -56,6 +80,30 @@
             "denom": "uaxl",
             "coinDecimals": 6,
             "icon": "uaxl.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
+            "symbol": "aUSDC",
+            "denom": "uausdc",
+            "coinDecimals": 6,
+            "icon": "uausdc.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
+            "symbol": "WETH",
+            "denom": "eth-wei",
+            "coinDecimals": 18,
+            "icon": "weth-wei.logo.svg",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
+            "symbol": "WBNB",
+            "denom": "wbnb-wei",
+            "coinDecimals": 18,
+            "icon": "wbnb-wei.logo.svg",
             "SNIP20_address": "",
             "SNIP20_code_hash": ""
           }
