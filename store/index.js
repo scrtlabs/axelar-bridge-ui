@@ -1,7 +1,7 @@
 import { SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance } from './token'
 
-import chains from './networksConfig-local.json'
+import chains from './networksConfig.json'
 
 export const state = () => ({
   accounts: {},
