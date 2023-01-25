@@ -8,7 +8,7 @@
       "coinType": 529,
       "out_port": "wasm.secret1z5pc6g98zr6e5r63x6u3ejav2xmcju827esrtr",
       "ICS_code_hash": "d41a88f84eb05452d2bd85a4128ec17bb155c79937e01032b7ce3ceb5e3c2099",
-      "out_channel": "channel-48",
+      "out_channel": "channel-49",
       "stakeCurrency": {
         "coinDenom": "SCRT",
         "coinMinimalDenom": "uscrt",
@@ -24,7 +24,7 @@
               "denom": "sAXL",
               "coinDecimals": 6,
               "icon": "uaxl.logo.svg",
-              "SNIP20_address": "secret1h2un04tzy55w3v0vhl9dwyk53xfz9darcyu5m0",
+              "SNIP20_address": "secret1uag25fgnu0tx35wk4fape7rmzu85209au7vx2c",
               "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
             },
             {
@@ -32,23 +32,23 @@
               "denom": "saUSDC",
               "coinDecimals": 6,
               "icon": "uausdc.logo.svg",
-              "SNIP20_address": "secret18h06uksfr208cqf529f2cs30yewnupc6t0zfqh",
+              "SNIP20_address": "secret16kg697jvxqpu4m53st45fnu0jwtpzju024rag5",
               "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
             },
             {
-              "symbol": "sWETH",
-              "denom": "sWETH",
+              "symbol": "saWETH",
+              "denom": "saWETH",
               "coinDecimals": 18,
               "icon": "weth-wei.logo.svg",
-              "SNIP20_address": "secret13yymuj0jhjeckj54p0l6tfzadsgzwvzfaupae4",
+              "SNIP20_address": "secret1drdekppqdy4f2n5ddjlx3zf8w70mk2en49kp93",
               "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
             },
             {
-              "symbol": "sWBNB",
-              "denom": "sWBNB",
+              "symbol": "saWBNB",
+              "denom": "saWBNB",
               "coinDecimals": 18,
               "icon": "wbnb-wei.logo.svg",
-              "SNIP20_address": "secret1mxwz4t7pcrpdla62xdxpxuh8rdgecn9r59m4v2",
+              "SNIP20_address": "secret1pc3ttxte96x6f7pnfp2vm7cazd85w7cvqzwr4j",
               "SNIP20_code_hash": "26395bc6317ee315440058c7a4fb1fa62237fcf9b761251c940955c0a3760b94"
             }
           ]
@@ -64,7 +64,7 @@
       "coinType": 118,
       "out_port": "transfer",
       "ICS_code_hash": "",
-      "out_channel": "channel-152",    
+      "out_channel": "channel-155",    
       "stakeCurrency": {
         "coinDenom": "AXL",
         "coinMinimalDenom": "uaxl",
