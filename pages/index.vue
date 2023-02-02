@@ -38,8 +38,8 @@
       <div class="main-section">
         
         <div  v-if="!walletOption" style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; z-index: 3">
-          <v-btn rounded style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" :style="MMSmallIconStyle" />{{ isMMConnected ? 'MetaMask Connected' : 'Connect MetaMask' }}</v-btn>
-          <v-btn rounded style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" :style="KeplrSmallIconStyle" />{{ isKeplrConnected ? 'Keplr Connected' : 'Connect Keplr' }} </v-btn>          
+          <v-btn rounded @click="connectMM()" style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" :style="MMSmallIconStyle" />{{ isMMConnected ? 'MetaMask Connected' : 'Connect MetaMask' }}</v-btn>
+          <v-btn rounded @click="connect()" style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" :style="KeplrSmallIconStyle" />{{ isKeplrConnected ? 'Keplr Connected' : 'Connect Keplr' }} </v-btn>          
         </div>
         <!-- <div class="connect-wallet-section">
           <v-menu rounded="b-xl" offset-y>
