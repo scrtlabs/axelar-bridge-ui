@@ -2,37 +2,10 @@
   <div class="main" style="position: relative; flex-direction: column; display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh">
     <div style="position: absolute; top: 10px; right: 10px">
     </div>
-    <div class="connect-wallet-section">
-      <v-menu rounded="b-xl" offset-y>
-        <template v-slot:activator="{ attrs, on }">
-          <v-btn class="" v-bind="attrs" color="primary" v-on="on">
-            Connect Wallets
-            <img :src="require('~/assets/wallets/kepler.logo.svg')" width="16" height="16" :style="KeplrSmallIconStyle" />
-            <img :src="require('~/assets/wallets/metamask.logo.svg')" width="16" height="16" :style="MMSmallIconStyle" />
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item link>
-            <v-list-item-title @click="connect()" class="wallet-menu-item">
-              <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
-              <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-right: 10px" /> Keplr
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-title @click="connectMM()" class="wallet-menu-item">
-              <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
-              <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-right: 10px" /> MetaMask
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <!-- <v-btn @click="connect(sourceAddress != '')">{{ sourceAddress == '' ? 'Connect Keplr Wallet' : 'Disconnect' }}</v-btn>
-      <v-btn @click="connectMM()">{{ isMMConnected ? 'MetaMask Connected' : 'Connect MetaMask Wallet' }}</v-btn> -->
-    </div>
-
+    <div style="height: 45px"></div>
     <lottie-wrapper style="position: absolute; top: 10px; left: 600px; z-index: 2;"  :height="150" :path="require('../assets/animations/satellite.json')" />
     <lottie-wrapper style="position: absolute; top: 410px; left: 90px; z-index: 2;"  :speed="0.5" :height="200" :path="require('../assets/animations/flame.json')" />
+
 
     <!-- <lottie-wrapper style="position: absolute; top: 1px ;z-index: 2;" path="https://assets5.lottiefiles.com/datafiles/zc3XRzudyWE36ZBJr7PIkkqq0PFIrIBgp4ojqShI/newAnimation.json" /> -->
 
@@ -41,10 +14,59 @@
     <div class="mountain"></div>
 
     <div class="main-section-wrapper">
+      <div  v-if="walletOption" class="wallet-item-container">
+        <!-- <div  v-for="n in 3" :style="styleObject" class="wallet-item" :key="'wallet_item_' + n"></div> -->
+        <div :style="styleObject" class="wallet-item" @click="connect()" >
+          Keplr
+          <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 2px" />
+          <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
+        </div>
+
+        <div :style="styleObject" class="wallet-item" @click="connectMM()">
+          MetaMask
+          <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 2px" />
+          <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
+        </div>
+
+
+      </div>
+      
+
       <div class="right-cave" />
       <div class="left-cave" />
       
       <div class="main-section">
+        
+        <div  v-if="!walletOption" style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; z-index: 3">
+          <v-btn rounded style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" :style="MMSmallIconStyle" />{{ isMMConnected ? 'MetaMask Connected' : 'Connect MetaMask' }}</v-btn>
+          <v-btn rounded style="font-family:'Banana'; color: #EA7534; font-size: 14px"><img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" :style="KeplrSmallIconStyle" />{{ isKeplrConnected ? 'Keplr Connected' : 'Connect Keplr' }} </v-btn>          
+        </div>
+        <!-- <div class="connect-wallet-section">
+          <v-menu rounded="b-xl" offset-y>
+            <template v-slot:activator="{ attrs, on }">
+              <v-btn class="" v-bind="attrs" color="primary" v-on="on">
+                Connect Wallets
+                <img :src="require('~/assets/wallets/kepler.logo.svg')" width="16" height="16" :style="KeplrSmallIconStyle" />
+                <img :src="require('~/assets/wallets/metamask.logo.svg')" width="16" height="16" :style="MMSmallIconStyle" />
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item link>
+                <v-list-item-title @click="connect()" class="wallet-menu-item">
+                  <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
+                  <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-right: 10px" /> Keplr
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item link>
+                <v-list-item-title @click="connectMM()" class="wallet-menu-item">
+                  <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
+                  <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-right: 10px" /> MetaMask
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div> -->
+
         <div v-if="disableUI" class="main-section-disable"></div>
         <!-- <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px">Secret Bridge</div> -->
         <!-- From & To Start -->
@@ -63,7 +85,7 @@
         </div>
         <!-- From & To End -->
 
-        <div v-if="fromSubChain != null" style="background-color: #141924; display: flex; flex-direction: column; width: 100%; border-radius: 10px; padding: 10px">
+        <div v-if="fromSubChain != null" class="assets-to-transfer">
           <div style="display: flex; justify-content: space-between;">
             <div>Asset to transfer:</div>
             <div>
@@ -104,8 +126,6 @@
       </div>
     </div>
     <fire-fly></fire-fly>
-
-    <!-- <div class="firefly"  v-for="n in 15" :key="'firefly' + n"></div> -->
   </div>
 </template>
 
@@ -125,6 +145,42 @@
   color: black
 } */
 
+.wallet-item-container {
+  position: absolute; 
+  top: 160px; 
+  left: 848px; 
+  z-index: 2;  
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-item {
+  /* position: absolute;  */
+  cursor: pointer;
+  width: var(--width); 
+  height: 40px; 
+  margin-bottom: 10px;
+  z-index: 2;  
+  transition-property: all;
+  transition-timing-function: cubic-bezier(.47,1.64,.41,.8);
+  transition-duration: 0.3s;
+  border-radius: 0 10px 10px 0;
+  font-family: "Banana";
+  
+  background-color: rgba(0, 0, 0, 0.6); 
+  backdrop-filter: blur(7px);
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.wallet-item:hover {
+  width: var(--width-hover); 
+}
+
 .styled-button {
   background: linear-gradient(90deg, #EA7534 0%, #7EC9CF 100%) !important;
   width: 230px;
@@ -142,7 +198,8 @@
   flex-direction: column; 
   display: flex; 
   justify-content: center; 
-  align-items: center;}
+  align-items: center;
+}
 
 .main-section {
   width: 600px !important;
@@ -172,7 +229,15 @@
   border-color: white;
   border-style: dashed;
   backdrop-filter: blur(7px);
+}
 
+.assets-to-transfer {
+  display: flex; 
+  flex-direction: column; 
+  width: 100%; 
+  background-color: rgba(20, 25, 36, 0.7);
+  border-radius: 10px; 
+  padding: 10px;
 }
 
 .right-cave {
@@ -304,6 +369,18 @@ export default {
       MMAccounts: 'getMMAccounts',
       MMBalance: 'getMMBalance',
     }),
+    walletOption() {
+      return this.$route.query.uioption == "1";
+    },
+    styleObject() {
+      return {
+        '--color': "red",
+        '--color-hover': "blue",
+        '--width': '40px',
+        '--width-hover': '150px'
+      }
+    },
+
     disableUI() {
       return !this.isKeplrConnected;
     },
@@ -380,12 +457,13 @@ export default {
     },
 
     MMSmallIconStyle() {
-      let style = this.isMMConnected ? '' : 'filter: grayscale(100%);';
+      let style = "margin-right: 10px;";
+      style += this.isMMConnected ? '' : 'filter: grayscale(100%);';
       return style;
     },
 
     KeplrSmallIconStyle() {
-      let style = "margin-left: 10px; margin-right: 10px;";
+      let style = "margin-right: 10px;";
       style += this.isKeplrConnected ? '' : 'filter: grayscale(100%);';
       
       return style;
