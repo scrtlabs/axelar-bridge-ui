@@ -1,5 +1,6 @@
 import { SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance } from './token'
+import { getMMAccounts, getMMContractBalance } from './metamask'
 
 import chains from './networksConfig.json'
 
@@ -8,7 +9,10 @@ export const state = () => ({
   keplrLoading: false,
   noKeplr: false,
   balance: 0,
-  bankBalances: new Map()
+  bankBalances: new Map(),
+
+  MMAccounts: [],
+  MMbalance: 0
 });
 
 export const actions = {
@@ -168,7 +172,19 @@ export const actions = {
     commit('updateBankBalances', balances)
   },
 
+  async getMMBalance({ commit, state }, payload) {
+    let balance = await getMMContractBalance(
+      payload.contract,
+      payload.walletAddress
+    );
+    commit('updateMMBalance', balance)
+  },
 
+
+  async connectMetaMask({commit, state}) {
+    let accounts = await getMMAccounts();
+    commit('updateMMAccounts', accounts);
+  }
 
 }
 
@@ -193,6 +209,14 @@ export const mutations = {
     console.log(balances);
     state.bankBalances = balances;
   },
+  updateMMAccounts(state, accounts) {
+    state.MMAccounts = accounts;
+  },
+  updateMMBalance(state, balance) {
+    console.log(balance);
+    state.MMbalance = balance;
+  },
+
 }
 
 export const getters = {
@@ -213,5 +237,11 @@ export const getters = {
   },
   getBankBalances(state) {
     return state.bankBalances;
+  },
+  getMMAccounts(state) {
+    return state.MMAccounts;
+  },
+  getMMBalance(state) {
+    return state.MMbalance;
   }
 }

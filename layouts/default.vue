@@ -43,4 +43,10 @@ export default {
     
     font-size: 12px;
   }
+
+@font-face {
+    font-family: 'Banana';
+    src: url("../assets/fonts/Banana.ttf");
+}
+
 </style>

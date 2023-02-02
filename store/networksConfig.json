@@ -8,7 +8,7 @@
       "coinType": 529,
       "out_port": "wasm.secret1z5pc6g98zr6e5r63x6u3ejav2xmcju827esrtr",
       "ICS_code_hash": "d41a88f84eb05452d2bd85a4128ec17bb155c79937e01032b7ce3ceb5e3c2099",
-      "out_channel": "channel-49",
+      "out_channel": "channel-51",
       "stakeCurrency": {
         "coinDenom": "SCRT",
         "coinMinimalDenom": "uscrt",
@@ -64,7 +64,7 @@
       "coinType": 118,
       "out_port": "transfer",
       "ICS_code_hash": "",
-      "out_channel": "channel-155",    
+      "out_channel": "channel-160",    
       "stakeCurrency": {
         "coinDenom": "AXL",
         "coinMinimalDenom": "uaxl",
@@ -106,6 +106,22 @@
               "icon": "wbnb-wei.logo.svg",
               "SNIP20_address": "",
               "SNIP20_code_hash": ""
+            }
+          ]
+        },
+        {
+          "name": "Ethereum",
+          "icon": "ethereum.logo.svg",
+          "chainId": "5",
+          "tokens": [
+            {
+              "symbol": "aUSDC",
+              "denom": "aUSDC",
+              "coinDecimals": 6,
+              "icon": "uausdc.logo.svg",
+              "SNIP20_address": "",
+              "SNIP20_code_hash": "",
+              "ERC20_address": "0x254d06f33bDc5b8ee05b2ea472107E300226659A"
             }
           ]
         }
