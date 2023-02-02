@@ -273,6 +273,9 @@ export default {
 
     async sendTransfer(amount) {
       try {
+        this.tx = "";
+        this.ack = -1;
+        this.ibcTx = undefined;
         const msgTransfer = new MsgTransfer({
           source_port: this.fromChain.out_port,
           source_channel: this.fromChain.out_channel,
@@ -317,7 +320,7 @@ export default {
     },
 
     async sendWasm(amount) {
-      this.tx = undefined;
+      this.tx = "";
       this.ack = -1;
       this.ibcTx = undefined;
 
@@ -358,6 +361,7 @@ export default {
             }
           });
           console.log(tx);
+          this.tx = 'TX in source chain: ' + tx.transactionHash;
           this.ack = 0;
           this.ibcTx = 'Waiting for IBC ACK...';
           const ibcResponses = await Promise.all(tx.ibcResponses);
