@@ -495,7 +495,8 @@ export default {
     async selectedToken(token) {
       this.getBalance();
       if (!this.shouldUseMMAddress) {
-        this.fromAccountName = "(" + (await window.keplr.getKey("pulsar-2")).name + ")";
+        if (this.isKeplrConnected)
+          this.fromAccountName = "(" + (await window.keplr.getKey("pulsar-2")).name + ")";
       } else {
         this.fromAccountName = "";
       }
