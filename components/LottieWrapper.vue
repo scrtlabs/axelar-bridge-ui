@@ -88,11 +88,6 @@ export default {
         jsonData = await this.loadJsonData(this.path);
       }
 
-      console.log("===jsonData===");
-      console.log(jsonData)
-      console.log("===jsonData===");
-      
-
       if (this.anim) {
         this.anim.destroy(); // Releases resources. The DOM element will be emptied.
       }

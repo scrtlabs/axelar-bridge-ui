@@ -3,9 +3,8 @@
     <div style="position: absolute; top: 10px; right: 10px">
     </div>
     <div style="height: 45px"></div>
-    <lottie-wrapper style="position: absolute; top: 10px; left: 600px; z-index: 2;"  :height="150" :path="require('../assets/animations/satellite.json')" />
+    <!-- <lottie-wrapper style="position: absolute; top: 10px; left: 600px; z-index: 2;"  :height="150" :path="require('../assets/animations/satellite.json')" /> -->
     <lottie-wrapper style="position: absolute; top: 410px; left: 90px; z-index: 2;"  :speed="0.5" :height="200" :path="require('../assets/animations/flame.json')" />
-
 
     <!-- <lottie-wrapper style="position: absolute; top: 1px ;z-index: 2;" path="https://assets5.lottiefiles.com/datafiles/zc3XRzudyWE36ZBJr7PIkkqq0PFIrIBgp4ojqShI/newAnimation.json" /> -->
 
@@ -15,7 +14,6 @@
 
     <div class="main-section-wrapper">
       <div  v-if="walletOption" class="wallet-item-container">
-        <!-- <div  v-for="n in 3" :style="styleObject" class="wallet-item" :key="'wallet_item_' + n"></div> -->
         <div :style="styleObject" class="wallet-item" @click="connect()" >
           Keplr
           <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 2px" />
@@ -27,10 +25,23 @@
           <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 2px" />
           <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
         </div>
-
-
       </div>
+
+      <div style="position: absolute; top: 80px; right: -150px; z-index: 1;">
+        <lottie-wrapper v-if="showArrow" style="filter: invert(48%); transform: scaleX(-1); z-index: 2;" :speed="1" :height="200" :loop="false" :path="require('../assets/animations/arrow.json')" />
+        <transition name="fade">
+        <img v-show="showArrowText" style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px" :src="require('~/assets/animations/connect-wallets.png')" />
+        </transition>
+      </div>
+
       
+      <div class="input-coin" id="input-coin">
+        <img :src="require('~/assets/tokens/3d/uaxl.png')" style="width: 100px" />
+      </div>
+
+      <div class="output-coin" id="output-coin">
+        <img :src="require('~/assets/tokens/3d/suaxl.png')" style="width: 90px" />
+      </div>
 
       <div class="right-cave" />
       <div class="left-cave" />
@@ -67,7 +78,7 @@
           </v-menu>
         </div> -->
 
-        <div v-if="disableUI" class="main-section-disable"></div>
+        <div v-if="false && disableUI" class="main-section-disable"></div>
         <!-- <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px">Secret Bridge</div> -->
         <!-- From & To Start -->
         <div style="background-color: transparent; display: flex; justify-content: space-between; width: 100%; gap: 10px">
@@ -109,9 +120,13 @@
           </div>
         </div>
 
-      
         <div style="margin: 20px" >
-          <v-btn class="styled-button" style="font-family: Banana; font-size: 16px" @click="send" :disabled="disableUI">Transfer</v-btn>
+          <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index:999" @click="animate" :disabled="false && disableUI">Transfer</v-btn>
+          <!-- <v-btn @click="animate()" style="z-index:999">Animate</v-btn> -->
+        </div>
+
+        <div v-if="showMerge">
+          <lottie-wrapper  style="z-index: 20;" :speed="1" :width="100" :height="100" :loop="false" :path="require('../assets/animations/merge-axl.json')" />
         </div>
 
         <div>
@@ -144,6 +159,91 @@
   min-height: 56px;
   color: black
 } */
+
+
+.input-coin {
+  position: absolute; 
+  left: -200px; bottom: 200px;
+  opacity: 0;
+}
+
+.output-coin {
+  position: absolute; 
+  /* right: 130px; bottom: 125px; */
+  right: 200px; bottom: 170px;
+  opacity: 0;
+  /* z-index: 99; */
+  /* left: 130px; bottom: 150px;   */
+}
+
+
+.input-coin-start {
+  animation: input-coin-anim 2s linear;
+}
+
+.output-coin-start {
+  animation: output-coin-anim 2s linear;
+}
+
+@keyframes input-coin-anim {
+
+	0% {
+		transform: translate(0px, 250px);
+    opacity: 0;
+	}
+
+  5% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  90.1% {
+    opacity: 0;
+  }
+
+	100% {
+		transform: translate(400px, 0px);
+    opacity: 0;
+	}
+}
+
+
+@keyframes output-coin-anim {
+
+	0% {
+		transform: translate(0px, 0px);
+    opacity: 0;
+	}
+
+  5% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 0;
+  }
+
+	100% {
+		transform: translate(430px, 250px);
+    opacity: 0;
+	}
+}
+
 
 .wallet-item-container {
   position: absolute; 
@@ -180,6 +280,15 @@
 .wallet-item:hover {
   width: var(--width-hover); 
 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+
 
 .styled-button {
   background: linear-gradient(90deg, #EA7534 0%, #7EC9CF 100%) !important;
@@ -339,11 +448,19 @@ import LottieAnimation from "lottie-vuejs/src/LottieAnimation.vue"; // import lo
 export default {
   components: { SubChainSelector, TokenSelector},
   mounted() {
+    let self = this;
     this.$nextTick(() => {
       var connectedBefore = window.localStorage.getItem('connectedBefore');
       if (connectedBefore) {
         this.connect();
         this.connectMM();
+      } else {
+        setTimeout(function() {
+          self.showArrow = true;
+          setTimeout(function() {
+            self.showArrowText = true;
+          }, 1000);
+        }, 2000);
       }
       this.$nuxt.$on('secretjs-loaded', async () => {
         console.log('Loaded!!!!');
@@ -355,6 +472,8 @@ export default {
 
       this.fromSubChain = this.fromChain.subChains[0];
       this.toSubChain = this.toChain.subChains[0];
+
+
 
     });
   },
@@ -370,13 +489,13 @@ export default {
       MMBalance: 'getMMBalance',
     }),
     walletOption() {
-      return this.$route.query.uioption == "1";
+      return true; //this.$route.query.uioption == "1";
     },
     styleObject() {
       return {
         '--color': "red",
         '--color-hover': "blue",
-        '--width': '40px',
+        '--width': '45px',
         '--width-hover': '150px'
       }
     },
@@ -489,6 +608,12 @@ export default {
       ack: -1,
       tx: undefined,
       ibcTx: undefined,
+
+      showArrow: false,
+      showArrowText: false,
+      showMerge: false,
+      audio: null
+
     };
   },
   watch: {
@@ -506,10 +631,50 @@ export default {
     }
   },
   methods: {
+    playSound() {
+      this.audio = new Audio(require('~/assets/audio/whoosh.mp3'));
+      this.audio.play();
+    },
+
+    animate() {
+      var self = this;      
+      self.animateInput();
+      setTimeout(() => {
+        self.showMerge = true;
+        self.playSound();        
+        setTimeout(self.animateOutput, 4000);
+      }, 3000)
+      
+    },
+    animateInput() {
+      this.showMerge = false;
+      var elm = document.getElementById("input-coin");
+      console.log(elm);
+      if (elm) {
+        elm.classList.remove('input-coin-start');
+        setTimeout(() => {
+          elm.classList.add('input-coin-start');
+        }, 200);
+        
+      }
+    },
+    animateOutput() {
+      var elm = document.getElementById("output-coin");
+      console.log(elm);
+      if (elm) {
+        elm.classList.remove('output-coin-start');
+        setTimeout(() => {
+          elm.classList.add('output-coin-start');
+        }, 200);
+        
+      }
+    },
+
     connect(disconnect) {
       if (disconnect) {
         this.$store.dispatch('disconnectKeplr');
       } else {
+        this.showArrow = this.showArrowText = false;
         this.$store.dispatch('initKeplr', this.availableChains)
       }
     }, 
