@@ -521,7 +521,6 @@ export default {
     },
 
     toSubChain(newChain, oldChain) {
-      console.log(newChain);
       if (this.isMMConnected) {
         if (newChain.hasOwnProperty("chainId")) { // EVM
           this.destinationAddress = this.MMAccounts[0];
@@ -878,6 +877,7 @@ export default {
         this.getBalance();
         if (this.tx_error == '') {
           this.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+          this.transferInProgress = false;
           this.animateProcessing();
         } else {
           this.axelarStatus = `<div style="color: orange">Error:<br>${this.tx_error}</div>`;
@@ -992,7 +992,7 @@ export default {
           this.ack = 1;
           if (ibcResponses.length > 0) {
             this.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
-
+            this.transferInProgress = false;
             //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
           }
           this.animateProcessing();
