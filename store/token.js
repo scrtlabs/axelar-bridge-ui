@@ -22,8 +22,6 @@ export const getTokenBalance = async (secretJS, contract, chainId, walletAddress
       }
   }
   
-  console.log(walletAddress);
-
   if (viewingKey) {
       const msg = {
           balance: {

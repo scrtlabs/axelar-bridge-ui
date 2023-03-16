@@ -1,0 +1,26 @@
+{
+  "testnet": {
+    "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
+    "transaction-viewer": "https://testnet.axelarscan.io/transfer/",
+    "secret-block-explorer": "https://secretnodes.com/pulsar/transactions",
+    "fee-decimals": {
+      "uaxl": { "decimal": 6, "symbol": "AXL"},
+      "uausdc": { "decimal": 6, "symbol": "aUSDC"},
+      "eth-wei": { "decimal": 18, "symbol": "WETH"},
+      "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
+      "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
+    }
+  },
+  "mainnet": {
+    "axelarscan-api": "https://api.axelarscan.io/cross-chain/transfers",
+    "transaction-viewer": "https://axelarscan.io/transfer/",
+    "secret-block-explorer": "https://secretnodes.com/secret/transactions",
+    "fee-decimals": {
+      "uaxl": { "decimal": 6, "symbol": "AXL"},
+      "uausdc": { "decimal": 6, "symbol": "aUSDC"},
+      "eth-wei": { "decimal": 18, "symbol": "WETH"},
+      "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
+      "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
+    }
+  }
+}
