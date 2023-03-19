@@ -182,6 +182,15 @@
         </div> -->
 
           <div class="transfer-info">
+            <div style="position: absolute; bottom: -9px; right: 10px">
+              <div style="position: absolute; color: black; font-family: 'Banana'; font-weight: bold; font-size: 14px; top: 12px; left: 40px">info</div>
+              <img :src="require('~/assets/images/output-sign.png')" height="80" />
+            </div>
+            <div v-if="false" style="position: absolute; top: -20px; left: -30px">
+              <div style="position: absolute; color: rgb(50,50,50); font-family: 'Banana'; font-weight: bold; font-size: 20px; top: 4px; left: 35px">info</div>
+              <img :src="require('~/assets/images/info2.png')" height="40" style="" />            
+            </div>
+            <div v-if="false" style="height: 10px"></div>
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
             <div style="font-size: 14px;" v-html="axelarStatus"></div>
             <div v-if="tx == ''"></div>
@@ -1240,6 +1249,7 @@ export default {
 }
 
 .transfer-info {
+  position: relative;
   font-family: 'BalsamiqSans-Regular';
   margin-top: 20px;
   width: 100%;

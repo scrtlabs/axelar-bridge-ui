@@ -82,6 +82,13 @@ body {
 }
 
 
+@font-face {
+    font-family: 'RockyRock';
+    src: url("../assets/fonts/Rocky Rock.ttf");
+}
+
+
+
 
 
 </style>
