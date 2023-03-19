@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="font-size: 12px; margin-bottom: 2px; font-family: 'BalsamiqSans-Regular';">{{ lable }}</div>
-    <v-select :disabled="disabled" item-color="orange" background-color="transparent" flat solo @change="handleChange" v-model="content" :items="chain.subChains" dense item-text="name" return-object>
+    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="chain.subChains" dense item-text="name" return-object>
       <template slot="selection" slot-scope="data">
         <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: 100%; "> 
           <!-- transparent -->

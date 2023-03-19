@@ -144,7 +144,7 @@
                 type="number"
                 style="max-width: 150px"
                 color="orange"
-                background-color="transparent"
+                background-color="rgba(0,0,0,0.5)"
                 label="Amount"
                 solo
                 flat
@@ -164,13 +164,15 @@
                 <v-text-field
                   :disabled="transferInProgress"
                   class="address-input pa-0 ma-0"
-                  background-color="#000000"
+                  background-color="rgb(54, 53, 73)"
                   color="orange"
                   flat
                   dense
                   label=""
                   v-model="destinationAddress"
-                ></v-text-field>
+                >
+                <v-btn slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
+                </v-text-field>
               </div>
             </div>
           </div>
@@ -655,7 +657,15 @@ export default {
             
     /******* AXELAR *******/
 
-
+    autoFill() {
+      if (this.isMMConnected) {
+        if (this.toSubChain.hasOwnProperty("chainId")) { // EVM
+          this.destinationAddress = this.MMAccounts[0];
+        } else {
+          this.destinationAddress = this.receiverAccount.address;
+        }
+      }
+    },
     shortNetworkName(name) {
       let sName = name;
       if (sName.indexOf(' ') != -1) {

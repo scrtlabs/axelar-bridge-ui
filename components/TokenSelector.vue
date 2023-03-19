@@ -1,6 +1,6 @@
 <template>
   <div >
-    <v-select :disabled="disabled" item-color="orange" background-color="transparent" flat solo @change="handleChange" v-model="content" :items="tokens" dense item-text="symbol" return-object>
+    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="tokens" dense item-text="symbol" return-object>
       <template slot="selection" slot-scope="data">
         <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: 100%;">
           <div><img :src="require('~/assets/tokens/' + data.item.icon)" :width="iconSize" :height="iconSize" /></div>
