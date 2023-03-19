@@ -7,7 +7,7 @@
   <v-footer color="black" padless fixed style="z-index: 200" >
     <v-row justify="center" no-gutters>
       <v-col class="py-1 text-center white--text" dense cols="12">
-        <strong>SCRT Labs</strong> © {{ new Date().getFullYear() }} | powered by <strong>Axelar</strong>
+        <a href="https://scrtlabs.com" target="_" style="font-weight: bold; text-decoration: none; color: white">SCRT Labs</a> © {{ new Date().getFullYear() }} | powered by <a href="https://axelar.network/" target="_" style="font-weight: bold; text-decoration: none; color: white">Axelar</a>
       </v-col>
     </v-row>
   </v-footer>
