@@ -133,7 +133,7 @@
             <div style="display: flex; justify-content: space-between">
               <div>Asset to transfer:</div>
               <div>
-                <v-btn :disabled="transferInProgress" dense x-small @click="amount = getNormalizedCurrentBalance">MAX</v-btn>
+                <v-btn :disabled="transferInProgress || getNormalizedCurrentBalance == -1 " dense x-small @click="amount = getNormalizedCurrentBalance">MAX</v-btn>
               </div>
             </div>
             <div style="display: flex; justify-content: space-between; gap: 10px">
@@ -153,7 +153,28 @@
                 :suffix="selectedToken == null ? 'unknown' : selectedToken.symbol"
               ></v-text-field>
             </div>
-            <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px">Balance: {{ showCurrentBalance }}</div>
+            <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px;">
+              <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden">
+                <div>Balance: </div>
+                <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>
+                <div v-if="refreshBalance">
+                  <lottie-wrapper
+                    style="z-index: 2"
+                    :speed="1"
+                    :height="20"
+                    :path="require('../assets/animations/wait.json')"
+                  />                
+                </div>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon dense x-small v-bind="attrs" v-on="on" @click="getBalance">
+                      <v-icon size="16">mdi-refresh</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Refresh balance</span>
+                </v-tooltip>                
+              </div>
+            </div>
             <div>
               <div style="margin-bottom: 5px">From address: {{ fromAccountName }}</div>
               <div>
@@ -190,9 +211,11 @@
               <div style="position: absolute; color: rgb(50,50,50); font-family: 'Banana'; font-weight: bold; font-size: 20px; top: 4px; left: 35px">info</div>
               <img :src="require('~/assets/images/info2.png')" height="40" style="" />            
             </div> -->
-            <div style="margin-top: -21px; margin-bottom: 5px; color: orange; font-weight: bold; font-size: 16px;">Info:</div>
+            <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px;">Info:</div>
             <!-- <div style="height: 10px"></div> -->
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
+            <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
+            
             <div style="font-size: 14px;" v-html="axelarStatus"></div>
             <div v-if="tx == ''"></div>
             <div v-else>
@@ -439,13 +462,17 @@ export default {
       } catch (err) {
         console.log(err);
       }
-      return 0;
+      return -1;
     },
     showCurrentBalance() {
       if (this.selectedToken) {
+        let norm = this.getNormalizedCurrentBalance;
+        if (norm == -1) {
+          return "unknown"
+        }
         return this.getNormalizedCurrentBalance + ' ' + this.selectedToken.symbol;
       }
-      return '';
+      return '?';
     },
 
     MMSmallIconStyle() {
@@ -492,9 +519,11 @@ export default {
       axelarTransfer: null,
       axelarQuery: null,
       estimatedFee: "",
+      estimatedTime: -1,
       axelarStatus: "",
 
-      transferInProgress: false
+      transferInProgress: false,
+      refreshBalance: false,
 
     };
   },
@@ -511,9 +540,17 @@ export default {
       if (result) {
         this.estimatedFee = result.display;
       }
-
     },
 
+    tokenBalance(newBalance, oldBalance) {
+      setTimeout(() => { this.refreshBalance = false; }, 1000);
+    },
+    bankBalances(newBalance, oldBalance) {
+      setTimeout(() => { this.refreshBalance = false; }, 1000);
+    },
+    MMBalance(newBalance, oldBalance) {
+      setTimeout(() => { this.refreshBalance = false; }, 1000);
+    },
     MMAccounts(newAccounts, oldAccounts) {
       this.getBalance();
     },
@@ -530,6 +567,14 @@ export default {
       if (oldChain && newChain.hasOwnProperty("chainId")) {
         this.connectMM(false);
       }
+      
+      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) { 
+        this.estimatedTime = newChain.axelar.transferTime;
+      } else {
+        if (this.toSubChain.axelar.transferTime == -1) {
+          this.estimatedTime = -1;
+        }
+      }
     },
 
     toSubChain(newChain, oldChain) {
@@ -540,6 +585,15 @@ export default {
           this.destinationAddress = this.receiverAccount.address;
         }
       }
+
+      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) { 
+        this.estimatedTime = newChain.axelar.transferTime;
+      } else {
+        if (this.fromSubChain.axelar.transferTime == -1) {
+          this.estimatedTime = -1;
+        }
+      }
+
     }
   },
   methods: {
@@ -593,13 +647,16 @@ export default {
         let microAmount = this.getMicroAmount(amount);
         const result = await this.axelarQuery.getTransferFee(this.fromSubChain.axelar.chain, this.toSubChain.axelar.chain, this.selectedToken.denom, microAmount);
         var display = result.fee.amount + " " + result.fee.denom;
+        var symbol = result.fee.denom;
         let normal = 0;
         if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(result.fee.denom)) {
           let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][result.fee.denom];
           normal = parseFloat(result.fee.amount) / Math.pow(10, tokenInfo.decimal);
           display = normal.toFixed(4) + " " + tokenInfo.symbol;
+          symbol = tokenInfo.symbol;
         }
         result.fee["display"] = display;
+        result.fee["symbol"] = symbol;
         result.fee["normalAmount"] = normal;
         result.fee.amount = parseInt(result.fee.amount);
 
@@ -622,9 +679,9 @@ export default {
         this.axelarStatus = "";
         return;
       } 
-
-      if (parseFloat(amount) < fee["normalAmount"]) {
-        this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
+      let minAmount = fee["normalAmount"] * 2;
+      if (parseFloat(amount) < minAmount) {
+        this.info_error = `Minimun transfer is (${minAmount} ${fee.symbol})`;
         this.axelarStatus = "";
         return;
       }
@@ -754,6 +811,7 @@ export default {
         try {
           if (this.selectedToken.SNIP20_address) {
             let contract = { address: this.selectedToken.SNIP20_address, codeHash: this.selectedToken.SNIP20_code_hash };
+            this.refreshBalance = true;
             this.$store.dispatch('getTokenBalance', {
               account: this.senderAccount,
               contract,
@@ -761,6 +819,7 @@ export default {
               walletAddress: this.sourceAddress
             });
           } else if (this.selectedToken.ERC20_address) {
+            this.refreshBalance = true;
             this.$store.dispatch('getMMBalance', { contract: this.selectedToken.ERC20_address, walletAddress: this.MMAccounts[0] });
           }
         } catch (err) {
@@ -769,9 +828,11 @@ export default {
 
         try {
           if (this.selectedToken.isEVMNative) {
+            this.refreshBalance = true;
             this.$store.dispatch('getMMBankBalance', { walletAddress: this.MMAccounts[0], denom: this.selectedToken.denom });
 
           } else if (!this.selectedToken.ERC20_address) {
+            this.refreshBalance = true;
             this.$store.dispatch('getBankBalance', { account: this.senderAccount, walletAddress: this.sourceAddress });
           }
         } catch (err) {

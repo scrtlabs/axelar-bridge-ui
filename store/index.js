@@ -1,8 +1,10 @@
 import { SecretNetworkClient } from 'secretjs'
-import { getTokenBalance, getBankBalance } from './token'
+import { getTokenBalance, getBankBalance, getPermit } from './token'
 import { connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
 
 import chains from './networksConfig.json'
+
+var _getTokenDebounce = false;
 
 var mobileAndTabletCheck = function () {
   let check = false;
@@ -164,24 +166,43 @@ export const actions = {
   },
 
   async getTokenBalance({ commit, state }, payload) {
+    if (_getTokenDebounce) {
+      return;
+    }
+    _getTokenDebounce = true;
+
+    let contracts = [];
+    for (let i = 0; i < chains[0].subChains[0].tokens.length; i++) {
+      let token = chains[0].subChains[0].tokens[i];
+      if (token.SNIP20_address != "") {
+        contracts.push(token.SNIP20_address);
+      }
+    }
+    console.log(contracts);
+    let permit = await getPermit(payload.chainId, contracts ,payload.walletAddress);
     let balance = await getTokenBalance(
       payload.account,
       payload.contract,
       payload.chainId,
-      payload.walletAddress
+      payload.walletAddress,
+      permit
     )
-    commit('updateBalance', balance)
+    commit('updateBalance', balance);
+
+    setTimeout(function() {
+      _getTokenDebounce = false;
+    }, 400);
   },
 
-  async getTokenBalance({ commit, state }, payload) {
-    let balance = await getTokenBalance(
-      payload.account,
-      payload.contract,
-      payload.chainId,
-      payload.walletAddress
-    )
-    commit('updateBalance', balance)
-  },
+  // async getTokenBalance({ commit, state }, payload) {
+  //   let balance = await getTokenBalance(
+  //     payload.account,
+  //     payload.contract,
+  //     payload.chainId,
+  //     payload.walletAddress
+  //   )
+  //   commit('updateBalance', balance)
+  // },
 
   async getBankBalance({ commit, state }, payload) {
     let balances = await getBankBalance(

@@ -20,7 +20,8 @@
         "icon": "secret.logo.svg",
         "axelar": {
             "Env": "testnet",
-            "chain": "secret-snip"
+            "chain": "secret-snip",
+            "transferTime": -1
         },
         "tokens": [
           {
@@ -105,7 +106,8 @@
         "blockExplorerUrls": ["https://goerli.etherscan.io"],
         "axelar": {
             "Env": "testnet",
-            "chain": "ethereum-2"
+            "chain": "ethereum-2",
+            "transferTime": 15            
         },
         "tokens": [
           {
@@ -150,7 +152,8 @@
         "blockExplorerUrls": ["https://testnet.bscscan.com"],
         "axelar": {
             "Env": "testnet",
-            "chain": "binance"
+            "chain": "binance",
+            "transferTime": 2
         },
         "tokens": [
           {
@@ -187,7 +190,8 @@
         "icon": "axelar.logo.svg",
         "axelar": {
             "Env": "testnet",
-            "chain": "axelarnet"
+            "chain": "axelarnet",
+            "transferTime": -1
         },
         "tokens": [
           {
