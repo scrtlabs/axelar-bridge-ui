@@ -1,7 +1,7 @@
 {
   "testnet": {
     "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
-    "transaction-viewer": "https://testnet.axelarscan.io/transfer/",
+    "transaction-viewer": "https://testnet.axelarscan.io/transfer",
     "secret-block-explorer": "https://secretnodes.com/pulsar/transactions",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
@@ -13,7 +13,7 @@
   },
   "mainnet": {
     "axelarscan-api": "https://api.axelarscan.io/cross-chain/transfers",
-    "transaction-viewer": "https://axelarscan.io/transfer/",
+    "transaction-viewer": "https://axelarscan.io/transfer",
     "secret-block-explorer": "https://secretnodes.com/secret/transactions",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},

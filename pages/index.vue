@@ -32,6 +32,19 @@
             <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" />
             <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
           </div>
+
+          <div :style="styleTroubleshootingObject" class="wallet-item" @click="clearPermit">
+            <div style="display: flex; align-items: center; margin-top: 8px">
+              Troubleshooting
+              <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" />
+            </div>
+            <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
+              <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <v-btn @click="goToAxelar" >Axelarscan</v-btn>
+            </div>
+            <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
+          </div>
+
         </div>
 
         <div style="position: absolute; top: -30px; right: -150px; z-index: 1">
@@ -393,7 +406,25 @@ export default {
         '--color': 'red',
         '--color-hover': 'blue',
         '--width': '55px',
-        '--width-hover': '150px'
+        '--width-hover': '150px',
+        '--overflow': 'hidden',
+        '--overflow-hover': 'hidden',
+        '--height': '40px',
+        '--height-hover': '40px'
+      };
+    },
+    styleTroubleshootingObject() {
+      return {
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "flex-start",
+        "align-items": "flex-end",
+        '--width': '42px',
+        '--width-hover': '150px',
+        '--overflow': 'hidden',
+        '--overflow-hover': 'none',
+        '--height': '40px',
+        '--height-hover': '200px'
       };
     },
 
@@ -521,6 +552,7 @@ export default {
       estimatedFee: "",
       estimatedTime: -1,
       axelarStatus: "",
+      clearPermitText: "Clear Permit",
 
       transferInProgress: false,
       refreshBalance: false,
@@ -557,10 +589,12 @@ export default {
 
     async amount(val) {
       // if (this.shouldUseMMAddress) {
-      //   let result = await this.calcTransferFee(this.amount);
-      //   if (result) {
-      //     this.estimatedFee = result.amount + " " + result.denom;
-      //   }
+      //   try {
+      //     let result = await this.calcTransferFee(this.amount);
+      //     if (result) {
+      //       this.estimatedFee = result.display;
+      //     }
+      //   } catch (err) {}
       // }
     },
     fromSubChain(newChain, oldChain) {
@@ -804,6 +838,24 @@ export default {
     },
     getChainName(idx) {
       return this.getChainList[idx];
+    },
+
+    clearPermit() {
+      var self = this;
+      const items = Object.keys(window.localStorage);
+      this.clearPermitText = "Please wait...";
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].indexOf("perm_") != -1) {
+          window.localStorage.removeItem(items[i]);
+        }
+      }
+      setTimeout(function() {
+        self.clearPermitText = "Clear Permit";
+      }, 1000);
+    },
+
+    goToAxelar() {
+      window.open(`${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}s`, '_blank');      
     },
 
     async getBalance() {
@@ -1215,10 +1267,10 @@ export default {
 }
 
 .wallet-item {
-  /* position: absolute;  */
+  position: relative; 
   cursor: pointer;
   width: var(--width);
-  height: 40px;
+  height: var(--height);
   margin-bottom: 10px;
   z-index: 2;
   transition-property: all;
@@ -1234,11 +1286,13 @@ export default {
   justify-content: flex-end;
   align-items: center;
 
-  overflow: hidden;
+  overflow: var(--overflow);
 }
 
 .wallet-item:hover {
   width: var(--width-hover);
+  height: var(--height-hover);
+  overflow: var(--overflow-hover);
 }
 
 .fade-enter-active,
