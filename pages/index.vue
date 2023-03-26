@@ -163,6 +163,7 @@
                 flat
                 v-model="amount"
                 dense
+                 @focus="$event.target.select()"
                 :suffix="selectedToken == null ? 'unknown' : selectedToken.symbol"
               ></v-text-field>
             </div>
@@ -203,6 +204,7 @@
                   flat
                   dense
                   label=""
+                  ref="destinationAddress"
                   v-model="destinationAddress"
                 >
                 <v-btn slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
@@ -568,7 +570,7 @@ export default {
       } else {
         this.fromAccountName = '';
       }
-      let result = await this.calcTransferFee(this.amount);
+      let result = await this.calcTransferFee(this.amount == "" ? "0": this.amount);
       if (result) {
         this.estimatedFee = result.display;
       }
@@ -766,6 +768,7 @@ export default {
           this.destinationAddress = this.receiverAccount.address;
         }
       }
+      this.$refs.destinationAddress.blur();
     },
     shortNetworkName(name) {
       let sName = name;
@@ -901,6 +904,11 @@ export default {
     },
 
     send() {
+      if (this.amount == "" || this.amount == null || Number.isNaN(this.amount)) {
+        this.info_error = 'Amount must be a valid number';
+        return;
+      }
+
       this.tx_error = '';
       this.info_error = '';
       let microAmount = this.getMicroAmount(this.amount);
