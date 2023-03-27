@@ -207,7 +207,7 @@
                   ref="destinationAddress"
                   v-model="destinationAddress"
                 >
-                <v-btn slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
+                <v-btn :disabled="transferInProgress" slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
                 </v-text-field>
               </div>
             </div>
@@ -230,7 +230,7 @@
             <!-- <div style="height: 10px"></div> -->
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
             <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
-            
+            <div v-if="maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
             <div style="font-size: 14px;" v-html="axelarStatus"></div>
             <div v-if="tx == ''"></div>
             <div v-else>
@@ -552,6 +552,7 @@ export default {
       axelarTransfer: null,
       axelarQuery: null,
       estimatedFee: "",
+      maxTransfer: "",
       estimatedTime: -1,
       axelarStatus: "",
       clearPermitText: "Clear Permit",
@@ -574,6 +575,9 @@ export default {
       if (result) {
         this.estimatedFee = result.display;
       }
+
+      let limit = await this.getMaxTransfer();
+      this.maxTransfer = limit.display;
     },
 
     tokenBalance(newBalance, oldBalance) {
@@ -699,13 +703,51 @@ export default {
         return result.fee;
     },
 
+    async getMaxTransfer() {
+      let result = {
+        display: "",
+        normalAmount: -1,
+        symbol: "",
+        denom: ""
+      }
+      try {
+        const limit = await this.axelarQuery.getTransferLimit({
+          fromChainId: this.fromSubChain.axelar.chain,
+          toChainId: this.toSubChain.axelar.chain,
+          denom: this.selectedToken.denom
+        });
+        
+        if (limit) {
+          if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(this.selectedToken.denom)) {
+            let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][this.selectedToken.denom];
+            result.normalAmount = parseFloat(limit) / Math.pow(10, tokenInfo.decimal);
+            result.display = result.normalAmount.toLocaleString() + " " + tokenInfo.symbol;
+            result.symbol = tokenInfo.symbol;
+            result.denom = this.selectedToken.denom;
+          }
+        }
+      } catch (err) { }
+
+      return result;
+
+    },
+
+
+
     async sendAxelar(amount) {
       this.axelarStatus = "Please wait...";
       this.info_error = "";
       let microAmount = await this.getMicroAmount(amount);
       let fee = await this.calcTransferFee(amount);
+      let maxAmount = await this.getMaxTransfer();
       if (fee) {
           this.estimatedFee = fee.display;
+      }
+
+      if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
+        this.info_error = "Requested amount is excceding the maximum allowed transfer";
+        this.axelarStatus = "";
+        return;
       }
 
       let balanceToCheck = this.selectedToken.isEVMNative ? this.bankBalances.get(this.selectedToken.denom) :  this.MMBalance.amount;
@@ -903,7 +945,7 @@ export default {
       return Math.round(parseFloat(amount) * Math.pow(10, this.selectedToken.coinDecimals));
     },
 
-    send() {
+    async send() {
       if (this.amount == "" || this.amount == null || Number.isNaN(this.amount)) {
         this.info_error = 'Amount must be a valid number';
         return;
@@ -1039,8 +1081,15 @@ export default {
       this.info_error = "";
       //let microAmount = await this.getMicroAmount(amount);
       let fee = await this.calcTransferFee(amount);
+      let maxAmount = await this.getMaxTransfer();
       if (fee) {
           this.estimatedFee = fee.display;
+      }
+
+      if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
+        this.info_error = "Requested amount is excceding the maximum allowed transfer";
+        this.axelarStatus = "";
+        return;
       }
 
       if (this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address != '') { 
