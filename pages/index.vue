@@ -1,5 +1,6 @@
 <template>
   <div>
+    <faq :showFAQ="showFAQ"></faq>
     <div
       v-if="true || !isMobile"
       class="main"
@@ -33,14 +34,15 @@
             <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
           </div>
 
-          <div :style="styleTroubleshootingObject" class="wallet-item" @click="clearPermit">
-            <div style="display: flex; align-items: center; margin-top: 8px">
-              Troubleshooting
+          <div :style="styleTroubleshootingObject" class="wallet-item">
+            <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px">
+              Help
               <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" />
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
-              <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <!-- <v-btn @click="showFAQ = true">FAQ</v-btn> -->
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
+              <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
             </div>
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
           </div>
@@ -315,8 +317,8 @@ export default {
       this.fromSubChain = this.fromChain.subChains[0];
       this.toSubChain = this.toChain.subChains[0];
 
-      this.axelarTransfer = new AxelarAssetTransfer({ environment: 'testnet' });
-      this.axelarQuery = new AxelarQueryAPI({ environment: 'testnet' });
+      this.axelarTransfer = new AxelarAssetTransfer({ environment: process.env.NUXT_ENV_AXELAR_ENV });
+      this.axelarQuery = new AxelarQueryAPI({ environment: process.env.NUXT_ENV_AXELAR_ENV });
 
       this.$nuxt.$on('MM-TX', async (hash) => {
         self.axelarStatus = "Transaction was submitted, please wait..."
@@ -559,6 +561,7 @@ export default {
 
       transferInProgress: false,
       refreshBalance: false,
+      showFAQ: false
 
     };
   },
@@ -684,6 +687,7 @@ export default {
     /******* AXELAR *******/
 
     async calcTransferFee(amount) {
+      try {
         let microAmount = this.getMicroAmount(amount);
         const result = await this.axelarQuery.getTransferFee(this.fromSubChain.axelar.chain, this.toSubChain.axelar.chain, this.selectedToken.denom, microAmount);
         var display = result.fee.amount + " " + result.fee.denom;
@@ -701,11 +705,16 @@ export default {
         result.fee.amount = parseInt(result.fee.amount);
 
         return result.fee;
+      } catch (err) {
+        console.log(err);
+        return { display: "", symbol: "", normalAmount: -1, amount: -1};
+      }
     },
 
     async getMaxTransfer() {
       let result = {
         display: "",
+        amount: -1,
         normalAmount: -1,
         symbol: "",
         denom: ""
@@ -720,6 +729,7 @@ export default {
         if (limit) {
           if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(this.selectedToken.denom)) {
             let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][this.selectedToken.denom];
+            result.amount = parseInt(limit);
             result.normalAmount = parseFloat(limit) / Math.pow(10, tokenInfo.decimal);
             result.display = result.normalAmount.toLocaleString() + " " + tokenInfo.symbol;
             result.symbol = tokenInfo.symbol;
@@ -742,8 +752,11 @@ export default {
       let maxAmount = await this.getMaxTransfer();
       if (fee) {
           this.estimatedFee = fee.display;
+      } else {
+        this.estimatedFee = "";
       }
 
+      
       if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
         this.info_error = "Requested amount is excceding the maximum allowed transfer";
         this.axelarStatus = "";
@@ -976,6 +989,8 @@ export default {
         let fee = await this.calcTransferFee(amount);
         if (fee) {
             this.estimatedFee = fee.display;
+        } else {
+          this.estimatedFee = ""
         }
 
         if (BigInt(this.bankBalances.get(this.selectedToken.denom)) < BigInt(amount)) {
@@ -1086,7 +1101,8 @@ export default {
           this.estimatedFee = fee.display;
       }
 
-      if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
+
+      if (maxAmount.amount != -1 && parseFloat(amount) > maxAmount.amount) {
         this.info_error = "Requested amount is excceding the maximum allowed transfer";
         this.axelarStatus = "";
         return;
@@ -1113,6 +1129,7 @@ export default {
       this.showProcessAnimation = true;
 
       this.axelarStatus = "Initializing transfer...";
+      //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
         fromChain: this.fromSubChain.axelar.chain,
         toChain: this.toSubChain.axelar.chain,
@@ -1317,7 +1334,7 @@ export default {
 .wallet-item-container {
   position: absolute;
   top: 40px;
-  left: 848px;
+  left: 847px;
   z-index: 2;
   display: flex;
   flex-direction: column;

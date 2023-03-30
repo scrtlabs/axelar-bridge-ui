@@ -2,6 +2,7 @@ import { SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance, getPermit } from './token'
 import { connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
 
+//import chains from './networksConfig-mainnet.json'
 import chains from './networksConfig.json'
 
 var _getTokenDebounce = false;
@@ -178,8 +179,8 @@ export const actions = {
         contracts.push(token.SNIP20_address);
       }
     }
-    console.log(contracts);
-    let permit = await getPermit(payload.chainId, contracts ,payload.walletAddress);
+
+    let permit = await getPermit(chains[0].chainId, contracts ,payload.walletAddress);
     let balance = await getTokenBalance(
       payload.account,
       payload.contract,
