@@ -488,7 +488,7 @@ export default {
             return (parseInt(this.MMBalance.amount) / Math.pow(10, this.MMBalance.decimals).toFixed(4));
           }  else if (this.selectedToken.SNIP20_address != '' && this.tokenBalance) { // Balance in SNIP-20 contract
             if (this.tokenBalance.balance) {
-              return (parseFloat(this.tokenBalance.balance.amount) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
+              return (parseFloat(this.tokenBalance.balance.amount) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(6);
             }
           } else if (this.bankBalances.has(this.selectedToken.denom)) { // Balance in Bank
             return (parseFloat(this.bankBalances.get(this.selectedToken.denom)) / Math.pow(10, this.selectedToken.coinDecimals)).toFixed(4);
