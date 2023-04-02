@@ -115,13 +115,26 @@
             "denom": "eth",
             "isEVMNative": true,
             "coinDecimals": 18,
-            "icon": "weth-wei.logo.svg",
+            "icon": "eth.logo.svg",
             "fromImage": "eth-wei.png",
             "toImage": "seth-wei.png",
             "animation": "wrap/wrap-eth.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": "",
             "ERC20_address": ""
+          },
+          {
+            "symbol": "WETH",
+            "denom": "weth-wei",
+            "isEVMNative": false,
+            "coinDecimals": 18,
+            "icon": "weth-wei.logo.svg",
+            "fromImage": "eth-wei.png",
+            "toImage": "seth-wei.png",
+            "animation": "wrap/wrap-eth.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": "",
+            "ERC20_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
           },
           {
             "symbol": "aUSDC",

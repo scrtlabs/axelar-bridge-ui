@@ -124,6 +124,7 @@
         </div>
 
         <div class="main-section">
+          <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
           <div v-if="disableUI" class="main-section-disable"></div>
 
           <!-- From & To Start -->
@@ -170,25 +171,39 @@
               ></v-text-field>
             </div>
             <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px;">
-              <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden">
-                <div>Balance: </div>
-                <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>
-                <div v-if="refreshBalance">
-                  <lottie-wrapper
-                    style="z-index: 2"
-                    :speed="1"
-                    :height="20"
-                    :path="require('../assets/animations/wait.json')"
-                  />                
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px; overflow: hidden">
+                <div v-if="allowUnwrap">
+                  <!-- <v-checkbox
+                  label="Auto Unwrap"
+                  color="red"
+                  value="1"
+                  dense
+                  :ripple="false"
+                  hide-details
+                  style="margin-top: -8px"
+                ></v-checkbox> -->
                 </div>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon dense x-small v-bind="attrs" v-on="on" @click="getBalance">
-                      <v-icon size="16">mdi-refresh</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Refresh balance</span>
-                </v-tooltip>                
+                <div v-else></div>
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden">
+                  <div>Balance: </div>
+                  <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>
+                  <div v-if="refreshBalance">
+                    <lottie-wrapper
+                      style="z-index: 2"
+                      :speed="1"
+                      :height="20"
+                      :path="require('../assets/animations/wait.json')"
+                    />                
+                  </div>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon dense x-small v-bind="attrs" v-on="on" @click="getBalance">
+                        <v-icon size="16">mdi-refresh</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Refresh balance</span>
+                  </v-tooltip>                
+                </div>                
               </div>
             </div>
             <div>
@@ -399,6 +414,9 @@ export default {
       MMTx: 'getMMTx',
       isMobile: 'isMobile'
     }),
+    isTestnet() {
+      return process.env.NUXT_ENV_AXELAR_ENV == "testnet";
+    },
     navnav() {
       return window.fina;
     },
@@ -561,7 +579,8 @@ export default {
 
       transferInProgress: false,
       refreshBalance: false,
-      showFAQ: false
+      showFAQ: false,
+      allowUnwrap: false
 
     };
   },
@@ -581,6 +600,12 @@ export default {
 
       let limit = await this.getMaxTransfer();
       this.maxTransfer = limit.display;
+      if (token.hasOwnProperty("allow_autounwap")) {
+        console.log(token);
+        this.allowUnwrap = token.allow_autounwap;
+      } else {
+        this.allowUnwrap = false;
+      }
     },
 
     tokenBalance(newBalance, oldBalance) {
@@ -640,50 +665,6 @@ export default {
     }
   },
   methods: {
-    /******* TESTING AREA  *******/
-
-    async Burn() {
-      if (this.selectedToken.SNIP20_address) {
-        const msgBurn = new MsgExecuteContract({
-          sender: this.sourceAddress,
-          contract_address: this.selectedToken.SNIP20_address,
-          code_hash: this.selectedToken.SNIP20_code_hash, // optional but way faster
-          msg: {
-            burn_from: {
-              owner: this.sourceAddress,
-              amount: this.tokenBalance.balance.amount
-            }
-          },
-          sent_funds: []
-        });
-
-        // const msgBurn = new MsgExecuteContract({
-        //     sender: this.sourceAddress,
-        //     contract_address: this.selectedToken.SNIP20_address,
-        //     code_hash: this.selectedToken.SNIP20_code_hash, // optional but way faster
-        //     msg: { increase_allowance : {
-        //       spender: this.sourceAddress,
-        //       amount: this.tokenBalance.balance.amount
-        //     } },
-        //     sent_funds: [],
-        //   });
-
-        console.log('== Burn msg ==');
-        console.log(msgBurn);
-        console.log('== Burn msg ==');
-
-        const tx = await this.senderAccount.tx.broadcast([msgBurn], {
-          gasLimit: 60_000,
-          gasPriceInFeeDenom: 0.1,
-          feeDenom: 'uscrt'
-        });
-
-        console.log(tx);
-      }
-    },
-
-    /******* TESTING AREA  *******/
-
     /******* AXELAR *******/
 
     async calcTransferFee(amount) {
@@ -696,8 +677,12 @@ export default {
         if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(result.fee.denom)) {
           let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][result.fee.denom];
           normal = parseFloat(result.fee.amount) / Math.pow(10, tokenInfo.decimal);
-          display = normal.toFixed(4) + " " + tokenInfo.symbol;
-          symbol = tokenInfo.symbol;
+          if (this.selectedToken.isEVMNative) {
+            symbol = this.selectedToken.symbol;
+          } else {
+            symbol = tokenInfo.symbol;
+          }
+          display = normal.toFixed(4) + " " + symbol;
         }
         result.fee["display"] = display;
         result.fee["symbol"] = symbol;
@@ -790,14 +775,14 @@ export default {
         });
         this.axelarStatus = "Waiting for user approval...";
 
-        console.log(" ==== Axelar Transfer ====");
-        console.log("From Chain: ", this.fromSubChain.axelar.chain);
-        console.log("To Chain: ", this.toSubChain.axelar.chain);
-        console.log("Amount: ", microAmount + " " + this.selectedToken.denom);
-        console.log("Contract Address: ", this.selectedToken.ERC20_address);
-        console.log("Deposit Address: ", depositAddress);
-        console.log("From Address: ", this.sourceAddress);
-        console.log(" ==== Axelar Transfer ====");
+        // console.log(" ==== Axelar Transfer ====");
+        // console.log("From Chain: ", this.fromSubChain.axelar.chain);
+        // console.log("To Chain: ", this.toSubChain.axelar.chain);
+        // console.log("Amount: ", microAmount + " " + this.selectedToken.denom);
+        // console.log("Contract Address: ", this.selectedToken.ERC20_address);
+        // console.log("Deposit Address: ", depositAddress);
+        // console.log("From Address: ", this.sourceAddress);
+        // console.log(" ==== Axelar Transfer ====");
           
         this.animateInput();
         if (this.selectedToken.ERC20_address && this.selectedToken.ERC20_address != '') { 
@@ -968,7 +953,7 @@ export default {
       this.info_error = '';
       let microAmount = this.getMicroAmount(this.amount);
       if (microAmount == 0) {
-        this.info_error = 'Amount must be grater the 0';
+        this.info_error = 'Amount must be grater than 0';
         return;
       }
 
@@ -1109,7 +1094,7 @@ export default {
       }
 
       if (this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address != '') { 
-        console.log(`${this.tokenBalance.balance.amount} < ${amount}`);
+        // console.log(`${this.tokenBalance.balance.amount} < ${amount}`);
         if (this.tokenBalance.balance.amount < amount) {
           this.info_error = "Insufficient balance";
           this.axelarStatus = "";
@@ -1385,6 +1370,19 @@ export default {
   font-size: 16px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
+}
+
+.testnet-indicator {
+  position: absolute; 
+  top: -30px; 
+  height: 25px; 
+  width: 70px; 
+  background-color: rgb(158, 4, 4); 
+  border-radius: 8px; 
+  font-weight: bold; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;  
 }
 
 .main-section-wrapper {

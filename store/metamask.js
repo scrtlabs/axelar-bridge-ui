@@ -195,13 +195,13 @@ export const checkTxConfirmation = async (receipt) => {
     if (_web3) {
       try {
         let currentBlock = await _web3.eth.getBlockNumber();
-        console.log("--- TEST ---")
-        console.log(currentBlock);
-        console.log(receipt);
-        console.log(receipt.blockNumber);
+        // console.log("--- TEST ---")
+        // console.log(currentBlock);
+        // console.log(receipt);
+        // console.log(receipt.blockNumber);
         let confirmations = (parseInt(currentBlock) - parseInt(receipt.blockNumber));
-        console.log(confirmations);
-        console.log("--- TEST ---")
+        // console.log(confirmations);
+        // console.log("--- TEST ---")
         $nuxt.$emit('MM-confirmation-update', confirmations);
         if (confirmations >= 96) {
           $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);

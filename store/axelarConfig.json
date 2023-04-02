@@ -17,8 +17,9 @@
     "secret-block-explorer": "https://secretnodes.com/secret/transactions",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uausdc": { "decimal": 6, "symbol": "aUSDC"},
+      "uusdc": { "decimal": 6, "symbol": "aUSDC"},
       "eth-wei": { "decimal": 18, "symbol": "WETH"},
+      "weth-wei": { "decimal": 18, "symbol": "WETH"},
       "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
       "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
     }

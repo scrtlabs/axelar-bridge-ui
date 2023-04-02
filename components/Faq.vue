@@ -33,7 +33,6 @@ export default {
   watch: {
     showFAQ(val) {
       console.log("AAA");
-      console.log(val)
       this.show = val;
     }
   }

@@ -2,8 +2,12 @@ import { SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance, getPermit } from './token'
 import { connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
 
-//import chains from './networksConfig-mainnet.json'
-import chains from './networksConfig.json'
+const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
+
+import chainsMainnet from './networksConfig-mainnet.json'
+import chainsTestnet from './networksConfig.json'
+
+var chains = SITE_ENV == "mainnet" ? chainsMainnet : chainsTestnet;
 
 var _getTokenDebounce = false;
 
