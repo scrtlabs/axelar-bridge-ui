@@ -17,11 +17,16 @@
     "secret-block-explorer": "https://secretnodes.com/secret/transactions",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uusdc": { "decimal": 6, "symbol": "aUSDC"},
+      "uusdc": { "decimal": 6, "symbol": "USDC"},
+      "uusdt": { "decimal": 6, "symbol": "USDT"},
+      "dai-wei": { "decimal": 18, "symbol": "DAI"},
       "eth-wei": { "decimal": 18, "symbol": "WETH"},
       "weth-wei": { "decimal": 18, "symbol": "WETH"},
       "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
-      "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
+      "busd-wei": { "decimal": 18, "symbol": "BUSD"},
+      "frax-wei": { "decimal": 18, "symbol": "FRAX"},
+      "uni-wei": { "decimal": 18, "symbol": "UNI"}
+      
     }
   }
 }
