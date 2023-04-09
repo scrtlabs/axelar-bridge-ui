@@ -1,6 +1,5 @@
 <template>
   <div>
-    <faq :showFAQ="showFAQ"></faq>
     <div
       v-if="true || !isMobile"
       class="main"
@@ -40,7 +39,7 @@
               <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" />
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
-              <!-- <v-btn @click="showFAQ = true">FAQ</v-btn> -->
+              <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
               <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
             </div>
@@ -125,8 +124,10 @@
 
         <div class="main-section">
           <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
+          <!-- <v-slide-x-transition> -->
+          
+          <div class="main-section-tab"  :style="tabStyleObject">
           <div v-if="disableUI" class="main-section-disable"></div>
-
           <!-- From & To Start -->
           <div style="background-color: transparent; display: flex; justify-content: space-between; width: 100%; gap: 10px">
             <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
@@ -231,10 +232,6 @@
             </div>
           </div>
 
-          <!-- <div class="transfer-info">
-            <div v-if="fromSubChain">Waiting for TX from {{ fromSubChain.name }}...</div>
-        </div> -->
-
           <div class="transfer-info">
             <!-- <div style="position: absolute; bottom: -9px; right: 10px">
               <div style="position: absolute; color: black; font-family: 'Banana'; font-weight: bold; font-size: 14px; top: 12px; left: 40px">info</div>
@@ -289,6 +286,13 @@
               :path="require('../assets/animations/' + selectedToken.animation)"
             />
           </div>
+        </div>
+        <!-- </v-slide-x-transition>
+        <v-slide-x-transition> -->
+          <div class="main-section-tab" style="background-color: transparent">
+            <faq @hide="page = 0"></faq>            
+          </div>
+        <!-- </v-slide-x-transition> -->
         </div>
       </div>
       <fire-fly></fire-fly>
@@ -425,6 +429,17 @@ export default {
     walletOption() {
       return true; //this.$route.query.uioption == "1";
     },
+    tabStyleObject() {
+      if (this.page == 0) {
+        return {
+          'margin-top': '0px'
+        };
+      } 
+
+      return {
+        'margin-top': '-650px'
+      };
+    },
     styleObject() {
       return {
         '--color': 'red',
@@ -547,6 +562,7 @@ export default {
   },
   data() {
     return {
+      page: 0, 
       itemIconSize: 24,
 
       fromChainIdx: 1,
@@ -583,7 +599,6 @@ export default {
 
       transferInProgress: false,
       refreshBalance: false,
-      showFAQ: false,
       allowUnwrap: false
 
     };
@@ -1418,30 +1433,42 @@ export default {
   align-items: center;
 }
 
+.main-section-tab {
+  width: 600px; 
+  height: 650px !important;
+  position: relative;  
+  padding: 20px;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+  transition-duration: 0.5s;
+}
+
 .main-section {
   width: 600px !important;
   height: 650px !important;
   /* background-color: hsl(222, 27%, 15%, 0.7); */
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 20px;
-  padding: 20px;
+  
 
   position: relative;
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch; */
   z-index: 2;
   backdrop-filter: blur(7px);
+  overflow: hidden;
 }
 
 .main-section-disable {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 600px;
+  height: 650px;
   background-color: rgba(0, 0, 0, 0.6);
   opacity: 0.4;
   z-index: 2;
   margin-top: -20px;
+  margin-left: -20px;
   border-radius: 20px;
   border-color: white;
   border-style: dashed;
