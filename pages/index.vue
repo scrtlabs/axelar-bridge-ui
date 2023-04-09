@@ -125,8 +125,6 @@
         <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
         <div class="testnet-indicator" style="width: 180px" v-else>!! MAINNET - REAL MONEY !!</div>
         <div class="main-section">
-          <!-- <v-slide-x-transition> -->
-          
           <div class="main-section-tab"  :style="tabStyleObject">
           <div v-if="disableUI" class="main-section-disable"></div>
           <!-- From & To Start -->
@@ -287,13 +285,10 @@
               :path="require('../assets/animations/' + selectedToken.animation)"
             />
           </div>
-        </div>
-        <!-- </v-slide-x-transition>
-        <v-slide-x-transition> -->
+          </div>
           <div class="main-section-tab" style="background-color: transparent">
             <faq @hide="page = 0"></faq>            
           </div>
-        <!-- </v-slide-x-transition> -->
         </div>
       </div>
       <fire-fly></fire-fly>
