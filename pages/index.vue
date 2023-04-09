@@ -59,7 +59,7 @@
           />
           <transition name="fade">
             <img
-              v-show="showArrowText"
+              v-show="showArrowText && showArrowComputed"
               style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px"
               :src="require('~/assets/animations/connect-wallets.png')"
             />
