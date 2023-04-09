@@ -207,22 +207,23 @@ export const checkTxConfirmation = async (receipt) => {
           $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
           clearInterval(_transactionTracker);
           _transactionTracker = null;
-        } else if (confirmations > 60) {
+        } else if (confirmations > 40) {
           try {
             let status = await $nuxt.$axios.post(axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["axelarscan-api"], {
               txHash: receipt.transactionHash, 
               size: 1
             });
-            console.log(" --- status --- ");
-            console.log(status);
-            console.log(" --- status --- ");
             if (status) {
-              if (status.hasOwnProperty("error") && status.error) {
-                // Do something?
-              } else {
-                $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
-                clearInterval(_transactionTracker);
-                _transactionTracker = null;
+              try {
+                if (status.data.error) {
+                  // Do something?
+                } else {
+                  $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
+                  clearInterval(_transactionTracker);
+                  _transactionTracker = null;
+                }
+              } catch (err) {
+                console.log(err);
               }
             }
             
