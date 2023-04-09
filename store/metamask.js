@@ -59,7 +59,7 @@ export const connectMM = async (chainId, addEvent, chains) => {
           $nuxt.$emit('MM-account-changed', accounts);
         });
     
-        window.ethereum.on('networkChanged', function(networkId){
+        window.ethereum.on('chainChanged', function(networkId){
           $nuxt.$emit('MM-network-changed', networkId);
         });
       }
@@ -207,19 +207,24 @@ export const checkTxConfirmation = async (receipt) => {
           $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
           clearInterval(_transactionTracker);
           _transactionTracker = null;
-        } else if (confirmations > 60) {
+        } else if (confirmations > 40) {
           try {
             let status = await $nuxt.$axios.post(axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["axelarscan-api"], {
               txHash: receipt.transactionHash, 
               size: 1
             });
-            
             if (status) {
-              //if (status.data && status.data.total > 0) {
-                $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
-                clearInterval(_transactionTracker);
-                _transactionTracker = null;
-              //}
+              try {
+                if (status.data.error) {
+                  // Do something?
+                } else {
+                  $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
+                  clearInterval(_transactionTracker);
+                  _transactionTracker = null;
+                }
+              } catch (err) {
+                console.log(err);
+              }
             }
             
           } catch (err) {

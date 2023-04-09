@@ -40,6 +40,10 @@ export default {
       this.content = this.tokens[0];
       this.$emit('input', this.content);
     },
+    value(token) {
+      this.content = token;
+      this.$emit('input', this.content);
+    }
   },
   methods: {
     handleChange(val) {

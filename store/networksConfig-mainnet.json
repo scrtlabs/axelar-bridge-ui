@@ -20,7 +20,7 @@
         "icon": "secret.logo.svg",
         "axelar": {
             "Env": "mainnet",
-            "chain": "secret",
+            "chain": "secret-snip",
             "transferTime": -1
         },
         "tokens": [
@@ -61,6 +61,18 @@
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
           {
+            "symbol": "saWBTC",
+            "denom": "wbtc-satoshi",
+            "isEVMNative": false,
+            "coinDecimals": 8,
+            "icon": "wbtc-satoshi.logo.svg",
+            "fromImage": "swbtc.png",
+            "toImage": "wbtc.png",
+            "animation": "unwrap/unwrap-btc.json",
+            "SNIP20_address": "secret1guyayjwg5f84daaxl7w84skd8naxvq8vz9upqx",
+            "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
+          },
+          {
             "symbol": "saWBNB",
             "denom": "wbnb-wei",
             "isEVMNative": false,
@@ -80,7 +92,7 @@
             "icon": "busd-wei.logo.svg",
             "fromImage": "sbusd.png",
             "toImage": "busd.png",
-            "animation": "unwrap/unwrap-bnb.json",
+            "animation": "unwrap/unwrap-busd.json",
             "SNIP20_address": "secret1t642ayn9rhl5q9vuh4n2jkx0gpa9r6c3sl96te",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
@@ -90,9 +102,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "dai.logo.svg",
-            "fromImage": "sbusd.png",
-            "toImage": "busd.png",
-            "animation": "unwrap/unwrap-bnb.json",
+            "fromImage": "sdai.png",
+            "toImage": "dai.png",
+            "animation": "unwrap/unwrap-dai.json",
             "SNIP20_address": "secret1c2prkwd8e6ratk42l4vrnwz34knfju6hmp7mg7",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
@@ -102,9 +114,9 @@
             "isEVMNative": false,
             "coinDecimals": 6,
             "icon": "uusdt.logo.svg",
-            "fromImage": "sbusd.png",
-            "toImage": "busd.png",
-            "animation": "unwrap/unwrap-bnb.json",
+            "fromImage": "susdt.png",
+            "toImage": "usdt.png",
+            "animation": "unwrap/unwrap-usdt.json",
             "SNIP20_address": "secret1wk5j2cntwg2fgklf0uta3tlkvt87alfj7kepuw",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
@@ -114,9 +126,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "uni.logo.svg",
-            "fromImage": "sbusd.png",
-            "toImage": "busd.png",
-            "animation": "unwrap/unwrap-bnb.json",
+            "fromImage": "suni.png",
+            "toImage": "uni.png",
+            "animation": "unwrap/unwrap-uni.json",
             "SNIP20_address": "secret1egqlkasa6xe6efmfp9562sfj07lq44z7jngu5k",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
@@ -126,9 +138,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "frax.logo.svg",
-            "fromImage": "sbusd.png",
-            "toImage": "busd.png",
-            "animation": "unwrap/unwrap-bnb.json",
+            "fromImage": "sfrax.png",
+            "toImage": "frax.png",
+            "animation": "unwrap/unwrap-frax.json",
             "SNIP20_address": "secret16e230j6qm5u5q30pcc6qv726ae30ak6lzq0zvf",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           }          
@@ -228,9 +240,9 @@
             "isEVMNative": false,
             "coinDecimals": 6,
             "icon": "uusdt.logo.svg",
-            "fromImage": "uausdc.png",
-            "toImage": "suausdc.png",
-            "animation": "wrap/wrap-usdc.json",
+            "fromImage": "usdt.png",
+            "toImage": "susdt.png",
+            "animation": "wrap/wrap-usdt.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": "",
             "ERC20_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
@@ -241,9 +253,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "dai.logo.svg",
-            "fromImage": "uausdc.png",
-            "toImage": "suausdc.png",
-            "animation": "wrap/wrap-usdc.json",
+            "fromImage": "dai.png",
+            "toImage": "sdai.png",
+            "animation": "wrap/wrap-dai.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": "",
             "ERC20_address": "0x6B175474E89094C44Da98b954EedeAC495271d0F"
@@ -267,9 +279,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "frax.logo.svg",
-            "fromImage": "uausdc.png",
-            "toImage": "suausdc.png",
-            "animation": "wrap/wrap-usdc.json",
+            "fromImage": "frax.png",
+            "toImage": "sfrax.png",
+            "animation": "wrap/wrap-frax.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": "",
             "ERC20_address": "0x853d955aCEf822Db058eb8505911ED77F175b99e"
@@ -280,9 +292,9 @@
             "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "uni.logo.svg",
-            "fromImage": "uausdc.png",
-            "toImage": "suausdc.png",
-            "animation": "wrap/wrap-usdc.json",
+            "fromImage": "uni.png",
+            "toImage": "suni.png",
+            "animation": "wrap/wrap-uni.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": "",
             "ERC20_address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984"
@@ -412,13 +424,64 @@
             "coinDecimals": 8,
             "isEVMNative": false,
             "icon": "wbtc-satoshi.logo.svg",
-            "fromImage": "wbnb-wei.png",
-            "toImage": "swbnb-wei.png",
-            "animation": "wrap/wrap-bnb.json",
+            "fromImage": "wbtc.png",
+            "toImage": "swbtc.png",
+            "animation": "wrap/wrap-btc.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": ""
-          }
-
+          },
+          {
+            "symbol": "FRAX",
+            "denom": "frax-wei",
+            "isEVMNative": false,
+            "coinDecimals": 18,
+            "icon": "frax.logo.svg",
+            "fromImage": "frax.png",
+            "toImage": "sfrax.png",
+            "animation": "wrap/wrap-frax.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": "",
+            "ERC20_address": ""
+          },
+          {
+            "symbol": "DAI",
+            "denom": "dai-wei",
+            "isEVMNative": false,
+            "coinDecimals": 18,
+            "icon": "dai.logo.svg",
+            "fromImage": "dai.png",
+            "toImage": "sdai.png",
+            "animation": "wrap/wrap-dai.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": "",
+            "ERC20_address": ""
+          },
+          {
+            "symbol": "BUSD",
+            "denom": "busd-wei",
+            "isEVMNative": false,
+            "coinDecimals": 18,
+            "icon": "busd-wei.logo.svg",
+            "fromImage": "busd.png",
+            "toImage": "sbusd.png",
+            "animation": "wrap/wrap-busd.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": "",
+            "ERC20_address": ""
+          },
+          {
+            "symbol": "UNI",
+            "denom": "uni-wei",
+            "isEVMNative": false,
+            "coinDecimals": 18,
+            "icon": "uni.logo.svg",
+            "fromImage": "uni.png",
+            "toImage": "suni.png",
+            "animation": "wrap/wrap-uni.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": "",
+            "ERC20_address": ""
+          }          
         ]
       }      
     ]
