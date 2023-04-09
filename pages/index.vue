@@ -365,7 +365,7 @@ export default {
         self.getBalance();
         self.transferInProgress = false;
         self.showProcessAnimation = false;
-        self.axelarStatus = `<div style="color: lightgreen">Transfer complete!<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
+        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
       });
 
       
