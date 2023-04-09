@@ -14,7 +14,7 @@
   "mainnet": {
     "axelarscan-api": "https://api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://axelarscan.io/transfer",
-    "secret-block-explorer": "https://secretnodes.com/secret/transactions",
+    "secret-block-explorer": "https://www.mintscan.io/secret/txs",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
       "uusdc": { "decimal": 6, "symbol": "USDC"},
