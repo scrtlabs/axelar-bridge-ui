@@ -12,7 +12,7 @@
     "lintfix": "prettier --write --list-different ."
   },
   "dependencies": {
-    "@axelar-network/axelarjs-sdk": "^0.12.4",
+    "@axelar-network/axelarjs-sdk": "^0.12.6",
     "@metamask/detect-provider": "^2.0.0",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dotenv": "^1.4.1",

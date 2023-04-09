@@ -59,7 +59,7 @@ export const connectMM = async (chainId, addEvent, chains) => {
           $nuxt.$emit('MM-account-changed', accounts);
         });
     
-        window.ethereum.on('networkChanged', function(networkId){
+        window.ethereum.on('chainChanged', function(networkId){
           $nuxt.$emit('MM-network-changed', networkId);
         });
       }
@@ -213,13 +213,17 @@ export const checkTxConfirmation = async (receipt) => {
               txHash: receipt.transactionHash, 
               size: 1
             });
-            
+            console.log(" --- status --- ");
+            console.log(status);
+            console.log(" --- status --- ");
             if (status) {
-              //if (status.data && status.data.total > 0) {
+              if (status.hasOwnProperty("error") && status.error) {
+                // Do something?
+              } else {
                 $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
                 clearInterval(_transactionTracker);
                 _transactionTracker = null;
-              //}
+              }
             }
             
           } catch (err) {

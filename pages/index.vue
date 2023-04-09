@@ -51,7 +51,7 @@
 
         <div style="position: absolute; top: -30px; right: -150px; z-index: 1">
           <lottie-wrapper
-            v-if="showArrow"
+            v-if="showArrowComputed"
             style="filter: invert(48%); transform: scaleX(-1); z-index: 2"
             :speed="1"
             :height="200"
@@ -145,9 +145,9 @@
           </div>
           <!-- From & To End -->
 
-          <div v-if="fromSubChain != null" class="assets-to-transfer" style="font-family: 'BalsamiqSans-Regular' !important">
+          <div v-if="fromSubChain != null" class="assets-to-transfer" style="">
             <div style="display: flex; justify-content: space-between">
-              <div>Asset to transfer:</div>
+              <div style="font-family: 'BalsamiqSans-Regular">Asset to transfer:</div>
               <div>
                 <v-btn :disabled="transferInProgress || getNormalizedCurrentBalance == -1 " dense x-small @click="amount = getNormalizedCurrentBalance">MAX</v-btn>
               </div>
@@ -158,7 +158,7 @@
                 :disabled="transferInProgress"
                 class="right-input number-input"
                 type="number"
-                style="max-width: 150px"
+                style="max-width: 150px; font-family: 'BalsamiqSans-Regular' !important"
                 color="orange"
                 background-color="rgba(0,0,0,0.5)"
                 label="Amount"
@@ -207,11 +207,11 @@
               </div>
             </div>
             <div>
-              <div style="margin-bottom: 5px">From address: {{ fromAccountName }}</div>
+              <div style="margin-bottom: 5px; font-family: 'BalsamiqSans-Regular">From address: {{ fromAccountName }}</div>
               <div>
-                <v-text-field disabled class="address-input pa-0 ma-0" color="orange" flat dense label="" :value="sourceAddress"></v-text-field>
+                <v-text-field disabled class="address-input pa-0 ma-0" color="orange" flat dense label="" :value="sourceAddress" spellcheck="false"></v-text-field>
               </div>
-              <div style="margin-bottom: 5px">To address:</div>
+              <div style="margin-bottom: 5px; font-family: 'BalsamiqSans-Regular">To address:</div>
               <div>
                 <v-text-field
                   :disabled="transferInProgress"
@@ -223,6 +223,7 @@
                   label=""
                   ref="destinationAddress"
                   v-model="destinationAddress"
+                  spellcheck="false"
                 >
                 <v-btn :disabled="transferInProgress" slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
                 </v-text-field>
@@ -243,7 +244,7 @@
               <div style="position: absolute; color: rgb(50,50,50); font-family: 'Banana'; font-weight: bold; font-size: 20px; top: 4px; left: 35px">info</div>
               <img :src="require('~/assets/images/info2.png')" height="40" style="" />            
             </div> -->
-            <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px;">Info:</div>
+            <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px; font-family: 'BalsamiqSans-Regular">Info:</div>
             <!-- <div style="height: 10px"></div> -->
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
             <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
@@ -308,8 +309,6 @@ import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'; // import lo
 import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } from '@axelar-network/axelarjs-sdk';
 const Web3 = require('web3');
 
-console.log(CHAINS.TESTNET.BINANCE);
-
 export default {
   components: { SubChainSelector, TokenSelector },
   mounted() {
@@ -344,7 +343,7 @@ export default {
 
       this.$nuxt.$on('MM-receipt', async (receipt) => {
         self.$store.dispatch('checkTxConfirmation', receipt);
-        self.axelarStatus = `Waiting for confirmations 0 / 96... `;
+        self.axelarStatus = `Waiting for confirmations 0 / 64 ~ 96... `;
       });
 
       this.$nuxt.$on('MM-error', async (error, receipt) => {
@@ -358,7 +357,7 @@ export default {
       });
 
       this.$nuxt.$on('MM-confirmation-update', async (confirmations) => {
-        self.axelarStatus = `Waiting for confirmations ${confirmations} / 96... `;
+        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... `;
       });
 
       this.$nuxt.$on('MM-transfer-complete', async (tx) => {
@@ -414,6 +413,9 @@ export default {
       MMTx: 'getMMTx',
       isMobile: 'isMobile'
     }),
+    showArrowComputed() {
+      return this.showArrow || !this.isMMConnected || !this.isKeplrConnected;
+    },
     isTestnet() {
       return process.env.NUXT_ENV_AXELAR_ENV == "testnet";
     },
@@ -602,12 +604,12 @@ export default {
 
       let limit = await this.getMaxTransfer();
       this.maxTransfer = limit.display;
-      if (token.hasOwnProperty("allow_autounwap")) {
-        console.log(token);
-        this.allowUnwrap = token.allow_autounwap;
-      } else {
-        this.allowUnwrap = false;
-      }
+      // if (token.hasOwnProperty("allow_autounwap")) {
+      //   console.log(token);
+      //   this.allowUnwrap = token.allow_autounwap;
+      // } else {
+      //   this.allowUnwrap = false;
+      // }
     },
 
     tokenBalance(newBalance, oldBalance) {
@@ -672,6 +674,11 @@ export default {
     async calcTransferFee(amount) {
       try {
         let microAmount = this.getMicroAmount(amount);
+        //console.log("--- BEFORE FEE", this.selectedToken.denom, this.fromSubChain.axelar.chain, this.toSubChain.axelar.chain)
+        // let aa = await this.axelarQuery.isChainActive(this.toSubChain.axelar.chain);
+        // console.log(aa);
+        // let bb = await this.axelarQuery.throwIfInactiveChains([this.toSubChain.axelar.chain]);
+        // console.log(bb);
         const result = await this.axelarQuery.getTransferFee(this.fromSubChain.axelar.chain, this.toSubChain.axelar.chain, this.selectedToken.denom, microAmount);
         var display = result.fee.amount + " " + result.fee.denom;
         var symbol = result.fee.denom;
@@ -684,7 +691,7 @@ export default {
           } else {
             symbol = tokenInfo.symbol;
           }
-          display = normal.toFixed(4) + " " + symbol;
+          display = normal.toFixed(6) + " " + symbol;
         }
         result.fee["display"] = display;
         result.fee["symbol"] = symbol;
@@ -869,7 +876,7 @@ export default {
       if (disconnect) {
         this.$store.dispatch('disconnectKeplr');
       } else {
-        this.showArrow = this.showArrowText = false;
+        this.showArrow = false; //this.showArrowText
         this.$store.dispatch('initKeplr', this.availableChains);
       }
     },
@@ -1071,6 +1078,7 @@ export default {
         console.log(err);
         this.transferInProgress = false;
         this.showProcessAnimation = false;
+        this.axelarStatus = "";
       }
     },
 
@@ -1208,14 +1216,26 @@ export default {
         this.fromChainIdx = !this.fromChainIdx + 0;
         this.toChainIdx = !this.toChainIdx + 0;
 
+        var foundToken = null;
+        for (let i = 0; i < this.toSubChain.tokens.length; i++) {
+          if (this.toSubChain.tokens[i].denom == this.selectedToken.denom) {
+            foundToken = _.cloneDeep(this.toSubChain.tokens[i]);
+            break;
+          }
+        }
+
         let tmp = _.cloneDeep(this.fromSubChain);
         this.fromSubChain = _.cloneDeep(this.toSubChain);
         this.toSubChain = tmp;
         this.destinationAddress = this.receiverAccount.address;
+
         if (swapTokens && this.fromSubChain.tokens.length > 0) {
           this.amount = 0;
-          this.selectedToken = this.fromSubChain.tokens[0];
-          this.getBalance();
+          var self = this;
+          setTimeout(() => {
+            self.selectedToken = (foundToken != null) ? foundToken : self.fromSubChain.tokens[0];
+            self.getBalance();
+          }, 100);
         }
       }
     }
@@ -1440,7 +1460,7 @@ export default {
 
 .transfer-info {
   position: relative;
-  font-family: 'BalsamiqSans-Regular';
+  /*font-family: 'BalsamiqSans-Regular';*/
   margin-top: 20px;
   width: 100%;
   background-color: rgba(100, 100, 100, 0.5);
@@ -1509,8 +1529,16 @@ export default {
   font-size: 22px;
 }
 
+>>> .right-input input::selection {
+  background-color: #ff8c00;
+}
+
 >>> .right-input input {
   text-align: right;
+}
+
+.address-input >>> input::selection {
+  background-color: #ff8c00;
 }
 
 .address-input {

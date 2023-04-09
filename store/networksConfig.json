@@ -2,7 +2,7 @@
   {
     "name": "Secret Network",
     "chainId": "pulsar-2",
-    "rest": "https://lcd.testnet.secretsaturn.net",
+    "rest": "https://api.pulsar.scrttestnet.com",
     "rpcUrl": "https://rpc.testnet.secretsaturn.net",
     "hrp": "secret",
     "coinType": 529,
