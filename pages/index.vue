@@ -122,8 +122,8 @@
           </svg>
         </div>
 
+        <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
         <div class="main-section">
-          <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
           <!-- <v-slide-x-transition> -->
           
           <div class="main-section-tab"  :style="tabStyleObject">
