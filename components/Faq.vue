@@ -12,28 +12,37 @@
     <div style="background-image: linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0); height: 2px; width: 100%; opacity: 0.7"></div>
     <div class="faq-section">
       <div style="margin-top: 20px; width: 99%; background-color: rgba(0, 0, 0, 0.5);">
-        <h3 class="faq-title">What is the Secret bridge v2?</h3>
+        <h3 class="faq-title">What Do?</h3>
         <ul class="faq-content">
-          <li>The bridge allows users to lock their ETH, BNB, ERC20 or BEP20 in a smart contract on Ethereum and mint secretETH, secretBNB, secretERC20 or secretBEP20, which are wrapped tokens with privacy on the Secret Network based on SNIP-20 standard.</li>
-          <li>To bridge the assets, we are using the Axelar SDK, meaning that transactions from and to Ethereum/Binance will go through Axelar.</li>
+          <li>The Secret Tunnel allows users to wrap their ETH, BNB, ERC20 or BEP20 tokens and mint SNIP20 tokens, which are wrapped with privacy on the Secret Network.</li>
+          <li>The tunnel is powered by Axelar, meaning that transactions to and from Secret Network will pass through Axelar.</li>
         </ul>
+
+        <!-- <h3 class="faq-title">How Use?</h3>
+        <ul class="faq-content">
+          <li>Usage of the Tunnel requires both Metamask and Keplr wallets. For an in depth video guide, please check out this <link></li>
+        </ul> -->
+
+        <h3 class="faq-title">How See?</h3>
+        <ul class="faq-content">
+          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms <a href="https://docs.scrt.network/secret-network-documentation/development/secret-contracts/development-concepts/permissioned-viewing/viewing-keys" target="_blank" class="link-style">here</a></li>
+        </ul>  
+
+        <h3 class="faq-title">Funds Safu?</h3>
+        <ul class="faq-content">
+          <li>Your assets are safely stored in a smart contract. As long as you've entered a Secret Network address that you control, your funds are safe.</li>
+          <li>For support, you can reach out to the Secret Network's <a class="link-style" href="https://discord.com/invite/SJK32GY" target="_blank">discord</a> or directly to Axelar's <a class="link-style" href="https://axelar.network/" target="_blank">website</a> or <a class="link-style" href="https://discord.com/invite/aRZ3Ra6f7D" target="_blank">discord</a></li>
+        </ul>
+        
+        <h3 class="faq-title">Which Coin?</h3>
+        <ul class="faq-content">
+          <li>Currently assets from Ethereum and Binance Smart Chain are supported. In the future, we may add more networks to this interface. Have any requests? <a class="link-style" href="https://discord.com/invite/SJK32GY" target="_blank">Let us know</a></li>
+        </ul>        
 
         <h3 class="faq-title">Why the page is disabled?</h3>
         <ul class="faq-content">
           <li>Make sure that both Keplr & MetaMask are connected</li>
         </ul>
-        
-        <h3 class="faq-title">Something happened! Are my funds gone?</h3>
-        <ul class="faq-content">
-          <li>Relax, no matter what happens, your assets are safely stored in a smart contract.<br>As long as you've entered a Secret Network address that you control, your funds are safe.</li>
-          <li>In any case, you should reach out to Axelar for assistance.</li>
-          <li>That being said, our legal team requires us to say that none of the bridge operators takes any responsibility for any direct or indirect damages that may be caused by using this software. Choosing to interact with the Bridge is solely up to the discretion of the user.</li>
-        </ul>
-
-        <h3 class="faq-title">Which tokens are supported?</h3>
-        <ul class="faq-content">
-          <li>Please go to the following link <a href=" https://docs.axelar.dev/resources/mainnet" target="_"> https://docs.axelar.dev/resources/mainnet</a></li>
-        </ul>        
         
         <div style="height: 100px"></div>
       </div>
@@ -96,6 +105,10 @@ export default {
       border-radius: 15px !important;
       opacity: 0.5 !important;
       background-clip: padding-box !important;
+  }
+
+  .link-style {
+    font-weight: bold; text-decoration: none; color: white    
   }
 
 </style>

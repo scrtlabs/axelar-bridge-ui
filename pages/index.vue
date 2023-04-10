@@ -123,7 +123,7 @@
         </div>
 
         <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
-        <div class="testnet-indicator" style="width: 180px" v-else>!! MAINNET - REAL MONEY !!</div>
+        <!-- <div class="testnet-indicator" style="width: 180px" v-else>!! MAINNET - REAL MONEY !!</div> -->
         <div class="main-section">
           <div class="main-section-tab"  :style="tabStyleObject">
           <div v-if="disableUI" class="main-section-disable"></div>
@@ -274,11 +274,12 @@
           </div>
 
           <div style="margin: 20px; width: 100%; display: flex; flex-direction: column; align-items: center">
-            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
-            <div
-              v-if="info_error != ''"
-              style="font-size: 14px; margin-top: 4px; color: red; font-weight: bold; text-align: center; display: flex; justify-content: center; align-items: center; gap: 5px"
-            >
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <div v-if="!isMetaMaskChainCorrect" class="error-styling">
+              Metamask doesn't match selected network<br>Please change it manually
+            </div>
+            
+            <div v-if="info_error != ''" class="error-styling">
               <v-icon size="16" color="error">mdi-alert</v-icon> {{ info_error }}
             </div>
             <!-- <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index:999" @click="animate" :disabled="false && disableUI">Transfer Simulation</v-btn> -->
@@ -390,7 +391,7 @@ export default {
         self.transferInProgress = false;
         self.showProcessAnimation = false;
         self.showAxelarTxIndication = "";
-        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
+        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
       });
 
       this.$nuxt.$on('MM-transfer-indication', async (tx) => {
@@ -400,14 +401,17 @@ export default {
       
 
       this.$nuxt.$on('MM-connected', async () => {
+        this.activeMMChainId = window.ethereum.networkVersion;
         this.$store.dispatch('getMMAccounts');
       });
 
       this.$nuxt.$on('MM-account-changed', async (accounts) => {
+        //this.activeMMChainId = window.ethereum.networkVersion;
         this.$store.commit('updateMMAccounts', accounts);
       });
 
       this.$nuxt.$on('MM-network-changed', async (networkId) => {
+        this.activeMMChainId = Number(networkId);
         this.$store.dispatch('getMMAccounts');
       });
 
@@ -596,7 +600,12 @@ export default {
       return false;
     },
 
-
+    isMetaMaskChainCorrect() {
+      if (this.fromSubChain && this.fromSubChain.chainId && this.isMMConnected) {
+        return (Number(this.activeMMChainId) === Number(this.fromSubChain.chainId));
+      }
+      return true;
+    }
   },
   data() {
     return {
@@ -626,6 +635,7 @@ export default {
       showWrapAnimation: false,
       showProcessAnimation: false,
       audio: {},
+      activeMMChainId: -1,
 
       axelarTransfer: null,
       axelarQuery: null,
@@ -646,7 +656,7 @@ export default {
     async selectedToken(token) {
       this.getBalance();
       if (!this.shouldUseMMAddress) {
-        if (this.isKeplrConnected) this.fromAccountName = '(' + (await window.keplr.getKey('pulsar-2')).name + ')';
+        if (this.isKeplrConnected) this.fromAccountName = '(' + (await window.keplr.getKey(this.fromChain.chainId)).name + ')';
         //this.estimatedFee = "";
       } else {
         this.fromAccountName = '';
@@ -1123,7 +1133,7 @@ export default {
         }
         this.getBalance();
         if (this.tx_error == '') {
-          this.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+          this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
           this.transferInProgress = false;
           this.animateProcessing();
         } else {
@@ -1254,12 +1264,17 @@ export default {
           //this.tx = 'TX in source chain: ' + tx.transactionHash;
           this.ack = 0;
           //this.ibcTx = 'Waiting for IBC ACK...';
-          const ibcResponses = await Promise.all(tx.ibcResponses);
-          this.ack = 1;
-          if (ibcResponses.length > 0) {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
-            this.transferInProgress = false;
-            //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
+          try {
+            const ibcResponses = await Promise.all(tx.ibcResponses);
+            this.ack = 1;
+            if (ibcResponses.length > 0) {
+              this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
+              this.transferInProgress = false;
+              //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
+            }
+          } catch (ackError) {
+              this.axelarStatus = `<div style="color: orange">Looks like we got timeout, don't worry, detailed status can be found <a  style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>You should receive your funds shortly</div>`;
+              this.transferInProgress = false;
           }
           this.animateProcessing();
           console.log(ibcResponses);
@@ -1708,5 +1723,17 @@ export default {
   border-radius: 15px;
   padding: 0px;
   box-shadow: inset 0 0 2px #000;
+}
+
+.error-styling {
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: 5px;
+  font-size: 14px; 
+  margin-top: 4px; 
+  color: rgb(226, 76, 76); 
+  font-weight: bold; 
+  text-align: center; 
 }
 </style>
