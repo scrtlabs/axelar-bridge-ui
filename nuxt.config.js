@@ -13,8 +13,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - secret-axelar-bridge',
-    title: 'secret-axelar-bridge',
+    titleTemplate: '%s',
+    title: 'Secret Tunnel',
     htmlAttrs: {
       lang: 'en',
     },
