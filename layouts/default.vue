@@ -74,7 +74,7 @@
 
     <v-footer color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
-        <div style="flex: 1; "></div>
+        <div style="flex: 1; margin-left: 10px ">Version: 0.1.0</div>
         <div style="flex: 1; text-align: center;">
           <a href="https://scrtlabs.com" target="_blank" style="font-weight: bold; text-decoration: none; color: white">SCRT Labs</a> ©
           {{ new Date().getFullYear() }} | powered by
