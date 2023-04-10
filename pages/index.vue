@@ -42,6 +42,7 @@
               <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
               <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <v-btn @click="switchSite" :color="isTestnet ? '#892323' : '#61a722'" >{{ isTestnet ? "MAINNET" : "TESTNET" }}</v-btn>
             </div>
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
           </div>
@@ -492,7 +493,7 @@ export default {
         '--overflow': 'hidden',
         '--overflow-hover': 'none',
         '--height': '40px',
-        '--height-hover': '200px'
+        '--height-hover': '230px'
       };
     },
 
@@ -970,8 +971,16 @@ export default {
       }, 1000);
     },
 
+    switchSite() {
+      if (process.env.NUXT_ENV_AXELAR_ENV === "mainnet") {
+        window.location.href = "https://secret-tunnel-testnet.pages.dev";
+      } else {
+        window.location.href = "https://tunnel.scrt.network";
+      }
+    },
+
     goToAxelar() {
-      window.open(`${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}s`, '_blank');      
+      window.open(`${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}s`, '_blank');
     },
 
     async getBalance() {
