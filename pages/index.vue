@@ -263,7 +263,7 @@
             <!-- <div style="height: 10px"></div> -->
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
             <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
-            <div v-if="maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
+            <div v-if="!transferInProgress && maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
             <div style="font-size: 14px;" v-html="axelarStatus"></div>
             <div v-if="tx == ''"></div>
             <div v-else>
@@ -1167,8 +1167,9 @@ export default {
         }
       }
 
-      if (amount < fee.amount) {
-        this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
+      let minAmount = fee.amount * 2;
+      if (parseFloat(amount) < minAmount) {
+        this.info_error = `Minimun transfer is (${fee["normalAmount"] * 2} ${fee.symbol})`;
         this.axelarStatus = "";
         return;
       }
@@ -1182,6 +1183,7 @@ export default {
       
       let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
       console.log("shouldUnwrap", shouldUnwrap);
+
       //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
         fromChain: this.fromSubChain.axelar.chain,
@@ -1216,17 +1218,18 @@ export default {
             }
           }
         };
-        console.log(msgToSend);
-        let signedTX = await this.senderAccount.tx.signTx([new MsgExecuteContract(msgToSend)], {
-          gasLimit: 300_000,
-          gasPriceInFeeDenom: 0.1,
-          feeDenom: 'uscrt'
-        });
-
-        this.axelarStatus = "Transaction was submitted, please wait..."
-        this.animateInput();
 
         try {
+          console.log(msgToSend);
+          let signedTX = await this.senderAccount.tx.signTx([new MsgExecuteContract(msgToSend)], {
+            gasLimit: 300_000,
+            gasPriceInFeeDenom: 0.1,
+            feeDenom: 'uscrt'
+          });
+
+          this.axelarStatus = "Transaction was submitted, please wait..."
+          this.animateInput(); 
+
           this.tx = '';
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
@@ -1267,6 +1270,7 @@ export default {
           console.error(err);
           this.transferInProgress = false;
           this.showProcessAnimation = false;
+          this.axelarStatus = "";
         }
         this.getBalance();
       }
@@ -1544,7 +1548,7 @@ export default {
   padding: 10px;
   box-shadow: inset 0 0 2px #000;
 
-  min-height: 100px;
+  min-height: 105px;
 }
 
 .right-cave {
