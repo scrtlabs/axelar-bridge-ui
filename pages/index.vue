@@ -59,7 +59,7 @@
           />
           <transition name="fade">
             <img
-              v-show="showArrowText"
+              v-show="showArrowText && showArrowComputed"
               style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px"
               :src="require('~/assets/animations/connect-wallets.png')"
             />
@@ -125,8 +125,6 @@
         <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
         <div class="testnet-indicator" style="width: 180px" v-else>!! MAINNET - REAL MONEY !!</div>
         <div class="main-section">
-          <!-- <v-slide-x-transition> -->
-          
           <div class="main-section-tab"  :style="tabStyleObject">
           <div v-if="disableUI" class="main-section-disable"></div>
           <!-- From & To Start -->
@@ -155,7 +153,26 @@
               </div>
             </div>
             <div style="display: flex; justify-content: space-between; gap: 10px">
-              <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+              <div style="display: flex; align-items: flex-start; gap: 10px">
+                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+                <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
+                  </template>
+                  <span>This asset will auto-unwrap to native coin</span>
+                </v-tooltip>
+                
+                <v-tooltip top  v-if="!isValidTransferAsset">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" color="orange" v-bind="attrs" v-on="on">mdi-alert-rhombus</v-icon>
+                  </template>
+                  <span>This asset cannot be transferred to the selected network</span>
+                </v-tooltip>                   
+
+                
+
+                
+              </div>
               <v-text-field
                 :disabled="transferInProgress"
                 class="right-input number-input"
@@ -257,7 +274,7 @@
           </div>
 
           <div style="margin: 20px; width: 100%; display: flex; flex-direction: column; align-items: center">
-            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
             <div
               v-if="info_error != ''"
               style="font-size: 14px; margin-top: 4px; color: red; font-weight: bold; text-align: center; display: flex; justify-content: center; align-items: center; gap: 5px"
@@ -287,13 +304,10 @@
               :path="require('../assets/animations/' + selectedToken.animation)"
             />
           </div>
-        </div>
-        <!-- </v-slide-x-transition>
-        <v-slide-x-transition> -->
+          </div>
           <div class="main-section-tab" style="background-color: transparent">
             <faq @hide="page = 0"></faq>            
           </div>
-        <!-- </v-slide-x-transition> -->
         </div>
       </div>
       <fire-fly></fire-fly>
@@ -358,11 +372,16 @@ export default {
         self.transferInProgress = false;
         self.showProcessAnimation = false;
         self.axelarStatus = "";
+        self.showAxelarTxIndication = "";
         console.log("=== MM-error ===")
       });
 
       this.$nuxt.$on('MM-confirmation-update', async (confirmations) => {
-        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... `;
+        let link = "";
+        if (self.showAxelarTxIndication != "") {
+          link = ` <a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${self.showAxelarTxIndication}">(Detailed status available)</a>`;
+        }
+        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... ${link}`;
       });
 
       this.$nuxt.$on('MM-transfer-complete', async (tx) => {
@@ -370,8 +389,13 @@ export default {
         self.getBalance();
         self.transferInProgress = false;
         self.showProcessAnimation = false;
+        self.showAxelarTxIndication = "";
         self.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
       });
+
+      this.$nuxt.$on('MM-transfer-indication', async (tx) => {
+        self.showAxelarTxIndication = tx;  
+      });      
 
       
 
@@ -559,7 +583,20 @@ export default {
       style += this.isKeplrConnected ? '' : 'filter: grayscale(100%);';
 
       return style;
-    }
+    },
+
+    isValidTransferAsset() {
+      if (this.selectedToken) {
+        for (let i = 0; i < this.toSubChain.tokens.length; i++) {
+          if (this.toSubChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1 ) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+
   },
   data() {
     return {
@@ -596,6 +633,7 @@ export default {
       maxTransfer: "",
       estimatedTime: -1,
       axelarStatus: "",
+      showAxelarTxIndication: "",
       clearPermitText: "Clear Permit",
 
       transferInProgress: false,
@@ -976,6 +1014,7 @@ export default {
 
       this.tx_error = '';
       this.info_error = '';
+      this.showAxelarTxIndication = "";
       let microAmount = this.getMicroAmount(this.amount);
       if (microAmount == 0) {
         this.info_error = 'Amount must be grater than 0';
@@ -1140,12 +1179,18 @@ export default {
       this.showProcessAnimation = true;
 
       this.axelarStatus = "Initializing transfer...";
+      
+      let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
+      console.log("shouldUnwrap", shouldUnwrap);
       //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
         fromChain: this.fromSubChain.axelar.chain,
         toChain: this.toSubChain.axelar.chain,
         destinationAddress: this.destinationAddress,
-        asset: this.selectedToken.denom
+        asset: this.selectedToken.denom,
+        options: {
+          shouldUnwrapIntoNative: shouldUnwrap
+        }
       });
       this.axelarStatus = "Waiting for user approval...";
 
@@ -1209,7 +1254,7 @@ export default {
           const ibcResponses = await Promise.all(tx.ibcResponses);
           this.ack = 1;
           if (ibcResponses.length > 0) {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
             this.transferInProgress = false;
             //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
           }
@@ -1234,8 +1279,9 @@ export default {
 
         var foundToken = null;
         for (let i = 0; i < this.toSubChain.tokens.length; i++) {
-          if (this.toSubChain.tokens[i].denom == this.selectedToken.denom) {
+          if (this.toSubChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1) {
             foundToken = _.cloneDeep(this.toSubChain.tokens[i]);
+            console.log(this.toSubChain.tokens[i]);
             break;
           }
         }
@@ -1250,8 +1296,10 @@ export default {
           var self = this;
           setTimeout(() => {
             self.selectedToken = (foundToken != null) ? foundToken : self.fromSubChain.tokens[0];
-            self.getBalance();
-          }, 100);
+            setTimeout(() => {
+              self.getBalance();
+            }, 1000);
+          }, 200);
         }
       }
     }

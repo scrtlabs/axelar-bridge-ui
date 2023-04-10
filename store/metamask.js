@@ -218,9 +218,18 @@ export const checkTxConfirmation = async (receipt) => {
                 if (status.data.error) {
                   // Do something?
                 } else {
-                  $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
-                  clearInterval(_transactionTracker);
-                  _transactionTracker = null;
+                  console.log("----- STATUS -----")
+                  console.log(status.data);
+                  console.log("----- STATUS -----")
+                  if (status.data.data.length > 0) {
+                    if (status.data.data[0].simplified_status && status.data.data[0].simplified_status.toLowerCase() == "approved") {
+                      $nuxt.$emit('MM-transfer-complete', receipt.transactionHash);
+                      clearInterval(_transactionTracker);
+                      _transactionTracker = null;
+                    } else {
+                      $nuxt.$emit('MM-transfer-indication', receipt.transactionHash);
+                    }
+                  }
                 }
               } catch (err) {
                 console.log(err);

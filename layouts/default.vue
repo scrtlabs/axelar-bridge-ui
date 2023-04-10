@@ -1,16 +1,18 @@
 <template>
-  <v-app dark style="background-color: transparent !important;">
+  <v-app dark style="background-color: transparent !important">
     <v-main>
-        <Nuxt />
+      <Nuxt />
     </v-main>
 
-  <v-footer color="black" padless fixed style="z-index: 200" >
-    <v-row justify="center" no-gutters>
-      <v-col class="py-1 text-center white--text" dense cols="12">
-        <a href="https://scrtlabs.com" target="_" style="font-weight: bold; text-decoration: none; color: white">SCRT Labs</a> © {{ new Date().getFullYear() }} | powered by <a href="https://axelar.network/" target="_" style="font-weight: bold; text-decoration: none; color: white">Axelar</a>
-      </v-col>
-    </v-row>
-  </v-footer>
+    <v-footer color="black" padless fixed style="z-index: 200">
+      <v-row justify="center" no-gutters>
+        <v-col class="py-1 text-center white--text" dense cols="12">
+          <a href="https://scrtlabs.com" target="_" style="font-weight: bold; text-decoration: none; color: white">SCRT Labs</a> ©
+          {{ new Date().getFullYear() }} | powered by
+          <a href="https://axelar.network/" target="_" style="font-weight: bold; text-decoration: none; color: white">Axelar</a>
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
@@ -26,31 +28,29 @@ export default {
         {
           icon: 'mdi-apps',
           title: 'Welcome',
-          to: '/',
+          to: '/'
         },
         {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
-          to: '/inspire',
-        },
+          to: '/inspire'
+        }
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js',
-    }
-  },
-}
+      title: 'Vuetify.js'
+    };
+  }
+};
 </script>
 
 <style>
-  html {
-    overflow: auto;
-    margin: 0;
-    padding: 0;
-    
-
-  }
+html {
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   /* overflow: hidden; */
@@ -61,34 +61,43 @@ body {
   font-size: 12px;
   /* width: 100vw;
   height: 100vh; */
-  background: radial-gradient(circle, rgba(50,50,50,1) 0%, rgba(0,0,0,1) 100%);
+  background: radial-gradient(circle, rgba(50, 50, 50, 1) 0%, rgba(0, 0, 0, 1) 100%);
+}
+body::-webkit-scrollbar {
+  width: 14px !important;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(0, 0, 0, 0) !important;
+  outline: 1px solid rgba(255, 255, 255, 0.2) !important;
+  outline-offset: -3px !important;
+  border-radius: 15px !important;
+  opacity: 0.5 !important;
+  background-clip: padding-box !important;
 }
 
 @font-face {
-    font-family: 'Banana';
-    src: url("../assets/fonts/Banana.ttf");
+  font-family: 'Banana';
+  src: url('../assets/fonts/Banana.ttf');
 }
-
 
 @font-face {
-    font-family: 'Vanilla Caramel';
-    src: url("../assets/fonts/Vanilla Caramel.otf");
+  font-family: 'Vanilla Caramel';
+  src: url('../assets/fonts/Vanilla Caramel.otf');
 }
-
 
 @font-face {
-    font-family: 'BalsamiqSans-Regular';
-    src: url("../assets/fonts/BalsamiqSans-Regular.ttf");
+  font-family: 'BalsamiqSans-Regular';
+  src: url('../assets/fonts/BalsamiqSans-Regular.ttf');
 }
-
 
 @font-face {
-    font-family: 'RockyRock';
-    src: url("../assets/fonts/Rocky Rock.ttf");
+  font-family: 'RockyRock';
+  src: url('../assets/fonts/Rocky Rock.ttf');
 }
-
-
-
-
-
 </style>
