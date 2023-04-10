@@ -43,6 +43,12 @@
         <ul class="faq-content">
           <li>Make sure that both Keplr & MetaMask are connected</li>
         </ul>
+
+        <h3 class="faq-title">Why Timeout?</h3>
+        <ul class="faq-content">
+          <li>Sometimes relayers take their time to transfer packets from one network to another. Even if you receive timeout, the funds will make it to their destination, or in the worst case will go back to your account</li>
+        </ul>
+
         
         <div style="height: 100px"></div>
       </div>
