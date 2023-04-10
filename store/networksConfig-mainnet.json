@@ -61,6 +61,19 @@
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
           {
+            "symbol": "ETH",
+            "denom": "weth-wei",
+            "isEVMNative": false,
+            "allow_autounwap": true,
+            "coinDecimals": 18,
+            "icon": "eth.logo.svg",
+            "fromImage": "seth-wei.png",
+            "toImage": "eth-wei.png",
+            "animation": "unwrap/unwrap-eth.json",
+            "SNIP20_address": "secret139qfh3nmuzfgwsx2npnmnjl4hrvj3xq5rmq8a0",
+            "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
+          },
+          {
             "symbol": "saWBTC",
             "denom": "wbtc-satoshi",
             "isEVMNative": false,
@@ -84,6 +97,19 @@
             "SNIP20_address": "secret19xsac2kstky8nhgvvz257uszt44g0cu6ycd5e4",
             "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
           },
+          {
+            "symbol": "BNB",
+            "denom": "wbnb-wei",
+            "isEVMNative": false,
+            "allow_autounwap": true,            
+            "coinDecimals": 18,
+            "icon": "wbnb-wei.logo.svg",
+            "fromImage": "swbnb-wei.png",
+            "toImage": "wbnb-wei.png",
+            "animation": "unwrap/unwrap-bnb.json",
+            "SNIP20_address": "secret19xsac2kstky8nhgvvz257uszt44g0cu6ycd5e4",
+            "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
+          },          
           {
             "symbol": "saBUSD",
             "denom": "busd-wei",

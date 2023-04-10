@@ -153,7 +153,26 @@
               </div>
             </div>
             <div style="display: flex; justify-content: space-between; gap: 10px">
-              <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+              <div style="display: flex; align-items: flex-start; gap: 10px">
+                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+                <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
+                  </template>
+                  <span>This asset will auto-unwrap to native coin</span>
+                </v-tooltip>
+                
+                <v-tooltip top  v-if="!isValidTransferAsset">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" color="orange" v-bind="attrs" v-on="on">mdi-alert-rhombus</v-icon>
+                  </template>
+                  <span>This asset cannot be transferred to the selected network</span>
+                </v-tooltip>                   
+
+                
+
+                
+              </div>
               <v-text-field
                 :disabled="transferInProgress"
                 class="right-input number-input"
@@ -255,7 +274,7 @@
           </div>
 
           <div style="margin: 20px; width: 100%; display: flex; flex-direction: column; align-items: center">
-            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
             <div
               v-if="info_error != ''"
               style="font-size: 14px; margin-top: 4px; color: red; font-weight: bold; text-align: center; display: flex; justify-content: center; align-items: center; gap: 5px"
@@ -564,7 +583,20 @@ export default {
       style += this.isKeplrConnected ? '' : 'filter: grayscale(100%);';
 
       return style;
-    }
+    },
+
+    isValidTransferAsset() {
+      if (this.selectedToken) {
+        for (let i = 0; i < this.toSubChain.tokens.length; i++) {
+          if (this.toSubChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1 ) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+
   },
   data() {
     return {
@@ -1147,12 +1179,18 @@ export default {
       this.showProcessAnimation = true;
 
       this.axelarStatus = "Initializing transfer...";
+      
+      let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
+      console.log("shouldUnwrap", shouldUnwrap);
       //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
         fromChain: this.fromSubChain.axelar.chain,
         toChain: this.toSubChain.axelar.chain,
         destinationAddress: this.destinationAddress,
-        asset: this.selectedToken.denom
+        asset: this.selectedToken.denom,
+        options: {
+          shouldUnwrapIntoNative: shouldUnwrap
+        }
       });
       this.axelarStatus = "Waiting for user approval...";
 
@@ -1216,7 +1254,7 @@ export default {
           const ibcResponses = await Promise.all(tx.ibcResponses);
           this.ack = 1;
           if (ibcResponses.length > 0) {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["secret-block-explorer"]}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
             this.transferInProgress = false;
             //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
           }
@@ -1241,8 +1279,9 @@ export default {
 
         var foundToken = null;
         for (let i = 0; i < this.toSubChain.tokens.length; i++) {
-          if (this.toSubChain.tokens[i].denom == this.selectedToken.denom) {
+          if (this.toSubChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1) {
             foundToken = _.cloneDeep(this.toSubChain.tokens[i]);
+            console.log(this.toSubChain.tokens[i]);
             break;
           }
         }
@@ -1257,8 +1296,10 @@ export default {
           var self = this;
           setTimeout(() => {
             self.selectedToken = (foundToken != null) ? foundToken : self.fromSubChain.tokens[0];
-            self.getBalance();
-          }, 100);
+            setTimeout(() => {
+              self.getBalance();
+            }, 1000);
+          }, 200);
         }
       }
     }

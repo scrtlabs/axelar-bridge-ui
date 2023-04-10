@@ -2,6 +2,7 @@
   "testnet": {
     "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://testnet.axelarscan.io/transfer",
+    "deposit-account-viewer": "https://testnet.axelarscan.io/account",
     "secret-block-explorer": "https://secretnodes.com/pulsar/transactions",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
@@ -14,6 +15,7 @@
   "mainnet": {
     "axelarscan-api": "https://api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://axelarscan.io/transfer",
+    "deposit-account-viewer": "https://axelarscan.io/account",
     "secret-block-explorer": "https://www.mintscan.io/secret/txs",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
