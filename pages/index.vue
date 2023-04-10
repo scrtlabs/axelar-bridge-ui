@@ -823,7 +823,6 @@ export default {
       }
 
       let balanceToCheck = this.selectedToken.isEVMNative ? this.bankBalances.get(this.selectedToken.denom) :  this.MMBalance.amount;
-
       if (BigInt(balanceToCheck) < BigInt(microAmount)) {
         this.info_error = "Insufficient balance";
         this.axelarStatus = "";
@@ -1201,7 +1200,6 @@ export default {
       this.axelarStatus = "Initializing transfer...";
       
       let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
-      console.log("shouldUnwrap", shouldUnwrap);
 
       //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
@@ -1248,7 +1246,7 @@ export default {
 
           this.axelarStatus = "Transaction was submitted, please wait..."
           this.animateInput(); 
-
+          
           this.tx = '';
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
@@ -1277,6 +1275,7 @@ export default {
             const ibcResponses = await Promise.all(tx.ibcResponses);
             this.ack = 1;
             if (ibcResponses.length > 0) {
+              console.log(ibcResponses);
               this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
               this.transferInProgress = false;
               //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
@@ -1286,7 +1285,6 @@ export default {
               this.transferInProgress = false;
           }
           this.animateProcessing();
-          console.log(ibcResponses);
         } catch (err) {
           this.tx = undefined;
           this.ack = -1;
@@ -1294,7 +1292,6 @@ export default {
           console.error(err);
           this.transferInProgress = false;
           this.showProcessAnimation = false;
-          this.axelarStatus = "";
         }
         this.getBalance();
       }
