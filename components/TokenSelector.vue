@@ -8,7 +8,7 @@
         </div>
       </template>
       <template slot="item" slot-scope="data">
-        <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: 100%; font-size: 16px;">
+        <div class="token-item">
           <div><img :src="require('~/assets/tokens/' + data.item.icon)" :width="iconSize" :height="iconSize" /></div>
           <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.symbol }}</div>
         </div>
@@ -56,3 +56,32 @@ export default {
   }
 }
 </script>
+
+<style >
+.token-item {
+  display: flex; 
+  justify-content: flex-start; 
+  align-items: center; 
+  gap: 10px; 
+  width: 100%; 
+  font-size: 16px;
+}
+
+/* ::-webkit-scrollbar {
+  width: 14px !important;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid rgba(0, 0, 0, 0) !important;
+  outline: 1px solid rgba(255, 255, 255, 0.2) !important;
+  outline-offset: -3px !important;
+  border-radius: 15px !important;
+  opacity: 0.5 !important;
+  background-clip: padding-box !important;
+} */
+</style>
