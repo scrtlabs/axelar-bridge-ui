@@ -353,11 +353,16 @@ export default {
         self.transferInProgress = false;
         self.showProcessAnimation = false;
         self.axelarStatus = "";
+        self.showAxelarTxIndication = "";
         console.log("=== MM-error ===")
       });
 
       this.$nuxt.$on('MM-confirmation-update', async (confirmations) => {
-        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... `;
+        let link = "";
+        if (self.showAxelarTxIndication != "") {
+          link = ` <a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${self.showAxelarTxIndication}">(Detailed status available)</a>`;
+        }
+        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... ${link}`;
       });
 
       this.$nuxt.$on('MM-transfer-complete', async (tx) => {
@@ -365,8 +370,13 @@ export default {
         self.getBalance();
         self.transferInProgress = false;
         self.showProcessAnimation = false;
+        self.showAxelarTxIndication = "";
         self.axelarStatus = `<div style="color: lightgreen">Transfer complete! Your coins will be received in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
       });
+
+      this.$nuxt.$on('MM-transfer-indication', async (tx) => {
+        self.showAxelarTxIndication = tx;  
+      });      
 
       
 
@@ -591,6 +601,7 @@ export default {
       maxTransfer: "",
       estimatedTime: -1,
       axelarStatus: "",
+      showAxelarTxIndication: "",
       clearPermitText: "Clear Permit",
 
       transferInProgress: false,
@@ -971,6 +982,7 @@ export default {
 
       this.tx_error = '';
       this.info_error = '';
+      this.showAxelarTxIndication = "";
       let microAmount = this.getMicroAmount(this.amount);
       if (microAmount == 0) {
         this.info_error = 'Amount must be grater than 0';
