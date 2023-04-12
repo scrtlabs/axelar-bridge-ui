@@ -94,7 +94,7 @@ export default {
   data() {
     return {
       dialog: false,
-      version: "0.1.2"
+      version: "0.1.3"
     };
   }
 };
