@@ -155,7 +155,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; gap: 10px">
               <div style="display: flex; align-items: flex-start; gap: 10px">
-                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" :to="toSubChain" style="max-width: 200px"></token-selector>
                 <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>

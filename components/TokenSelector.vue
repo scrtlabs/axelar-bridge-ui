@@ -1,6 +1,6 @@
 <template>
   <div >
-    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="tokens" dense item-text="symbol" return-object>
+    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="activeTokens" dense item-text="symbol" return-object>
       <template slot="selection" slot-scope="data">
         <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: 100%;">
           <div><img :src="require('~/assets/tokens/' + data.item.icon)" :width="iconSize" :height="iconSize" /></div>
@@ -22,7 +22,7 @@ import { mapGetters } from 'vuex';
 
 export default {
   // value prop is a 'hack' alongside with handleChange to use v-model in our component
-  props: ['tokens', 'iconSize', 'lable', 'value', 'disabled'], 
+  props: ['tokens', 'iconSize', 'lable', 'value', 'disabled', 'to'], 
   mounted() {
     if (this.tokens) {
       this.content = this.tokens[0];
@@ -43,6 +43,18 @@ export default {
     value(token) {
       this.content = token;
       this.$emit('input', this.content);
+    },
+    to(newTo) {
+      let isActive = this.activeTokens.includes(this.content);
+      if (!isActive) {
+        for (let i = 0; i < this.activeTokens.length; i++) {
+          if (this.activeTokens[i].denom.indexOf(this.content.denom) != -1) {
+            this.content = this.activeTokens[i];
+            this.$emit('input', this.content);
+            return;
+          }
+        }
+      }
     }
   },
   methods: {
@@ -52,7 +64,21 @@ export default {
   },
   computed: {
     ...mapGetters({
-    })
+    }),
+
+    activeTokens() {
+      let _tokens = [];
+      for (var i = 0; i < this.tokens.length; i++) {
+        if (this.tokens[i].allow_autounwap) {
+          if (this.to.nativeCurrency && this.to.nativeCurrency.symbol === this.tokens[i].symbol) {
+            _tokens.push(this.tokens[i]);  
+          }
+        } else {
+          _tokens.push(this.tokens[i]);
+        }
+      }
+      return _tokens;
+    }
   }
 }
 </script>
