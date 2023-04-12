@@ -421,6 +421,18 @@
             "SNIP20_code_hash": ""
           },
           {
+            "symbol": "saUSDT",
+            "denom": "uusdt",
+            "coinDecimals": 6,
+            "isEVMNative": false,
+            "icon": "uusdt.logo.svg",
+            "fromImage": "susdt.png",
+            "toImage": "usdt.png",
+            "animation": "wrap/wrap-usdt.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
             "symbol": "WETH",
             "denom": "weth-wei",
             "coinDecimals": 18,
