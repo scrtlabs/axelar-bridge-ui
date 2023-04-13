@@ -1,7 +1,10 @@
 <template>
   <div>
+    <div v-if="isMobile" style="position: relative">
+      <img style="width: 100%; object-fit: cover" :src="require('~/assets/images/mobile-soon.webp')" />
+    </div>
     <div
-      v-if="true || !isMobile"
+      v-else
       class="main"
       style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
     >

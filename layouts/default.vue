@@ -72,7 +72,7 @@
       </v-card>
     </v-dialog>
 
-    <v-footer color="black" padless fixed style="z-index: 200">
+    <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
         <div style="flex: 1; margin-left: 10px ">Version: {{ version }}</div>
         <div style="flex: 1; text-align: center;">
@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'DefaultLayout',
   data() {
@@ -96,7 +98,14 @@ export default {
       dialog: false,
       version: "0.1.3"
     };
+  },
+  computed: {
+    ...mapGetters({
+      isMobile: 'isMobile'
+    })
   }
+
+
 };
 </script>
 
