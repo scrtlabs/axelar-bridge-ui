@@ -362,7 +362,7 @@
           {
             "symbol": "WBNB",
             "denom": "wbnb-wei",
-            "isEVMNative": true,
+            "isEVMNative": false,
             "coinDecimals": 18,
             "icon": "wbnb-wei.logo.svg",
             "fromImage": "wbnb-wei.png",
@@ -417,6 +417,18 @@
             "fromImage": "uausdc.png",
             "toImage": "suausdc.png",
             "animation": "wrap/wrap-usdc.json",
+            "SNIP20_address": "",
+            "SNIP20_code_hash": ""
+          },
+          {
+            "symbol": "saUSDT",
+            "denom": "uusdt",
+            "coinDecimals": 6,
+            "isEVMNative": false,
+            "icon": "uusdt.logo.svg",
+            "fromImage": "susdt.png",
+            "toImage": "usdt.png",
+            "animation": "wrap/wrap-usdt.json",
             "SNIP20_address": "",
             "SNIP20_code_hash": ""
           },

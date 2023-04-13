@@ -25,7 +25,7 @@
 
         <h3 class="faq-title">How See?</h3>
         <ul class="faq-content">
-          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms <a href="https://docs.scrt.network/secret-network-documentation/development/secret-contracts/development-concepts/permissioned-viewing/viewing-keys" target="_blank" class="link-style">here</a></li>
+          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms <a href="https://medium.com/@secretnetwork/secret-network-access-control-viewing-keys-vs-permits-97baad539e72" target="_blank" class="link-style">here</a></li>
         </ul>  
 
         <h3 class="faq-title">Funds Safu?</h3>
@@ -39,10 +39,16 @@
           <li>Currently assets from Ethereum and Binance Smart Chain are supported. In the future, we may add more networks to this interface. Have any requests? <a class="link-style" href="https://discord.com/invite/SJK32GY" target="_blank">Let us know</a></li>
         </ul>        
 
-        <h3 class="faq-title">Why the page is disabled?</h3>
+        <h3 class="faq-title">Why Disabled?</h3>
         <ul class="faq-content">
           <li>Make sure that both Keplr & MetaMask are connected</li>
         </ul>
+
+        <h3 class="faq-title">Why Timeout?</h3>
+        <ul class="faq-content">
+          <li>Sometimes relayers take their time to transfer packets from one network to another. Even if you receive timeout, the funds will make it to their destination, or in the worst case will go back to your account</li>
+        </ul>
+
         
         <div style="height: 100px"></div>
       </div>

@@ -41,6 +41,7 @@
               <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
               <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <v-btn @click="switchSite" :color="isTestnet ? '#892323' : '#61a722'" >{{ isTestnet ? "MAINNET" : "TESTNET" }}</v-btn>
             </div>
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
           </div>
@@ -153,7 +154,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; gap: 10px">
               <div style="display: flex; align-items: flex-start; gap: 10px">
-                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" style="max-width: 200px"></token-selector>
+                <token-selector :disabled="transferInProgress" :tokens="fromSubChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" :to="toSubChain" style="max-width: 200px"></token-selector>
                 <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
@@ -491,7 +492,7 @@ export default {
         '--overflow': 'hidden',
         '--overflow-hover': 'none',
         '--height': '40px',
-        '--height-hover': '200px'
+        '--height-hover': '230px'
       };
     },
 
@@ -821,7 +822,6 @@ export default {
       }
 
       let balanceToCheck = this.selectedToken.isEVMNative ? this.bankBalances.get(this.selectedToken.denom) :  this.MMBalance.amount;
-
       if (BigInt(balanceToCheck) < BigInt(microAmount)) {
         this.info_error = "Insufficient balance";
         this.axelarStatus = "";
@@ -967,6 +967,14 @@ export default {
       setTimeout(function() {
         self.clearPermitText = "Clear Permit";
       }, 1000);
+    },
+
+    switchSite() {
+      if (process.env.NUXT_ENV_AXELAR_ENV === "mainnet") {
+        window.location.href = "https://secret-tunnel-testnet.pages.dev";
+      } else {
+        window.location.href = "https://tunnel.scrt.network";
+      }
     },
 
     goToAxelar() {
@@ -1191,7 +1199,6 @@ export default {
       this.axelarStatus = "Initializing transfer...";
 
       let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
-      console.log("shouldUnwrap", shouldUnwrap);
 
       //const depositAddress = this.destinationAddress;
       const depositAddress = await this.axelarTransfer.getDepositAddress({
@@ -1267,6 +1274,7 @@ export default {
             const ibcResponses = await Promise.all(tx.ibcResponses);
             this.ack = 1;
             if (ibcResponses.length > 0) {
+              console.log(ibcResponses);
               this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
               this.transferInProgress = false;
               //this.ibcTx = 'IBC ACK: ' + ibcResponses[0].tx.transactionHash;
@@ -1276,7 +1284,6 @@ export default {
               this.transferInProgress = false;
           }
           this.animateProcessing();
-          console.log(ibcResponses);
         } catch (err) {
           this.tx = undefined;
           this.ack = -1;
@@ -1284,7 +1291,6 @@ export default {
           console.error(err);
           this.transferInProgress = false;
           this.showProcessAnimation = false;
-          this.axelarStatus = "";
         }
         this.getBalance();
       }
