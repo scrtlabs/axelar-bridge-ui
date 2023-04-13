@@ -15,7 +15,6 @@
         :height="200"
         :path="require('../assets/animations/flame.json')"
       />
-
       <!-- <lottie-wrapper style="position: absolute; top: 1px ;z-index: 2;" path="https://assets5.lottiefiles.com/datafiles/zc3XRzudyWE36ZBJr7PIkkqq0PFIrIBgp4ojqShI/newAnimation.json" /> -->
 
       <!-- <div style="position: absolute; top: 1px ;z-index: 2;width: 100px; height: 100px; background-color: red"></div> -->
@@ -65,7 +64,7 @@
             <img
               v-show="showArrowText && showArrowComputed"
               style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px"
-              :src="require('~/assets/animations/connect-wallets.png')"
+              :src="require('~/assets/animations/connect-wallets.webp')"
             />
           </transition>
         </div>
@@ -139,7 +138,7 @@
 
             <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
               <v-btn @click="swapChains(true)" :disabled="disableUI" icon width="70" height="70">
-                <img :src="require('~/assets/images/swap-button.png')" width="60" height="60" />
+                <img :src="require('~/assets/images/swap-button.webp')" width="60" height="60" />
               </v-btn>
             </div>
 
@@ -165,17 +164,17 @@
                   </template>
                   <span>This asset will auto-unwrap to native coin</span>
                 </v-tooltip>
-                
+
                 <v-tooltip top  v-if="!isValidTransferAsset">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon style="margin-top: 5px" color="orange" v-bind="attrs" v-on="on">mdi-alert-rhombus</v-icon>
                   </template>
                   <span>This asset cannot be transferred to the selected network</span>
-                </v-tooltip>                   
+                </v-tooltip>
 
-                
 
-                
+
+
               </div>
               <v-text-field
                 :disabled="transferInProgress"
@@ -216,7 +215,7 @@
                       :speed="1"
                       :height="20"
                       :path="require('../assets/animations/wait.json')"
-                    />                
+                    />
                   </div>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
@@ -225,8 +224,8 @@
                       </v-btn>
                     </template>
                     <span>Refresh balance</span>
-                  </v-tooltip>                
-                </div>                
+                  </v-tooltip>
+                </div>
               </div>
             </div>
             <div>
@@ -261,7 +260,7 @@
             </div>
             <div v-if="false" style="position: absolute; top: -20px; left: -30px">
               <div style="position: absolute; color: rgb(50,50,50); font-family: 'Banana'; font-weight: bold; font-size: 20px; top: 4px; left: 35px">info</div>
-              <img :src="require('~/assets/images/info2.png')" height="40" style="" />            
+              <img :src="require('~/assets/images/info2.png')" height="40" style="" />
             </div> -->
             <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px; font-family: 'BalsamiqSans-Regular">Info:</div>
             <!-- <div style="height: 10px"></div> -->
@@ -282,7 +281,7 @@
             <div v-if="!isMetaMaskChainCorrect" class="error-styling">
               Metamask doesn't match selected network<br>Please change it manually
             </div>
-            
+
             <div v-if="info_error != ''" class="error-styling">
               <v-icon size="16" color="error">mdi-alert</v-icon> {{ info_error }}
             </div>
@@ -311,7 +310,7 @@
           </div>
           </div>
           <div class="main-section-tab" style="background-color: transparent">
-            <faq @hide="page = 0"></faq>            
+            <faq @hide="page = 0"></faq>
           </div>
         </div>
       </div>
@@ -390,7 +389,7 @@ export default {
       });
 
       this.$nuxt.$on('MM-transfer-complete', async (tx) => {
-        self.animateProcessing();  
+        self.animateProcessing();
         self.getBalance();
         self.transferInProgress = false;
         self.showProcessAnimation = false;
@@ -399,10 +398,10 @@ export default {
       });
 
       this.$nuxt.$on('MM-transfer-indication', async (tx) => {
-        self.showAxelarTxIndication = tx;  
-      });      
+        self.showAxelarTxIndication = tx;
+      });
 
-      
+
 
       this.$nuxt.$on('MM-connected', async () => {
         this.activeMMChainId = window.ethereum.networkVersion;
@@ -432,7 +431,7 @@ export default {
         }, 1000);
       }
 
-      
+
 
     });
   },
@@ -467,7 +466,7 @@ export default {
         return {
           'margin-top': '0px'
         };
-      } 
+      }
 
       return {
         'margin-top': '-650px'
@@ -613,7 +612,7 @@ export default {
   },
   data() {
     return {
-      page: 0, 
+      page: 0,
       itemIconSize: 24,
 
       fromChainIdx: 1,
@@ -707,8 +706,8 @@ export default {
       if (oldChain && newChain.hasOwnProperty("chainId")) {
         this.connectMM(false);
       }
-      
-      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) { 
+
+      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) {
         this.estimatedTime = newChain.axelar.transferTime;
       } else {
         if (this.toSubChain.axelar.transferTime == -1) {
@@ -726,7 +725,7 @@ export default {
         }
       }
 
-      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) { 
+      if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) {
         this.estimatedTime = newChain.axelar.transferTime;
       } else {
         if (this.fromSubChain.axelar.transferTime == -1) {
@@ -787,7 +786,7 @@ export default {
           toChainId: this.toSubChain.axelar.chain,
           denom: this.selectedToken.denom
         });
-        
+
         if (limit) {
           if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(this.selectedToken.denom)) {
             let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][this.selectedToken.denom];
@@ -818,7 +817,7 @@ export default {
         this.estimatedFee = "";
       }
 
-      
+
       if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
         this.info_error = "Requested amount is excceding the maximum allowed transfer";
         this.axelarStatus = "";
@@ -830,7 +829,7 @@ export default {
         this.info_error = "Insufficient balance";
         this.axelarStatus = "";
         return;
-      } 
+      }
       let minAmount = fee["normalAmount"] * 2;
       if (parseFloat(amount) < minAmount) {
         this.info_error = `Minimun transfer is (${minAmount} ${fee.symbol})`;
@@ -859,9 +858,9 @@ export default {
         // console.log("Deposit Address: ", depositAddress);
         // console.log("From Address: ", this.sourceAddress);
         // console.log(" ==== Axelar Transfer ====");
-          
+
         this.animateInput();
-        if (this.selectedToken.ERC20_address && this.selectedToken.ERC20_address != '') { 
+        if (this.selectedToken.ERC20_address && this.selectedToken.ERC20_address != '') {
           this.$store.dispatch('sendMMTokens', { contract: this.selectedToken.ERC20_address, walletAddress: depositAddress, from: this.sourceAddress, amount: microAmount });
         } else if (this.selectedToken.isEVMNative) {
           this.$store.dispatch('sendCoins', { walletAddress: depositAddress, from: this.sourceAddress, amount: microAmount });
@@ -873,7 +872,7 @@ export default {
       }
     },
 
-            
+
     /******* AXELAR *******/
 
     autoFill() {
@@ -948,7 +947,7 @@ export default {
       }
     },
     connectMM(addEvent) {
-      
+
       let chainId = -1;
       if (this.fromSubChain.hasOwnProperty("chainId")) {
         chainId = this.fromSubChain.chainId;
@@ -1023,7 +1022,7 @@ export default {
     getMicroAmount(amount) {
       if (this.selectedToken.coinDecimals > 16) {
         return Web3.utils.toWei(amount + "");
-      } 
+      }
       return Math.round(parseFloat(amount) * Math.pow(10, this.selectedToken.coinDecimals));
     },
 
@@ -1042,13 +1041,13 @@ export default {
         return;
       }
 
-      if (this.fromChain.out_port === 'transfer') { // To secret    
+      if (this.fromChain.out_port === 'transfer') { // To secret
         if (this.fromSubChain.name.toLowerCase() == "axelar") {
-            this.sendTransfer(microAmount); 
+            this.sendTransfer(microAmount);
         } else {
           this.sendAxelar(this.amount);
         }
-        
+
       } else {
         this.sendWasm(microAmount); // from secret
       }
@@ -1067,7 +1066,7 @@ export default {
           this.info_error = "Insufficient balance";
           this.axelarStatus = "";
           return;
-        }           
+        }
 
         if (amount <= fee.amount) {
           this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
@@ -1090,7 +1089,7 @@ export default {
 
         console.log(msgTransfer);
         console.log(this.fromChain.stakeCurrency.coinMinimalDenom);
-        
+
         this.transferInProgress = true;
         this.showProcessAnimation = true;
         this.axelarStatus = "Waiting for user approval...";
@@ -1179,7 +1178,7 @@ export default {
         return;
       }
 
-      if (this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address != '') { 
+      if (this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address != '') {
         // console.log(`${this.tokenBalance.balance.amount} < ${amount}`);
         if (this.tokenBalance.balance.amount < amount) {
           this.info_error = "Insufficient balance";
@@ -1201,7 +1200,7 @@ export default {
       this.showProcessAnimation = true;
 
       this.axelarStatus = "Initializing transfer...";
-      
+
       let shouldUnwrap = this.selectedToken.hasOwnProperty("allow_autounwap") ? this.selectedToken.allow_autounwap : false;
 
       //const depositAddress = this.destinationAddress;
@@ -1248,8 +1247,8 @@ export default {
           });
 
           this.axelarStatus = "Transaction was submitted, please wait..."
-          this.animateInput(); 
-          
+          this.animateInput();
+
           this.tx = '';
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
@@ -1341,7 +1340,7 @@ export default {
 }
 
 /* .stone-button {
-  background: url('~/assets/images/stone-button.png') no-repeat center center; 
+  background: url('~/assets/images/stone-button.png') no-repeat center center;
   background-size: cover;
   background-color: transparent !important;
   width: 149px;
@@ -1440,7 +1439,7 @@ export default {
 }
 
 .wallet-item {
-  position: relative; 
+  position: relative;
   cursor: pointer;
   width: var(--width);
   height: var(--height);
@@ -1487,16 +1486,16 @@ export default {
 }
 
 .testnet-indicator {
-  position: absolute; 
-  top: -30px; 
-  height: 25px; 
-  width: 70px; 
-  background-color: rgb(158, 4, 4); 
-  border-radius: 8px; 
-  font-weight: bold; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center;  
+  position: absolute;
+  top: -30px;
+  height: 25px;
+  width: 70px;
+  background-color: rgb(158, 4, 4);
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main-section-wrapper {
@@ -1511,9 +1510,9 @@ export default {
 }
 
 .main-section-tab {
-  width: 600px; 
+  width: 600px;
   height: 650px !important;
-  position: relative;  
+  position: relative;
   padding: 20px;
   transition-property: all;
   transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
@@ -1526,7 +1525,7 @@ export default {
   /* background-color: hsl(222, 27%, 15%, 0.7); */
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 20px;
-  
+
 
   position: relative;
   /* display: flex;
@@ -1580,7 +1579,7 @@ export default {
   z-index: 5;
   bottom: 149px;
   right: 146px;
-  background: url('~/assets/images/right-cave.png') no-repeat center center;
+  background: url('~/assets/images/right-cave.webp') no-repeat center center;
   width: 176px;
   height: 319px;
 }
@@ -1590,7 +1589,7 @@ export default {
   z-index: 5;
   bottom: 180px;
   left: 143px;
-  background: url('~/assets/images/left-cave.png') no-repeat center center;
+  background: url('~/assets/images/left-cave.webp') no-repeat center center;
   width: 143px;
   height: 272px;
 }
@@ -1708,7 +1707,7 @@ export default {
   width: 1205px;
   min-height: 899px !important;
   height: 899px !important;
-  background: url('~/assets/images/mountain-bg.png') no-repeat center top transparent;
+  background: url('~/assets/images/mountain-bg.webp') no-repeat center top transparent;
   z-index: 0;
 }
 </style>
@@ -1735,14 +1734,14 @@ export default {
 }
 
 .error-styling {
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
-  font-size: 14px; 
-  margin-top: 4px; 
-  color: rgb(226, 76, 76); 
-  font-weight: bold; 
-  text-align: center; 
+  font-size: 14px;
+  margin-top: 4px;
+  color: rgb(226, 76, 76);
+  font-weight: bold;
+  text-align: center;
 }
 </style>

@@ -24,7 +24,10 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.jpg' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.jpg' },
+      { rel: "preload", as: "font", href: '../assets/fonts/BalsamiqSans-Regular-English-Only.woff2' },
+      { rel: "preload", as: "font", href: '../assets/fonts/Banana.woff2' },
+      { rel: "preload", as: "font", href: '../assets/fonts/RockyRock.woff2' }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -33,7 +36,6 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/lodash.js',
-
   ],
   script: [
   ],
@@ -96,7 +98,7 @@ export default {
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]',
-          esModule: false,          
+          esModule: false,
         }
       })
     },
