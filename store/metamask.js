@@ -95,24 +95,25 @@ export const getMMAccounts = async () => {
 }
 
 export const getMMContractBalance = async (contractAddress, address) => {
-    try {
-        var result = {
-          amount: 0,
-          decimals: 1
-        }
-        if (_web3) {
-            const contract = new _web3.eth.Contract(ABI, contractAddress);
-            result.decimals = await contract.methods.decimals().call();
-            result.amount = await contract.methods.balanceOf(address).call();
-            return result; //(parseInt(result) / Math.pow(10, decimals).toFixed(4));
-        } else {
-            console.error("MetaMask is not connected");
-            return result;
-        }
-    } catch (err) {
-        console.log(err);
+    
+  try {
+    var result = {
+      amount: 0,
+      decimals: 1
     }
-    return result;
+    if (_web3) {
+      const contract = new _web3.eth.Contract(ABI, contractAddress);
+      result.decimals = await contract.methods.decimals().call();
+      result.amount = await contract.methods.balanceOf(address).call();
+      return result; //(parseInt(result) / Math.pow(10, decimals).toFixed(4));
+    } else {
+      console.error("MetaMask is not connected");
+      return result;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return result;
 }
 
 export const getMMBankBalance = async (address) => {
@@ -154,12 +155,12 @@ export const sendCoins = async (toAxelarAddress, from, amount) => {
   }
 }
 
-export const sendMMTokens = async (ContractAddress, toAxelarAddress, from, amount) => {
+export const sendMMTokens = async (contractAddress, toAxelarAddress, from, amount) => {
   try {
     let tx = "";
     let error = "";
     if (_web3) {
-      const contract = new _web3.eth.Contract(ABI, ContractAddress);
+      const contract = new _web3.eth.Contract(ABI, contractAddress);
       try {
         contract.methods.transfer(toAxelarAddress, amount).send({ from })
         .on('transactionHash', function(hash){

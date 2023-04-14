@@ -5,10 +5,9 @@ import { connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendM
 const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
 
 import chainsMainnet from './networksConfig-mainnet.json'
-import chainsTestnet from './networksConfig.json'
+import chainsTestnet from './networksConfig-testnet.json'
 
 var chains = SITE_ENV == "mainnet" ? chainsMainnet : chainsTestnet;
-
 var _getTokenDebounce = false;
 
 var mobileAndTabletCheck = function () {
@@ -40,12 +39,16 @@ export const state = () => ({
 
   MMAccounts: [],
   MMbalance: 0,
-  MMTx: {tx: "", error: ""}
+  MMTx: {tx: "", error: ""},
+
+  keplrEventWasAdded: false
 });
 
 export const actions = {
-  initKeplr({ commit, state }, chains) {
+  initKeplr({ commit, state, getters }, selectedChain) {
+
     const suggestChain = async (chainInfo) => {
+  
       var addChain = false
       try {
         await window.keplr.enable(chainInfo.chainId);
@@ -103,22 +106,31 @@ export const actions = {
       }
     }
 
-    const createSecretJSAccounts = async (chain) => {
-      const keplrOfflineSigner = window.getOfflineSignerOnlyAmino(chain.chainId)
+    const createSecretJSAccounts = async (chainInfo) => {
+      const keplrOfflineSigner = window.getOfflineSignerOnlyAmino(chainInfo.chainId)
       const signer = await keplrOfflineSigner.getAccounts()
-      
+
       return new SecretNetworkClient({
-        url: chain.rest,
-        chainId: chain.chainId,
+        url: chainInfo.rest,
+        chainId: chainInfo.chainId,
         wallet: keplrOfflineSigner,
         walletAddress: signer[0].address,
-        encryptionUtils: window.getEnigmaUtils(chain.chainId),
+        encryptionUtils: window.getEnigmaUtils(chainInfo.chainId),
       })
     }
 
-    const keplrConnect = async (addEvent) => {
-      addEvent = typeof addEvent == 'undefined' ? true : addEvent
+    const getCosmosChainsInfo = () => {
+      let chainsInfo = {};
+      chainsInfo[chains["main-chain"][0].chainInfo.chainId] = chains["main-chain"][0].chainInfo;
+      for (let i = 0; i < chains["sub-chains"].length; i++) {
+        if (chains["sub-chains"][i].type === "cosmos") {
+          chainsInfo[chains["sub-chains"][i].chainInfo.chainId] = chains["sub-chains"][i].chainInfo;
+        }
+      }
+      return chainsInfo;
+    }
 
+    const keplrConnect = async () => {
       // Add indication for UI when keplr is loading
       commit('setKeplrLoading', true)
 
@@ -133,26 +145,31 @@ export const actions = {
         commit('setNoKeplr', true)
       } else {
         try {
-          let accounts = {}
-          for (var i = 0; i < chains.length; i++) {
-            await suggestChain(chains[i])
-            accounts[chains[i].chainId] = await createSecretJSAccounts(
-              chains[i]
-            )
+
+          let accounts = _.cloneDeep(state.accounts);
+          await suggestChain(selectedChain);
+          accounts[selectedChain.chainId] = await createSecretJSAccounts(selectedChain);
+
+          let cosmosChains = getCosmosChainsInfo();
+          let accountsChainIds = Object.keys(accounts);
+          for (let i = 0; i < accountsChainIds.length; i++ ) {
+            if (accountsChainIds[i] !== selectedChain.chainId) { // Already connected 
+              accounts[accountsChainIds[i]] = await createSecretJSAccounts(cosmosChains[accountsChainIds[i]]);
+            }
           }
           commit('setAccounts', accounts);
-
           // Save an indication that the user already approved keplr so we won't
           // Pop-up a keplr window before he pressed the "connect wallet" at least one time
           window.localStorage.setItem('connectedBefore', '1')
 
           // Listen to keplr events when wallet change
-          if (addEvent) {
+          if (!state.keplrEventWasAdded) {
+            commit('setKeplrEventWasAdded', true);            
             window.addEventListener('keplr_keystorechange', () => {
-              keplrConnect(false)
-              $nuxt.$emit('keystorechange')
+              keplrConnect()
             })
           }
+          $nuxt.$emit('keystorechange');          
         } catch (err) {
           console.log(err.message)
           console.log(
@@ -177,14 +194,14 @@ export const actions = {
     _getTokenDebounce = true;
 
     let contracts = [];
-    for (let i = 0; i < chains[0].subChains[0].tokens.length; i++) {
-      let token = chains[0].subChains[0].tokens[i];
+    for (let i = 0; i < chains["main-chain"][0].tokens.length; i++) {
+      let token = chains["main-chain"][0].tokens[i];
       if (token.SNIP20_address != "") {
         contracts.push(token.SNIP20_address);
       }
     }
 
-    let permit = await getPermit(chains[0].chainId, contracts ,payload.walletAddress);
+    let permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
     let balance = await getTokenBalance(
       payload.account,
       payload.contract,
@@ -241,11 +258,11 @@ export const actions = {
   },
 
   async connectMetaMask({commit, state, getters}, payload) {
-    let subChains = getters.getSubChains;
+    let subChains = chains["sub-chains"];
     let selectedChains = [];
     for (let i = 0; i < subChains.length; i++) {
-      if (subChains[i].hasOwnProperty("chainId")) {
-        selectedChains.push(subChains[i]);
+      if (subChains[i].type === "evm") {
+        selectedChains.push(subChains[i].chainInfo);
       }
     }
 
@@ -281,6 +298,9 @@ export const mutations = {
   },
   setKeplrLoading(state, loading) {
     state.keplrLoading = loading;
+  },
+  setKeplrEventWasAdded(state, value) {
+    state.keplrEventWasAdded = value;
   },
   setNoKeplr(state, value) {
     state.noKeplr = value;
@@ -320,28 +340,28 @@ export const getters = {
   getChains(state) {
     return chains
   },
-  getSubChains(state) {
-    let subChains = [];
-    for (let c of chains) {
-      for (let i = 0; i < c.subChains.length; i++) {
-        subChains.push(c.subChains[i]);
-      }
-    }
-    return subChains;
-  },  
+  // getSubChains(state) {
+  //   let subChains = [];
+  //   for (let c of chains) {
+  //     for (let i = 0; i < c["sub-chains"].length; i++) {
+  //       subChains.push(c["sub-chains"][i]);
+  //     }
+  //   }
+  //   return subChains;
+  // },  
 
-  getSubChainsMobile(state) { // for mobile
-    let subChains = [];
-    for (let c of chains) {
-      for (let i = 0; i < c.subChains.length; i++) {
-        let sChain = c.subChains[i];
-        sChain.chainId = c.chainId;
-        subChains.push(sChain);
-      }
-      //subChains = subChains.concat(c.subChains);
-    }
-    return subChains;
-  },  
+  // getSubChainsMobile(state) { // for mobile
+  //   let subChains = [];
+  //   for (let c of chains) {
+  //     for (let i = 0; i < c["sub-chains"].length; i++) {
+  //       let sChain = c["sub-chains"][i];
+  //       sChain.chainId = c.chainInfo.chainId;
+  //       subChains.push(sChain);
+  //     }
+  //     //subChains = subChains.concat(c.subChains);
+  //   }
+  //   return subChains;
+  // },  
   getBankBalances(state) {
     return state.bankBalances;
   },

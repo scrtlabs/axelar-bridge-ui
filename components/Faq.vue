@@ -92,7 +92,7 @@ export default {
   }
 
   .faq-section {
-    height: 590px; overflow: auto
+    height: 610px; overflow: auto
   }
 
   .faq-section::-webkit-scrollbar {
