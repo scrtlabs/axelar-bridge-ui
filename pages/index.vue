@@ -255,7 +255,13 @@
           </div>
 
           <div style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
+              <template v-slot:label>
+                <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>
+              </template>
+            </v-checkbox>
+            
             <div v-if="!isMetaMaskChainCorrect" class="error-styling">
               Metamask doesn't match selected network<br>Please change it manually
             </div>
@@ -360,6 +366,7 @@ export default {
         console.log(receipt)
         self.transferInProgress = false;
         self.showProcessAnimation = false;
+        self.selfCheckApproved = false;
         self.axelarStatus = "";
         self.showAxelarTxIndication = "";
         console.log("=== MM-error ===")
@@ -378,6 +385,7 @@ export default {
         self.getBalance();
         self.transferInProgress = false;
         self.showProcessAnimation = false;
+        self.selfCheckApproved = false;
         self.showAxelarTxIndication = "";
         self.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["transaction-viewer"]}/${tx}">Watch the transaction here</a></div>`;
       });
@@ -628,7 +636,9 @@ export default {
 
       transferInProgress: false,
       refreshBalance: false,
-      autounwrap: false
+      autounwrap: false,
+
+      selfCheckApproved: false
 
     };
   },
@@ -838,6 +848,7 @@ export default {
       } catch (err) {
         console.log("Axelar Error: ", err);
         this.transferInProgress = false;
+        this.selfCheckApproved = false;
         this.showProcessAnimation = false;
       }
     },
@@ -1151,6 +1162,7 @@ export default {
           if (this.tx_error == '') {
             this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["cosmos-block-explorer"]}/${this.fromChain.chainInfo.mintscan}/txs/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
             this.transferInProgress = false;
+            this.selfCheckApproved = false;
             this.animateProcessing();
           } else {
             this.showAxelarError(this.tx_error);
@@ -1283,10 +1295,12 @@ export default {
               console.log(ibcResponses);
               this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
               this.transferInProgress = false;
+              this.selfCheckApproved = false;
             }
           } catch (ackError) {
               this.axelarStatus = `<div style="color: orange">Looks like we got timeout, don't worry, detailed status can be found <a  style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>You should receive your funds shortly</div>`;
               this.transferInProgress = false;
+              this.selfCheckApproved = false;
           }
           this.animateProcessing();
         } catch (err) {
@@ -1296,6 +1310,7 @@ export default {
           console.error(err);
           this.axelarStatus = ""
           this.transferInProgress = false;
+          this.selfCheckApproved = false;
           this.showProcessAnimation = false;
         }
         this.getBalance();
