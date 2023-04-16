@@ -25,7 +25,7 @@
 
         <h3 class="faq-title">How See?</h3>
         <ul class="faq-content">
-          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms in this<a href="https://medium.com/@secretnetwork/secret-network-access-control-viewing-keys-vs-permits-97baad539e72" target="_blank" class="link-style">helpful blog post</a></li>
+          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms in this <a href="https://medium.com/@secretnetwork/secret-network-access-control-viewing-keys-vs-permits-97baad539e72" target="_blank" class="link-style">helpful blog post</a></li>
         </ul>
 
         <h3 class="faq-title">Funds Safu?</h3>
