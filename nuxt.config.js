@@ -62,7 +62,7 @@ export default {
         href: '/images/mountain-bg.webp',
         as: 'image',
         type: 'image/webp',
-        crossorigin: true
+        crossorigin: "anonymous"
       }
     ],
   },
