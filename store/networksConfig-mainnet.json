@@ -163,6 +163,167 @@
   ],
   "sub-chains": [
     {
+      "name": "Axelar",
+      "icon": "axelar.logo.svg",
+      "type": "cosmos",
+      "chainInfo": {
+        "chainId": "axelar-dojo-1",
+        "rest": "https://lcd-axelar.imperator.co",
+        "rpcUrl": "https://rpc-axelar.imperator.co:443",
+        "hrp": "axelar",
+        "coinType": 118,
+        "out_port": "transfer",
+        "ICS_code_hash": "",
+        "out_channel": "channel-69",
+        "stakeCurrency": {
+          "coinDenom": "AXL",
+          "coinMinimalDenom": "uaxl",
+          "coinDecimals": 6
+        },
+        "mintscan": "axelar"
+      },
+      "axelar": {
+          "Env": "mainnet",
+          "chain": "axelarnet",
+          "transferTime": -1
+      },
+      "tokens": [
+        {
+          "symbol": "AXL",
+          "denom": "uaxl",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uaxl.logo.svg",
+          "fromImage": "uaxl.png",
+          "toImage": "suaxl.png",
+          "animation": "wrap/wrap-axl.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlUSDC",
+          "denom": "uusdc",
+          "description": "Axelar USDC",
+          "coinDecimals": 6,
+          "isEVMNative": false,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlUSDT",
+          "denom": "uusdt",
+          "description": "Axelar USDT",
+          "coinDecimals": 6,
+          "isEVMNative": false,
+          "icon": "uusdt.logo.svg",
+          "fromImage": "susdt.png",
+          "toImage": "usdt.png",
+          "animation": "wrap/wrap-usdt.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlWETH",
+          "denom": "weth-wei",
+          "description": "Axelar Wrapped ETH",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "weth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlWBNB",
+          "denom": "wbnb-wei",
+          "description": "Axelar Wrapped BNB",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "wbnb-wei.png",
+          "toImage": "swbnb-wei.png",
+          "animation": "wrap/wrap-bnb.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlWBTC",
+          "denom": "wbtc-satoshi",
+          "description": "Axelar Wrapped BTC",
+          "coinDecimals": 8,
+          "isEVMNative": false,
+          "icon": "wbtc-satoshi.logo.svg",
+          "fromImage": "wbtc.png",
+          "toImage": "swbtc.png",
+          "animation": "wrap/wrap-btc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlFRAX",
+          "denom": "frax-wei",
+          "description": "Axelar FRAX",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "frax.logo.svg",
+          "fromImage": "frax.png",
+          "toImage": "sfrax.png",
+          "animation": "wrap/wrap-frax.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "axlDAI",
+          "denom": "dai-wei",
+          "description": "Axelar DAI",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "dai.logo.svg",
+          "fromImage": "dai.png",
+          "toImage": "sdai.png",
+          "animation": "wrap/wrap-dai.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "axlBUSD",
+          "description": "Axelar BUSD",
+          "denom": "busd-wei",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "busd-wei.logo.svg",
+          "fromImage": "busd.png",
+          "toImage": "sbusd.png",
+          "animation": "wrap/wrap-busd.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "axlUNI",
+          "denom": "uni-wei",
+          "description": "Axelar UNI",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "uni.logo.svg",
+          "fromImage": "uni.png",
+          "toImage": "suni.png",
+          "animation": "wrap/wrap-uni.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        }          
+      ]
+    },    
+    {
       "name": "Ethereum",
       "icon": "ethereum.logo.svg",
       "type": "evm",
@@ -447,167 +608,6 @@
         }
       ]
     },    
-    {
-      "name": "Axelar",
-      "icon": "axelar.logo.svg",
-      "type": "cosmos",
-      "chainInfo": {
-        "chainId": "axelar-dojo-1",
-        "rest": "https://lcd-axelar.imperator.co",
-        "rpcUrl": "https://rpc-axelar.imperator.co:443",
-        "hrp": "axelar",
-        "coinType": 118,
-        "out_port": "transfer",
-        "ICS_code_hash": "",
-        "out_channel": "channel-69",
-        "stakeCurrency": {
-          "coinDenom": "AXL",
-          "coinMinimalDenom": "uaxl",
-          "coinDecimals": 6
-        },
-        "mintscan": "axelar"
-      },
-      "axelar": {
-          "Env": "mainnet",
-          "chain": "axelarnet",
-          "transferTime": -1
-      },
-      "tokens": [
-        {
-          "symbol": "AXL",
-          "denom": "uaxl",
-          "isEVMNative": false,
-          "coinDecimals": 6,
-          "icon": "uaxl.logo.svg",
-          "fromImage": "uaxl.png",
-          "toImage": "suaxl.png",
-          "animation": "wrap/wrap-axl.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlUSDC",
-          "denom": "uusdc",
-          "description": "Axelar USDC",
-          "coinDecimals": 6,
-          "isEVMNative": false,
-          "icon": "uausdc.logo.svg",
-          "fromImage": "uausdc.png",
-          "toImage": "suausdc.png",
-          "animation": "wrap/wrap-usdc.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlUSDT",
-          "denom": "uusdt",
-          "description": "Axelar USDT",
-          "coinDecimals": 6,
-          "isEVMNative": false,
-          "icon": "uusdt.logo.svg",
-          "fromImage": "susdt.png",
-          "toImage": "usdt.png",
-          "animation": "wrap/wrap-usdt.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlWETH",
-          "denom": "weth-wei",
-          "description": "Axelar Wrapped ETH",
-          "coinDecimals": 18,
-          "isEVMNative": false,
-          "icon": "weth-wei.logo.svg",
-          "fromImage": "eth-wei.png",
-          "toImage": "seth-wei.png",
-          "animation": "wrap/wrap-eth.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlWBNB",
-          "denom": "wbnb-wei",
-          "description": "Axelar Wrapped BNB",
-          "coinDecimals": 18,
-          "isEVMNative": false,
-          "icon": "wbnb-wei.logo.svg",
-          "fromImage": "wbnb-wei.png",
-          "toImage": "swbnb-wei.png",
-          "animation": "wrap/wrap-bnb.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlWBTC",
-          "denom": "wbtc-satoshi",
-          "description": "Axelar Wrapped BTC",
-          "coinDecimals": 8,
-          "isEVMNative": false,
-          "icon": "wbtc-satoshi.logo.svg",
-          "fromImage": "wbtc.png",
-          "toImage": "swbtc.png",
-          "animation": "wrap/wrap-btc.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlFRAX",
-          "denom": "frax-wei",
-          "description": "Axelar FRAX",
-          "isEVMNative": false,
-          "coinDecimals": 18,
-          "icon": "frax.logo.svg",
-          "fromImage": "frax.png",
-          "toImage": "sfrax.png",
-          "animation": "wrap/wrap-frax.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
-        {
-          "symbol": "axlDAI",
-          "denom": "dai-wei",
-          "description": "Axelar DAI",
-          "isEVMNative": false,
-          "coinDecimals": 18,
-          "icon": "dai.logo.svg",
-          "fromImage": "dai.png",
-          "toImage": "sdai.png",
-          "animation": "wrap/wrap-dai.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
-        {
-          "symbol": "axlBUSD",
-          "description": "Axelar BUSD",
-          "denom": "busd-wei",
-          "isEVMNative": false,
-          "coinDecimals": 18,
-          "icon": "busd-wei.logo.svg",
-          "fromImage": "busd.png",
-          "toImage": "sbusd.png",
-          "animation": "wrap/wrap-busd.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
-        {
-          "symbol": "axlUNI",
-          "denom": "uni-wei",
-          "description": "Axelar UNI",
-          "isEVMNative": false,
-          "coinDecimals": 18,
-          "icon": "uni.logo.svg",
-          "fromImage": "uni.png",
-          "toImage": "suni.png",
-          "animation": "wrap/wrap-uni.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        }          
-      ]
-    },
     {
       "name": "Osmosis",
       "icon": "osmosis.logo.svg",
