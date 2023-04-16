@@ -32,12 +32,6 @@ export default {
       { rel: 'preconnect', href: 'https://fonts.googleapis.com/',
         crossorigin: "" },
       {
-        rel: 'preload',
-        href: '/fonts/Banana.woff2',
-        as: 'font',
-        type: 'font/woff2'
-      },
-      {
         rel: "preconnect",
         href: "https://fonts.gstatic.com",
         crossorigin: ""
@@ -47,28 +41,28 @@ export default {
         href: '/fonts/Banana.woff2',
         as: 'font',
         type: 'font/woff2',
-        crossorigin: false
+        crossorigin: true
       },
       {
         rel: 'preload',
         href: '/fonts/Rocky Rock.woff2',
         as: 'font',
         type: 'font/woff2',
-        crossorigin: false
+        crossorigin: true
       },
       {
         rel: 'preload',
         href: '/fonts/BalsamiqSans-Regular-English-Only.woff2',
         as: 'font',
         type: 'font/woff2',
-        crossorigin: false
+        crossorigin: true
       },
       {
         rel: 'preload',
         href: '/images/mountain-bg.webp',
         as: 'image',
         type: 'image/webp',
-        crossorigin: false
+        crossorigin: true
       }
     ],
   },
