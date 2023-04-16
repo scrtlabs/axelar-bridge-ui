@@ -72,15 +72,7 @@
           </transition>
         </div>
 
-        <template v-if="selectedToken">
-          <div class="input-coin" id="input-coin">
-            <img :src="require('~/assets/tokens/3d/input/' + selectedToken.fromImage)" style="width: 100px" alt="token used to animate source network"/>
-          </div>
-
-          <div class="output-coin" id="output-coin">
-            <img :src="require('~/assets/tokens/3d/output/' + selectedToken.toImage)" style="width: 90px" alt="token used to animate destination network" />
-          </div>
-        </template>
+        <selected-token-images v-if="selectedToken" :to-image="selectedToken.toImage" :from-image="selectedToken.fromImage"/>
 
         <div class="right-cave" />
         <div class="left-cave" />
@@ -300,12 +292,12 @@ import TokenSelector from '~/components/TokenSelector.vue';
 // import LottieWrapper from '~/components/LottieWrapper.vue';
 import _ from 'lodash';
 import {MsgExecuteContract, MsgTransfer, toBase64, toUtf8} from 'secretjs';
-// import {AxelarAssetTransfer, AxelarQueryAPI} from '@axelar-network/axelarjs-sdk';
 
 const Web3 = require('web3');
 
 export default {
   components: {
+    SelectedTokenImages: () => import('../components/SelectedTokenImages.vue'),
     WrapAnimation: () => import('../components/WrapAnimation.vue'),
     ProcessAnimation: () => import('../components/ProcessAnimation.vue'),
     SubChainSelector,
@@ -1384,20 +1376,6 @@ export default {
 <style scoped>
 .main {
   /* background-color: transparent !important; */
-}
-
-.input-coin {
-  position: absolute;
-  left: -200px;
-  bottom: 320px;
-  opacity: 0;
-}
-
-.output-coin {
-  position: absolute;
-  right: 200px;
-  bottom: 270px;
-  opacity: 0;
 }
 
 .input-coin-start {

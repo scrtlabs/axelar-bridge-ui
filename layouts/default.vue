@@ -81,7 +81,7 @@
           <a href="https://axelar.network/" target="_blank" style="font-weight: bold; text-decoration: none; color: white">Axelar</a>
         </div>
         <div style="flex: 1; text-align: right;">
-          <a @click="dialog = true" style="font-weight: bold; text-decoration: none; color: white; margin-right: 10px ">Terms and Conditions</a>
+          <a href="#" @click="dialog = true" style="font-weight: bold; text-decoration: none; color: white; margin-right: 10px ">Terms and Conditions</a>
         </div>
       </div>
     </v-footer>
