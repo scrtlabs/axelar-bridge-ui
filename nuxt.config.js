@@ -46,25 +46,29 @@ export default {
         rel: 'preload',
         href: '/fonts/Banana.woff2',
         as: 'font',
-        type: 'font/woff2'
+        type: 'font/woff2',
+        crossorigin: false
       },
       {
         rel: 'preload',
         href: '/fonts/Rocky Rock.woff2',
         as: 'font',
-        type: 'font/woff2'
+        type: 'font/woff2',
+        crossorigin: false
       },
       {
         rel: 'preload',
         href: '/fonts/BalsamiqSans-Regular-English-Only.woff2',
         as: 'font',
-        type: 'font/woff2'
+        type: 'font/woff2',
+        crossorigin: false
       },
       {
         rel: 'preload',
         href: '/images/mountain-bg.webp',
         as: 'image',
-        type: 'image/webp'
+        type: 'image/webp',
+        crossorigin: false
       }
     ],
   },

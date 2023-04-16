@@ -312,29 +312,7 @@ export default {
     TokenSelector,
   },
 
-  async getAxelarTransferInstance() {
-    if (!this.axelarTransfer) {
-      const { AxelarAssetTransfer } = await import(
-        "@axelar-network/axelarjs-sdk"
-        );
-      this.axelarTransfer = new AxelarAssetTransfer({
-        environment: process.env.NUXT_ENV_AXELAR_ENV,
-      });
-    }
-    return this.axelarTransfer;
-  },
 
-  async getAxelarApiInstance() {
-    if (!this.axelarQuery) {
-      const { AxelarQueryAPI } = await import(
-        "@axelar-network/axelarjs-sdk"
-        );
-      this.axelarQuery = new AxelarQueryAPI({
-        environment: process.env.NUXT_ENV_AXELAR_ENV,
-      });
-    }
-    return this.axelarQuery;
-  },
 
   created() {
     this.toChain = this.availableChains["main-chain"][0];
@@ -744,6 +722,30 @@ export default {
   },
   methods: {
     /******* AXELAR *******/
+
+    async getAxelarTransferInstance() {
+      if (!this.axelarTransfer) {
+        const { AxelarAssetTransfer } = await import(
+          "@axelar-network/axelarjs-sdk"
+          );
+        this.axelarTransfer = new AxelarAssetTransfer({
+          environment: process.env.NUXT_ENV_AXELAR_ENV,
+        });
+      }
+      return this.axelarTransfer;
+    },
+
+    async getAxelarApiInstance() {
+      if (!this.axelarQuery) {
+        const { AxelarQueryAPI } = await import(
+          "@axelar-network/axelarjs-sdk"
+          );
+        this.axelarQuery = new AxelarQueryAPI({
+          environment: process.env.NUXT_ENV_AXELAR_ENV,
+        });
+      }
+      return this.axelarQuery;
+    },
 
     async calcTransferFee(amount) {
       try {
