@@ -27,9 +27,46 @@ export default {
       { name: 'format-detection', content: 'telephone=no' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.jpg' },
-      { rel: "preload", as: "font", href: '../assets/fonts/BalsamiqSans-Regular-English-Only.woff2' },
-      { rel: "preload", as: "font", href: '../assets/fonts/Banana.woff2' },
-      { rel: "preload", as: "font", href: '../assets/fonts/Rocky Rock.woff2' }],
+      { rel: 'preconnect', href: 'https://axelar-mainnet.s3.us-east-2.amazonaws.com',
+        crossorigin: "" },
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com/',
+        crossorigin: "" },
+      {
+        rel: 'preload',
+        href: '/fonts/Banana.woff2',
+        as: 'font',
+        type: 'font/woff2'
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossorigin: ""
+      },
+      {
+        rel: 'preload',
+        href: '/fonts/Banana.woff2',
+        as: 'font',
+        type: 'font/woff2'
+      },
+      {
+        rel: 'preload',
+        href: '/fonts/Rocky Rock.woff2',
+        as: 'font',
+        type: 'font/woff2'
+      },
+      {
+        rel: 'preload',
+        href: '/fonts/BalsamiqSans-Regular-English-Only.woff2',
+        as: 'font',
+        type: 'font/woff2'
+      },
+      {
+        rel: 'preload',
+        href: '/images/mountain-bg.webp',
+        as: 'image',
+        type: 'image/webp'
+      }
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -50,8 +87,13 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    "@nuxt/image"
     // '@nuxtjs/style-resources'
   ],
+
+  image: {
+
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
@@ -98,10 +140,38 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+
+    babel: {
+      presets({isClient}, preset) {
+        if (isClient) {
+          preset[1].targets = {
+            browsers: [
+              'Chrome >= 60',
+              'Safari >= 10.1',
+              'iOS >= 10.3',
+              'Firefox >= 54',
+              'Edge >= 15'
+            ]
+          }
+        }
+        return [preset]
+      }
+    },
+
+    optimization: {
+      splitChunks: {
+        name: true
+      }
+    },
+
+    filenames: {
+      chunk: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[name].[contenthash:7]${isModern ? '.modern' : ''}.js`,
+    },
     extend(config, ctx) {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       };
+
       config.module.rules.push({
         test: /\.(ogg|mp3|wav|mpe?g)$/i,
         loader: 'file-loader',

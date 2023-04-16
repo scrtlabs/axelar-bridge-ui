@@ -14,7 +14,14 @@
         :height="200"
         :path="require('../assets/animations/flame.json')"
       />
-      <div class="mountain"></div>
+      <div class="mountain" />
+<!--      <nuxt-img-->
+<!--        preload src="/mountain-bg.webp"-->
+<!--        alt="Mountain Background"-->
+<!--        width="1205"-->
+<!--        height="899"-->
+<!--        class="mountain"-->
+<!--      />-->
 
       <div class="main-section-wrapper">
         <div class="wallet-item-container">
@@ -271,26 +278,8 @@
               <v-icon size="16" color="error">mdi-alert</v-icon> {{ info_error }}
             </div>
           </div>
-
-          <div v-if="showProcessAnimation">
-            <lottie-wrapper
-              style="z-index: 2"
-              :speed="1"
-              :height="100"
-              :path="require('../assets/animations/processing.json')"
-            />
-          </div>
-
-          <div v-if="showWrapAnimation">
-            <lottie-wrapper
-              style="z-index: 20"
-              :speed="1"
-              :width="100"
-              :height="100"
-              :loop="false"
-              :path="require('../assets/animations/' + selectedToken.animation)"
-            />
-          </div>
+            <process-animation v-if="showProcessAnimation" />
+            <wrap-animation v-if="showWrapAnimation" :selected-token="selectedToken"/>
           </div>
           <div class="main-section-tab" style="background-color: transparent">
             <faq @hide="page = 0"></faq>
@@ -304,23 +293,50 @@
 
 <script>
 import axelarConfig from '../store/axelarConfig.json'
-import { mapGetters } from 'vuex';
+import {mapGetters} from 'vuex';
 import SubChainSelector from '~/components/SubChainSelector.vue';
 import TokenSelector from '~/components/TokenSelector.vue';
-// import LottieWrapper from '~/components/LottieWrapper.vue';
 
+// import LottieWrapper from '~/components/LottieWrapper.vue';
 import _ from 'lodash';
-import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secretjs';
-import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'; // import lottie-vuejs
-import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } from '@axelar-network/axelarjs-sdk';
+import {MsgExecuteContract, MsgTransfer, toBase64, toUtf8} from 'secretjs';
+// import {AxelarAssetTransfer, AxelarQueryAPI} from '@axelar-network/axelarjs-sdk';
+
 const Web3 = require('web3');
 
 export default {
-  components: { SubChainSelector, TokenSelector },
-  created() {
-    this.axelarTransfer = new AxelarAssetTransfer({ environment: process.env.NUXT_ENV_AXELAR_ENV });
-    this.axelarQuery = new AxelarQueryAPI({ environment: process.env.NUXT_ENV_AXELAR_ENV });
+  components: {
+    WrapAnimation: () => import('../components/WrapAnimation.vue'),
+    ProcessAnimation: () => import('../components/ProcessAnimation.vue'),
+    SubChainSelector,
+    TokenSelector,
+  },
 
+  async getAxelarTransferInstance() {
+    if (!this.axelarTransfer) {
+      const { AxelarAssetTransfer } = await import(
+        "@axelar-network/axelarjs-sdk"
+        );
+      this.axelarTransfer = new AxelarAssetTransfer({
+        environment: process.env.NUXT_ENV_AXELAR_ENV,
+      });
+    }
+    return this.axelarTransfer;
+  },
+
+  async getAxelarApiInstance() {
+    if (!this.axelarQuery) {
+      const { AxelarQueryAPI } = await import(
+        "@axelar-network/axelarjs-sdk"
+        );
+      this.axelarQuery = new AxelarQueryAPI({
+        environment: process.env.NUXT_ENV_AXELAR_ENV,
+      });
+    }
+    return this.axelarQuery;
+  },
+
+  created() {
     this.toChain = this.availableChains["main-chain"][0];
     this.fromChain = this.availableChains["sub-chains"][0];
   },
@@ -732,7 +748,8 @@ export default {
     async calcTransferFee(amount) {
       try {
         let microAmount = this.getMicroAmount(amount);
-        const result = await this.axelarQuery.getTransferFee(this.fromChain.axelar.chain, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
+        const axelarQuery = await this.getAxelarApiInstance();
+        const result = await axelarQuery.getTransferFee(this.fromChain.axelar.chain, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
         var display = result.fee.amount + " " + result.fee.denom;
         var symbol = result.fee.denom;
         let normal = 0;
@@ -767,7 +784,8 @@ export default {
         denom: ""
       }
       try {
-        const limit = await this.axelarQuery.getTransferLimit({
+        const axelarQuery = await this.getAxelarApiInstance();
+        const limit = await axelarQuery.getTransferLimit({
           fromChainId: this.fromChain.axelar.chain,
           toChainId: this.toChain.axelar.chain,
           denom: this.selectedToken.denom
@@ -829,7 +847,9 @@ export default {
         this.showProcessAnimation = true;
 
         this.axelarStatus = "Initializing transfer...";
-        const depositAddress = await this.axelarTransfer.getDepositAddress({
+
+        const axelarTransfer = await this.getAxelarTransferInstance();
+        const depositAddress = await axelarTransfer.getDepositAddress({
           fromChain: this.fromChain.axelar.chain,
           toChain: this.toChain.axelar.chain,
           destinationAddress: this.destinationAddress,
@@ -1022,6 +1042,8 @@ export default {
       }
 
 
+      this.axelarTransfer = new AxelarAssetTransfer({ environment: process.env.NUXT_ENV_AXELAR_ENV });
+
       if (this.fromChain.type === "evm") {
         this.sendFromEVM(this.amount);
       } if (this.fromChain.type === "cosmos") {
@@ -1068,7 +1090,8 @@ export default {
         var depositAddress = this.destinationAddress;
         let usedAxelarAPI = false;
         if (this.fromChain.name.toLowerCase() !== "axelar") {
-          depositAddress = await this.axelarTransfer.getDepositAddress({
+          const axelarTransfer = await this.getAxelarTransferInstance();
+          depositAddress = axelarTransfer.getDepositAddress({
             fromChain: this.fromChain.axelar.chain,
             toChain: this.toChain.axelar.chain,
             destinationAddress: this.destinationAddress,
@@ -1230,7 +1253,8 @@ export default {
       console.log("Should Unwrap:", shouldUnwrap);
 
       //const depositAddress = this.destinationAddress;
-      const depositAddress = await this.axelarTransfer.getDepositAddress({
+      const axelarTransfer = await this.getAxelarTransferInstance();
+      const depositAddress = await axelarTransfer.getDepositAddress({
         fromChain: this.fromChain.axelar.chain,
         toChain: this.toChain.axelar.chain,
         destinationAddress: this.destinationAddress,
@@ -1707,12 +1731,12 @@ export default {
 
 .mountain {
   position: absolute;
-  top: 0px;
-  /* width: 1095px; */
+  top: 0;
+  width: 1095px;
   width: 1205px;
   min-height: 899px !important;
   height: 899px !important;
-  background: url('~/assets/images/mountain-bg.webp') no-repeat center top transparent;
+  background: url('/images/mountain-bg.webp') no-repeat center top transparent;
   z-index: 0;
 }
 </style>

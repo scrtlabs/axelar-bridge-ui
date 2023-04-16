@@ -93,6 +93,27 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'DefaultLayout',
+
+  head: {
+    link: [
+      // https://csswizardry.com/2020/05/the-fastest-google-fonts/
+      {
+        rel: "preload",
+        as: "style",
+        href:
+          "https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap"
+      },
+      {
+        rel: "stylesheet",
+        href:
+          "https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap",
+        media: "print",
+        onload: "this.media='all'"
+      }]
+  },
+
+
+
   data() {
     return {
       dialog: false,
@@ -149,7 +170,7 @@ body {
   font-family: 'Banana';
   font-style: normal;
   font-weight: 400;
-  src: local('Banana'), url('../assets/fonts/Banana.woff2') format("woff2");
+  src: local('Banana'), url('/fonts/Banana.woff2') format("woff2");
   font-display: swap;
   unicode-range: U+0000-00FF;
 }
@@ -167,8 +188,8 @@ body {
   font-family: 'BalsamiqSans-Regular';
   font-style: normal;
   font-weight: 400;
-  src: local('BalsamiqSans Regular'), local('BalsamiqSans-Regular'),
-  url('../assets/fonts/BalsamiqSans-Regular-English-Only.woff2') format("woff2");
+  src: local('BalsamiqSans-Regular-English-Only'), local('BalsamiqSans Regular'), local('BalsamiqSans-Regular'),
+  url('/fonts/BalsamiqSans-Regular-English-Only.woff2') format("woff2");
   font-display: swap;
   unicode-range: U+0000-00FF;
 }
@@ -177,8 +198,12 @@ body {
   font-family: 'RockyRock';
   font-style: normal;
   font-weight: 400;
-  src: local('RockyRock'), url('../assets/fonts/Rocky Rock.woff2') format("woff2");
+  src: local('RockyRock'), local('Rocky Rock'), url('/fonts/Rocky Rock.woff2') format("woff2");
   font-display: swap;
   unicode-range: U+0000-00FF;
+}
+
+div#preload {
+  display: none;
 }
 </style>
