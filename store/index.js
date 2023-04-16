@@ -45,7 +45,7 @@ export const state = () => ({
 });
 
 export const actions = {
-  initKeplr({ commit, state, getters }, selectedChain) {
+  async initKeplr({ commit, state, getters }, selectedChain) {
 
     const suggestChain = async (chainInfo) => {
   
@@ -165,7 +165,7 @@ export const actions = {
           // Listen to keplr events when wallet change
           if (!state.keplrEventWasAdded) {
             commit('setKeplrEventWasAdded', true);            
-            window.addEventListener('keplr_keystorechange', () => {
+            window.addEventListener('keplr_keystorechange', async () => {
               keplrConnect()
             })
           }
@@ -179,7 +179,8 @@ export const actions = {
         commit('setKeplrLoading', false)
       }
     }
-    keplrConnect()
+      await keplrConnect()
+    
   },
 
   async disconnectKeplr({ commit, state }) {
@@ -266,7 +267,7 @@ export const actions = {
       }
     }
 
-    await connectMM(payload.chainId, payload.addEvent, selectedChains);
+    await connectMM(payload.chainId, selectedChains);
   },
 
   async sendMMTokens({commit, state}, payload) {

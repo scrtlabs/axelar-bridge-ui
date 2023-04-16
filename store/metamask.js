@@ -13,6 +13,7 @@ const ACTIVE_CHAIN_ID = APP_TESTNET_CHAIN_ID;
 var _web3 = null;
 
 var _transactionTracker = null;
+var _mmEventWasAdded = false;
 
 export const addChain = async (chain) => {
   const params = [{
@@ -34,8 +35,7 @@ export const addChain = async (chain) => {
 }
 
 
-export const connectMM = async (chainId, addEvent, chains) => {
-  addEvent = typeof addEvent == 'undefined' ? true : addEvent
+export const connectMM = async (chainId, chains) => {
 
   try {
     let selectedChain = 1;
@@ -53,7 +53,8 @@ export const connectMM = async (chainId, addEvent, chains) => {
           params: [{chainId: selectedChain}]
       });
 
-      if (addEvent) {
+      if (!_mmEventWasAdded) {
+        _mmEventWasAdded = true;
         window.ethereum.on('accountsChanged', function (accounts) {
           console.log('accountsChanges', accounts);
           $nuxt.$emit('MM-account-changed', accounts);

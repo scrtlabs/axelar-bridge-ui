@@ -24,7 +24,7 @@
             <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
           </div>
 
-          <div :style="styleObject" class="wallet-item" @click="connectMM(true)">
+          <div :style="styleObject" class="wallet-item" @click="connectMM()">
             MetaMask
             <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" />
             <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
@@ -413,7 +413,7 @@ export default {
       var connectedBefore = window.localStorage.getItem('connectedBefore');
       if (connectedBefore) {
         this.connect();
-        this.connectMM(true);
+        //this.connectMM();
       } else {
         setTimeout(function () {
           self.showArrow = true;
@@ -441,7 +441,7 @@ export default {
       isMobile: 'isMobile'
     }),
     showArrowComputed() {
-      return this.showArrow || !this.isMMConnected || !this.isKeplrConnected;
+      return this.showArrow || !this.isKeplrConnected; // || !this.isMMConnected;
     },
     isTestnet() {
       return process.env.NUXT_ENV_AXELAR_ENV == "testnet";
@@ -491,7 +491,7 @@ export default {
     },
 
     disableUI() {
-      return !this.isKeplrConnected || !this.isMMConnected;
+      return !this.isKeplrConnected; // || !this.isMMConnected;
     },
     isKeplrConnected() {
       return this.accounts && Object.keys(this.accounts).length > 0;
@@ -683,13 +683,11 @@ export default {
       // }
     },
     fromChain(newChain, oldChain) {
-      if (oldChain) {
-        if (newChain.type === "evm") {
-          this.connectMM(false);
-        } else if (newChain.type === "cosmos") {
-          this.connect(false, newChain.chainInfo);
-        }
-      } 
+      if (newChain.type === "evm") {
+        this.connectMM();
+      } else if (newChain.type === "cosmos") {
+        this.connect(false, newChain.chainInfo);
+      }
 
       if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) {
         this.estimatedTime = newChain.axelar.transferTime;
@@ -701,9 +699,10 @@ export default {
     },
 
     toChain(newChain, oldChain) {
-      if (this.isMMConnected) {
         if (newChain.type === "evm") { // EVM
-          this.destinationAddress = this.MMAccounts[0];
+          if (this.isMMConnected) {
+            this.destinationAddress = this.MMAccounts[0];
+          }
         } else {
           try {
             if (!this.receiverAccount) {
@@ -715,7 +714,6 @@ export default {
             console.log(err);
           }
         }
-      }
 
       if (newChain.axelar.transferTime && newChain.axelar.transferTime > -1) {
         this.estimatedTime = newChain.axelar.transferTime;
@@ -922,20 +920,20 @@ export default {
       } else {
         this.showArrow = false; //this.showArrowText
         if (typeof chain === 'undefined') {
-          this.$store.dispatch('initKeplr', this.availableChains["main-chain"][0].chainInfo);
+          this.$dispatchQueue.addToQueue('initKeplr', this.availableChains["main-chain"][0].chainInfo);
         } else {
-          this.$store.dispatch('initKeplr', chain);
+          this.$dispatchQueue.addToQueue('initKeplr', chain);
         }
           
       }
     },
-    connectMM(addEvent) {
+    connectMM() {
 
       let chainId = -1;
       if (this.fromChain.type === "evm") {
         chainId = this.fromChain.chainInfo.chainId;
       }
-      this.$store.dispatch('connectMetaMask', { chainId, addEvent});
+      this.$store.dispatch('connectMetaMask', { chainId });
     },
     // getChainName(idx) {
     //   return this.getChainList[idx];
@@ -1322,7 +1320,6 @@ export default {
       for (let i = 0; i < this.toChain.tokens.length; i++) {
         if (this.toChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1) {
           foundToken = _.cloneDeep(this.toChain.tokens[i]);
-          console.log(this.toChain.tokens[i]);
           break;
         }
       }
