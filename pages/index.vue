@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isMobile" style="position: relative">
-      <img style="width: 100%; object-fit: cover" :src="require('~/assets/images/mobile-soon.webp')" />
+      <img style="width: 100%; object-fit: cover" :src="require('~/assets/images/mobile-soon.webp')" alt="mobile coming soon" />
     </div>
     <div
       v-else
@@ -20,20 +20,20 @@
         <div class="wallet-item-container">
           <div :style="styleObject" class="wallet-item" @click="connect()">
             Keplr
-            <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" />
+            <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" alt="keplr logo"/>
             <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
           </div>
 
           <div :style="styleObject" class="wallet-item" @click="connectMM()">
             MetaMask
-            <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" />
+            <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" alt="metamask logo"/>
             <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
           </div>
 
           <div :style="styleTroubleshootingObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px">
               Help
-              <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" />
+              <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
               <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
@@ -60,17 +60,18 @@
               v-show="showArrowText && showArrowComputed"
               style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px"
               :src="require('~/assets/animations/connect-wallets.webp')"
+              alt="arrow pointing to connect wallet buttons"
             />
           </transition>
         </div>
 
         <template v-if="selectedToken">
           <div class="input-coin" id="input-coin">
-            <img :src="require('~/assets/tokens/3d/input/' + selectedToken.fromImage)" style="width: 100px" />
+            <img :src="require('~/assets/tokens/3d/input/' + selectedToken.fromImage)" style="width: 100px" alt="token used to animate source network"/>
           </div>
 
           <div class="output-coin" id="output-coin">
-            <img :src="require('~/assets/tokens/3d/output/' + selectedToken.toImage)" style="width: 90px" />
+            <img :src="require('~/assets/tokens/3d/output/' + selectedToken.toImage)" style="width: 90px" alt="token used to animate destination network" />
           </div>
         </template>
 
@@ -133,7 +134,7 @@
 
             <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
               <v-btn @click="swapChains(true)" :disabled="disableUI" icon width="70" height="70">
-                <img :src="require('~/assets/images/swap-button.webp')" width="60" height="60" />
+                <img :src="require('~/assets/images/swap-button.webp')" width="60" height="60" alt="swap token button" />
               </v-btn>
             </div>
 
@@ -261,7 +262,7 @@
                 <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>
               </template>
             </v-checkbox>
-            
+
             <div v-if="!isMetaMaskChainCorrect" class="error-styling">
               Metamask doesn't match selected network<br>Please change it manually
             </div>
@@ -332,8 +333,8 @@ export default {
         } else if (self.toChain.type === "evm") {
           self.destinationAddress = self.MMAccounts[0];
         }
-        
-        
+
+
         self.getBalance();
 
         if (self.isMobile) {
@@ -924,7 +925,7 @@ export default {
         } else {
           this.$dispatchQueue.addToQueue('initKeplr', chain);
         }
-          
+
       }
     },
     connectMM() {
@@ -1125,7 +1126,7 @@ export default {
             case 13:
               this.tx_error = "insufficient fees";
               break;
-          } 
+          }
         }
 
         if (this.tx_error === '') {
@@ -1168,7 +1169,7 @@ export default {
         } else {
           this.showAxelarError(this.tx_error);
         }
-        
+
       } catch (err) {
         console.error(err);
         this.showAxelarError("Unknown");
@@ -1337,7 +1338,7 @@ export default {
       } else if (this.toChain.type == "evm") {
         this.destinationAddress = this.MMAccounts[0]
       }
-      
+
 
       if (swapTokens && this.fromChain.tokens.length > 0) {
         this.amount = 0;
