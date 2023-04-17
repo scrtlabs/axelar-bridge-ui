@@ -8,9 +8,12 @@
         </div>
       </template>
       <template slot="item" slot-scope="data">
-        <div class="token-item">
-          <div><img :src="require('~/assets/tokens/' + data.item.icon)" :width="iconSize" :height="iconSize" /></div>
-          <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.symbol }}</div>
+        <div class="token-entry-wrapper">
+          <div class="token-item">
+            <div class="icon-item"><img :src="require('~/assets/tokens/' + data.item.icon)" :width="iconSize" :height="iconSize" /></div>
+            <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.symbol }}</div>
+          </div>
+          <div v-if="data.item.description" :style="descriptionStyle" class="token-item-description">{{ data.item.description }}</div>
         </div>
       </template>
     </v-select>
@@ -66,24 +69,38 @@ export default {
     ...mapGetters({
     }),
 
+    descriptionStyle() {
+      return {
+        "margin-left": (this.iconSize + 10) + "px",
+      };
+    },
+    
+
     activeTokens() {
-      let _tokens = [];
-      for (var i = 0; i < this.tokens.length; i++) {
-        if (this.tokens[i].allow_autounwap) {
-          if (this.to.nativeCurrency && this.to.nativeCurrency.symbol === this.tokens[i].symbol) {
-            _tokens.push(this.tokens[i]);  
-          }
-        } else {
-          _tokens.push(this.tokens[i]);
-        }
-      }
-      return _tokens;
+      return this.tokens;
+      // Remove Candidate
+      // let _tokens = [];
+      // for (var i = 0; i < this.tokens.length; i++) {
+      //   if (this.tokens[i].allow_autounwap) {
+      //     if (this.to.chainInfo.nativeCurrency && this.to.chainInfo.nativeCurrency.symbol === this.tokens[i].symbol) {
+      //       _tokens.push(this.tokens[i]);  
+      //     }
+      //   } else {
+      //     _tokens.push(this.tokens[i]);
+      //   }
+      // }
+      // return _tokens;
     }
   }
 }
 </script>
 
 <style >
+.token-entry-wrapper {
+  display: flex; 
+  flex-direction: column;
+}
+
 .token-item {
   display: flex; 
   justify-content: flex-start; 
@@ -91,6 +108,17 @@ export default {
   gap: 10px; 
   width: 100%; 
   font-size: 16px;
+  padding-top: 0px;
+}
+
+.token-item-description {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: -14px;
+}
+
+.icon-item {
+  padding-top: 6px;
 }
 
 /* ::-webkit-scrollbar {

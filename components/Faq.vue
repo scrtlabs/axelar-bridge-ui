@@ -25,19 +25,19 @@
 
         <h3 class="faq-title">How See?</h3>
         <ul class="faq-content">
-          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms <a href="https://medium.com/@secretnetwork/secret-network-access-control-viewing-keys-vs-permits-97baad539e72" target="_blank" class="link-style">here</a></li>
-        </ul>  
+          <li>Balances on Secret Network are private, and require permits or viewing keys. You can find out more about these privacy-preserving mechanisms in this <a href="https://medium.com/@secretnetwork/secret-network-access-control-viewing-keys-vs-permits-97baad539e72" target="_blank" class="link-style">helpful blog post</a></li>
+        </ul>
 
         <h3 class="faq-title">Funds Safu?</h3>
         <ul class="faq-content">
           <li>Your assets are safely stored in a smart contract. As long as you've entered a Secret Network address that you control, your funds are safe.</li>
           <li>For support, you can reach out to the Secret Network's <a class="link-style" href="https://discord.com/invite/SJK32GY" target="_blank">discord</a> or directly to Axelar's <a class="link-style" href="https://axelar.network/" target="_blank">website</a> or <a class="link-style" href="https://discord.com/invite/aRZ3Ra6f7D" target="_blank">discord</a></li>
         </ul>
-        
+
         <h3 class="faq-title">Which Coin?</h3>
         <ul class="faq-content">
           <li>Currently assets from Ethereum and Binance Smart Chain are supported. In the future, we may add more networks to this interface. Have any requests? <a class="link-style" href="https://discord.com/invite/SJK32GY" target="_blank">Let us know</a></li>
-        </ul>        
+        </ul>
 
         <h3 class="faq-title">Why Disabled?</h3>
         <ul class="faq-content">
@@ -49,7 +49,7 @@
           <li>Sometimes relayers take their time to transfer packets from one network to another. Even if you receive timeout, the funds will make it to their destination, or in the worst case will go back to your account</li>
         </ul>
 
-        
+
         <div style="height: 100px"></div>
       </div>
     </div>
@@ -92,7 +92,7 @@ export default {
   }
 
   .faq-section {
-    height: 590px; overflow: auto
+    height: 610px; overflow: auto
   }
 
   .faq-section::-webkit-scrollbar {
@@ -114,7 +114,7 @@ export default {
   }
 
   .link-style {
-    font-weight: bold; text-decoration: none; color: white    
+    font-weight: bold; text-decoration: none; color: white
   }
 
 </style>

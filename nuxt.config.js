@@ -21,10 +21,15 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-      { hid: 'description', name: 'description', content: '' },
+      { hid: 'description',
+        name: 'description',
+        content: 'Secret Tunnel is a bridge between Secret Network and Axelar that allows automatic wrapping of assets with privacy-preserving tokens' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.jpg' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.jpg' },
+      { rel: "preload", as: "font", href: '../assets/fonts/BalsamiqSans-Regular-English-Only.woff2' },
+      { rel: "preload", as: "font", href: '../assets/fonts/Banana.woff2' },
+      { rel: "preload", as: "font", href: '../assets/fonts/Rocky Rock.woff2' }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -33,7 +38,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/lodash.js',
-
+    '~/plugins/dispatchQueue.js'
   ],
   script: [
   ],
@@ -52,7 +57,13 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/robots'
   ],
+
+  robots: {
+    UserAgent: '*',
+    Allow: '/'
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
@@ -96,7 +107,7 @@ export default {
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]',
-          esModule: false,          
+          esModule: false,
         }
       })
     },

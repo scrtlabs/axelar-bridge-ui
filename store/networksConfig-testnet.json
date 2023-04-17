@@ -1,0 +1,371 @@
+{
+  "main-chain": [
+    {
+      "name": "Secret Network",
+      "icon": "secret.logo.svg",
+      "type": "cosmos",
+      "chainInfo": {
+        "chainId": "pulsar-2",
+        "rest": "https://api.pulsar.scrttestnet.com",
+        "rpcUrl": "https://rpc.testnet.secretsaturn.net",
+        "hrp": "secret",
+        "coinType": 529,
+        "out_port": "wasm.secret1c4envjuzy8j36c3w7qtyaeelfl3je6egxa85ve",
+        "ICS_code_hash": "2976a2577999168b89021ecb2e09c121737696f71c4342f9a922ce8654e98662",
+        "out_channel": "channel-182",
+        "stakeCurrency": {
+          "coinDenom": "SCRT",
+          "coinMinimalDenom": "uscrt",
+          "coinDecimals": 6
+        },
+        "mintscan": "secret"
+      },        
+      "axelar": {
+          "Env": "testnet",
+          "chain": "secret-snip-2",
+          "transferTime": -1
+      },
+      "tokens": [
+        {
+          "symbol": "sAXL",
+          "denom": "uaxl",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uaxl.logo.svg",
+          "fromImage": "suaxl.png",
+          "toImage": "uaxl.png",
+          "animation": "unwrap/unwrap-axl.json",
+          "SNIP20_address": "secret1tf9uyn2qpe3j56p8sf4f03nnphccq3lmp4aa93",
+          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+        },
+        {
+          "symbol": "saUSDC",
+          "denom": "uausdc",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "suausdc.png",
+          "toImage": "uausdc.png",
+          "animation": "unwrap/unwrap-usdc.json",
+          "SNIP20_address": "secret1xmvmqj3rdzarmnyml62kzpfylw8p2el64emcgc",
+          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+        },
+        {
+          "symbol": "saWETH",
+          "denom": "eth-wei",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "weth-wei.logo.svg",
+          "fromImage": "seth-wei.png",
+          "toImage": "eth-wei.png",
+          "animation": "unwrap/unwrap-eth.json",
+          "SNIP20_address": "secret1sfurfnr2aj3z9zqrvgk9728fp80agmnkzwhw8k",
+          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+        },
+        {
+          "symbol": "ETH",
+          "denom": "eth-wei",
+          "isEVMNative": false,
+          "allow_autounwap": true,
+          "coinDecimals": 18,
+          "icon": "eth.logo.svg",
+          "fromImage": "seth-wei.png",
+          "toImage": "eth-wei.png",
+          "animation": "unwrap/unwrap-eth.json",
+          "SNIP20_address": "secret1sfurfnr2aj3z9zqrvgk9728fp80agmnkzwhw8k",
+          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+        },
+        {
+          "symbol": "saWBNB",
+          "denom": "wbnb-wei",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "swbnb-wei.png",
+          "toImage": "wbnb-wei.png",
+          "animation": "unwrap/unwrap-bnb.json",
+          "SNIP20_address": "secret1lw9e3cm93zw5swgejd92d095f6m0qcsgpt7eya",
+          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+        }
+      ]
+    }    
+  ],
+  "sub-chains": [
+    {
+      "name": "Axelar",
+      "icon": "axelar.logo.svg",
+      "type": "cosmos",
+      "chainInfo": {
+        "chainId": "axelar-testnet-lisbon-3",
+        "rest": "https://axelartest-lcd.quantnode.tech",
+        "rpcUrl": "https://rpc-axelar-testnet.imperator.co:443",
+        "hrp": "axelar",
+        "coinType": 118,
+        "out_port": "transfer",
+        "ICS_code_hash": "",
+        "out_channel": "channel-201",
+        "stakeCurrency": {
+          "coinDenom": "AXL",
+          "coinMinimalDenom": "uaxl",
+          "coinDecimals": 6
+        },
+        "mintscan": "axelar"
+      },        
+      "axelar": {
+          "Env": "testnet",
+          "chain": "axelarnet",
+          "transferTime": -1
+      },
+      "tokens": [
+        {
+          "symbol": "AXL",
+          "denom": "uaxl",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uaxl.logo.svg",
+          "fromImage": "uaxl.png",
+          "toImage": "suaxl.png",
+          "animation": "wrap/wrap-axl.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "aUSDC",
+          "denom": "uausdc",
+          "coinDecimals": 6,
+          "isEVMNative": false,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "WETH",
+          "denom": "eth-wei",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "weth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "WBNB",
+          "denom": "wbnb-wei",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "wbnb-wei.png",
+          "toImage": "swbnb-wei.png",
+          "animation": "wrap/wrap-bnb.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        }
+      ]
+    },
+    {
+      "name": "Ethereum",
+      "icon": "ethereum.logo.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "5",
+        "rpcUrls": ["https://goerli.infura.io/v3/"],
+        "nativeCurrency": {
+          "name": "Ethereum",
+          "symbol": "ETH",
+          "decimals": 18
+        },
+        "chainName": "Goerli test network",
+        "blockExplorerUrls": ["https://goerli.etherscan.io"]
+      },
+      "axelar": {
+          "Env": "testnet",
+          "chain": "ethereum-2",
+          "transferTime": 15            
+      },
+      "tokens": [
+        {
+          "symbol": "ETH",
+          "denom": "eth",
+          "isEVMNative": true,
+          "coinDecimals": 18,
+          "icon": "eth.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "WETH",
+          "denom": "eth-wei",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "weth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+        },
+        {
+          "symbol": "axlUSDC",
+          "denom": "uausdc",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x254d06f33bDc5b8ee05b2ea472107E300226659A"
+        }
+      ]
+    },
+    {
+      "name": "Binance",
+      "icon": "binance.logo.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "97",
+        "rpcUrls": ["https://data-seed-prebsc-1-s1.binance.org:8545"],
+        "nativeCurrency": {
+          "name": "Binance Coin",
+          "symbol": "BNB",
+          "decimals": 18
+        },
+        "chainName": "BNB Chain Testnet",
+        "blockExplorerUrls": ["https://testnet.bscscan.com"]
+      },     
+      "axelar": {
+          "Env": "testnet",
+          "chain": "binance",
+          "transferTime": 2
+      },
+      "tokens": [
+        {
+          "symbol": "aUSDC",
+          "denom": "uausdc",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xc2fA98faB811B785b81c64Ac875b31CC9E40F9D2"
+        },
+        {
+          "symbol": "BNB",
+          "denom": "bnb",
+          "isEVMNative": true,
+          "coinDecimals": 18,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "wbnb-wei.png",
+          "toImage": "swbnb-wei.png",
+          "animation": "wrap/wrap-bnb.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "WBNB",
+          "denom": "wbnb-wei",
+          "isEVMNative": true,
+          "coinDecimals": 18,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "wbnb-wei.png",
+          "toImage": "swbnb-wei.png",
+          "animation": "wrap/wrap-bnb.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd"
+        }
+      ]
+    },
+    {
+      "name": "Avalanche",
+      "icon": "avalanche.logo.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "43113",
+        "rpcUrls": ["https://api.avax-test.network/ext/bc/C/rpc"],
+        "nativeCurrency": {
+          "name": "Avalanche",
+          "symbol": "AVAX",
+          "decimals": 18
+        },
+        "chainName": "Avalanche Testnet",
+        "blockExplorerUrls": ["https://testnet.snowtrace.io/"]
+      },
+      "axelar": {
+          "Env": "testnet",
+          "chain": "avalanche",
+          "transferTime": 2            
+      },
+      "tokens": [
+        {
+          "symbol": "aUSDC",
+          "denom": "uausdc",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x57F1c63497AEe0bE305B8852b354CEc793da43bB"
+        }
+      ]
+    },
+    {
+      "name": "Osmosis",
+      "icon": "osmosis.logo.svg",
+      "type": "cosmos",
+      "chainInfo": {
+        "chainId": "osmo-test-4",
+        "rest": "https://lcd-test.osmosis.zone",
+        "rpcUrl": "https://rpc.testnet.osmosis.zone/",
+        "hrp": "osmo",
+        "coinType": 118,
+        "out_port": "transfer",
+        "out_channel": "channel-1946",
+        "stakeCurrency": {
+          "coinDenom": "OSMO",
+          "coinMinimalDenom": "uosmo",
+          "coinDecimals": 6
+        },
+        "mintscan": "osmosis"
+      },
+      "axelar": {
+          "Env": "testnet",
+          "chain": "osmosis-5",
+          "transferTime": -1
+      },
+      "tokens": [
+        {
+          "symbol": "axlUSDC",
+          "denom": "uausdc",
+          "ibcDenom": "ibc/FF3065989E34457F342D4EFB8692406D49D4E2B5C70F725F127862E22CE6BDCD",
+          "coinDecimals": 6,
+          "isEVMNative": false,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        }
+      ]
+    }
+  ]
+}

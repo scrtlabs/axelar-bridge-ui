@@ -72,7 +72,7 @@
       </v-card>
     </v-dialog>
 
-    <v-footer color="black" padless fixed style="z-index: 200">
+    <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
         <div style="flex: 1; margin-left: 10px ">Version: {{ version }}</div>
         <div style="flex: 1; text-align: center;">
@@ -89,14 +89,23 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'DefaultLayout',
   data() {
     return {
       dialog: false,
-      version: "0.1.3"
+      version: "0.2.1"
     };
+  },
+  computed: {
+    ...mapGetters({
+      isMobile: 'isMobile'
+    })
   }
+
+
 };
 </script>
 
@@ -138,21 +147,38 @@ body {
 
 @font-face {
   font-family: 'Banana';
-  src: url('../assets/fonts/Banana.ttf');
+  font-style: normal;
+  font-weight: 400;
+  src: local('Banana'), url('../assets/fonts/Banana.woff2') format("woff2");
+  font-display: swap;
+  unicode-range: U+0000-00FF;
 }
 
-@font-face {
-  font-family: 'Vanilla Caramel';
-  src: url('../assets/fonts/Vanilla Caramel.otf');
-}
+/*@font-face {*/
+/*  font-family: 'Vanilla Caramel';*/
+/*  font-style: normal;*/
+/*  font-weight: 400;*/
+/*  src: local('Vanilla Caramel'), url('../assets/fonts/Vanilla Caramel.otf');*/
+/*  font-display: swap;*/
+/*  unicode-range: U+0000-00FF;*/
+/*}*/
 
 @font-face {
   font-family: 'BalsamiqSans-Regular';
-  src: url('../assets/fonts/BalsamiqSans-Regular.ttf');
+  font-style: normal;
+  font-weight: 400;
+  src: local('BalsamiqSans Regular'), local('BalsamiqSans-Regular'),
+  url('../assets/fonts/BalsamiqSans-Regular-English-Only.woff2') format("woff2");
+  font-display: swap;
+  unicode-range: U+0000-00FF;
 }
 
 @font-face {
   font-family: 'RockyRock';
-  src: url('../assets/fonts/Rocky Rock.ttf');
+  font-style: normal;
+  font-weight: 400;
+  src: local('RockyRock'), url('../assets/fonts/Rocky Rock.woff2') format("woff2");
+  font-display: swap;
+  unicode-range: U+0000-00FF;
 }
 </style>

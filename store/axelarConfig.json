@@ -3,7 +3,7 @@
     "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://testnet.axelarscan.io/transfer",
     "deposit-account-viewer": "https://testnet.axelarscan.io/account",
-    "secret-block-explorer": "https://secretnodes.com/pulsar/transactions",
+    "cosmos-block-explorer": "https://testnet.mintscan.io",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
       "uausdc": { "decimal": 6, "symbol": "aUSDC"},
@@ -16,7 +16,7 @@
     "axelarscan-api": "https://api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://axelarscan.io/transfer",
     "deposit-account-viewer": "https://axelarscan.io/account",
-    "secret-block-explorer": "https://www.mintscan.io/secret/txs",
+    "cosmos-block-explorer": "https://www.mintscan.io",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
       "uusdc": { "decimal": 6, "symbol": "USDC"},

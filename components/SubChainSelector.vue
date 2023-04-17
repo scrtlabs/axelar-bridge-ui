@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="font-size: 12px; margin-bottom: 2px; font-family: 'BalsamiqSans-Regular';">{{ lable }}</div>
-    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="chain.subChains" dense item-text="name" return-object>
+    <v-select :disabled="disabled" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo @change="handleChange" v-model="content" :items="chains" dense item-text="name" return-object>
       <template slot="selection" slot-scope="data">
         <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: 100%; "> 
           <!-- transparent -->
@@ -24,10 +24,12 @@ import { mapGetters } from 'vuex';
 
 export default {
   // value prop is a 'hack' alongside with handleChange to use v-model in our component
-  props: ['chain', 'iconSize', 'lable', 'value', 'disabled'], 
+  props: ['chains', 'iconSize', 'lable', 'value', 'disabled'], 
   mounted() {
-    if (!this.content)
-      this.content =  this.chain.subChains[0];
+    if (!this.content) {
+      this.content =  this.chains[0];
+      //this.$emit('input', this.content);
+    }
   },
   data() {
     return {
@@ -35,9 +37,9 @@ export default {
     }
   },
   watch: {
-    chain(c) {
+    chains(c) {
       if (!this.content)
-        this.content = this.chain.subChains[0];
+        this.content = this.chains[0];
     },
     value(val) {
       this.content = this.value;
