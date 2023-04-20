@@ -130,7 +130,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
           "coinDecimals": 6,
           "isEVMNative": false,
@@ -251,7 +251,7 @@
       },
       "tokens": [
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
           "isEVMNative": false,
           "coinDecimals": 6,
@@ -313,7 +313,7 @@
       },
       "tokens": [
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
           "isEVMNative": false,
           "coinDecimals": 6,

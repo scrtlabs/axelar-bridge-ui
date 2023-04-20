@@ -6,7 +6,7 @@
     "cosmos-block-explorer": "https://testnet.mintscan.io",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uausdc": { "decimal": 6, "symbol": "aUSDC"},
+      "uausdc": { "decimal": 6, "symbol": "axlUSDC"},
       "eth-wei": { "decimal": 18, "symbol": "WETH"},
       "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
       "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
