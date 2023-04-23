@@ -545,7 +545,7 @@
         "blockExplorerUrls": ["https://snowtrace.io/"]
       },
       "axelar": {
-          "Env": "testnet",
+          "Env": "mainnet",
           "chain": "avalanche",
           "transferTime": 2            
       },
@@ -607,7 +607,7 @@
           "ERC20_address": "0x4914886dBb8aAd7A7456D471EAab10b06d42348D"
         }
       ]
-    },    
+    },
     {
       "name": "Osmosis",
       "icon": "osmosis.logo.svg",
