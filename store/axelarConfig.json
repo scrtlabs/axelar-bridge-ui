@@ -19,16 +19,16 @@
     "cosmos-block-explorer": "https://www.mintscan.io",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uusdc": { "decimal": 6, "symbol": "USDC"},
-      "uusdt": { "decimal": 6, "symbol": "USDT"},
-      "dai-wei": { "decimal": 18, "symbol": "DAI"},
-      "eth-wei": { "decimal": 18, "symbol": "WETH"},
-      "weth-wei": { "decimal": 18, "symbol": "WETH"},
-      "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
-      "busd-wei": { "decimal": 18, "symbol": "BUSD"},
-      "frax-wei": { "decimal": 18, "symbol": "FRAX"},
-      "uni-wei": { "decimal": 18, "symbol": "UNI"},
-      "wbtc-satoshi": { "decimal": 8, "symbol": "WBTC"}
+      "uusdc": { "decimal": 6, "symbol": "axlUSDC"},
+      "uusdt": { "decimal": 6, "symbol": "axlUSDT"},
+      "dai-wei": { "decimal": 18, "symbol": "axlDAI"},
+      "eth-wei": { "decimal": 18, "symbol": "axlWETH"},
+      "weth-wei": { "decimal": 18, "symbol": "axlWETH"},
+      "wbnb-wei": { "decimal": 18, "symbol": "axlBNB"},
+      "busd-wei": { "decimal": 18, "symbol": "axlBUSD"},
+      "frax-wei": { "decimal": 18, "symbol": "axlFRAX"},
+      "uni-wei": { "decimal": 18, "symbol": "axlUNI"},
+      "wbtc-satoshi": { "decimal": 8, "symbol": "axlWBTC"}
     }
   }
 }

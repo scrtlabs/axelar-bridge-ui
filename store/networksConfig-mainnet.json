@@ -705,6 +705,164 @@
           "SNIP20_code_hash": ""
         }
       ]
-    }    
+    },
+    {
+      "name": "Arbitrum",
+      "icon": "arbitrum.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "42161",
+        "rpcUrls": ["https://arb1.arbitrum.io/rpc"],
+        "nativeCurrency": {
+          "name": "Arbitrum",
+          "symbol": "ETH",
+          "decimals": 18
+        },
+        "chainName": "Arbitrum",
+        "blockExplorerUrls": ["https://arbiscan.io/"]
+      },
+      "axelar": {
+          "Env": "mainnet",
+          "chain": "arbitrum",
+          "transferTime": 3            
+      },
+      "tokens": [
+        {
+          "symbol": "axlUSDC",
+          "denom": "uusdc",
+          "description": "Axelar USDC",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xEB466342C4d449BC9f53A865D5Cb90586f405215"
+        },
+        {
+          "symbol": "axlUSDT",
+          "denom": "uusdt",
+          "description": "Axelar USDT",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uusdt.logo.svg",
+          "fromImage": "usdt.png",
+          "toImage": "susdt.png",
+          "animation": "wrap/wrap-usdt.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x7f5373AE26c3E8FfC4c77b7255DF7eC1A9aF52a6"
+        },
+        {
+          "symbol": "axlDAI",
+          "denom": "dai-wei",
+          "description": "Axelar DAI",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "dai.logo.svg",
+          "fromImage": "dai.png",
+          "toImage": "sdai.png",
+          "animation": "wrap/wrap-dai.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x5C7e299CF531eb66f2A1dF637d37AbB78e6200C7"
+        },
+        {
+          "symbol": "axlFRAX",
+          "denom": "frax-wei",
+          "description": "Axelar FRAX",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "frax.logo.svg",
+          "fromImage": "frax.png",
+          "toImage": "sfrax.png",
+          "animation": "wrap/wrap-frax.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x406Cde76a3fD20e48bc1E0F60651e60Ae204B040"
+        }
+      ]
+    },      
+    {
+      "name": "Polygon",
+      "icon": "polygon.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "137",
+        "rpcUrls": ["https://polygon-rpc.com/"],
+        "nativeCurrency": {
+          "name": "Polygon",
+          "symbol": "MATIC",
+          "decimals": 18
+        },
+        "chainName": "Polygon",
+        "blockExplorerUrls": ["https://polygonscan.com/"]
+      },
+      "axelar": {
+          "Env": "mainnet",
+          "chain": "polygon",
+          "transferTime": 15            
+      },
+      "tokens": [
+        {
+          "symbol": "axlUSDC",
+          "denom": "uusdc",
+          "description": "Axelar USDC",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x750e4C4984a9e0f12978eA6742Bc1c5D248f40ed"
+        },
+        {
+          "symbol": "axlUSDT",
+          "denom": "uusdt",
+          "description": "Axelar USDT",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uusdt.logo.svg",
+          "fromImage": "usdt.png",
+          "toImage": "susdt.png",
+          "animation": "wrap/wrap-usdt.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xCeED2671d8634e3ee65000EDbbEe66139b132fBf"
+        },
+        {
+          "symbol": "axlDAI",
+          "denom": "dai-wei",
+          "description": "Axelar DAI",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "dai.logo.svg",
+          "fromImage": "dai.png",
+          "toImage": "sdai.png",
+          "animation": "wrap/wrap-dai.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xDDc9E2891FA11a4CC5C223145e8d14B44f3077c9"
+        },
+        {
+          "symbol": "axlFRAX",
+          "denom": "frax-wei",
+          "description": "Axelar FRAX",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "frax.logo.svg",
+          "fromImage": "frax.png",
+          "toImage": "sfrax.png",
+          "animation": "wrap/wrap-frax.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x53Adc464b488bE8C5d7269B9ABBCe8bA74195C3a"
+        }
+      ]
+    }
   ]
 }

@@ -217,6 +217,7 @@
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -253,6 +254,7 @@
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",          
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -315,6 +317,7 @@
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",          
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
