@@ -130,7 +130,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
           "coinDecimals": 6,
           "isEVMNative": false,
@@ -217,6 +217,7 @@
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -251,8 +252,9 @@
       },
       "tokens": [
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",          
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -313,8 +315,9 @@
       },
       "tokens": [
         {
-          "symbol": "aUSDC",
+          "symbol": "axlUSDC",
           "denom": "uausdc",
+          "description": "Axelar USDC",          
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
