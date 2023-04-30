@@ -4,6 +4,7 @@
       "name": "Secret Network",
       "icon": "secret.logo.svg",
       "type": "cosmos",
+      "enableForMobile": true,
       "chainInfo": {
         "chainId": "secret-4",
         "rest": "https://lcd-secret.scrtlabs.com/lcd",
@@ -163,9 +164,109 @@
   ],
   "sub-chains": [
     {
+      "name": "Osmosis",
+      "icon": "osmosis.logo.svg",
+      "type": "cosmos",
+      "enableForMobile": true,      
+      "chainInfo": {
+        "chainId": "osmosis-1",
+        "rest": "https://lcd.osmosis.zone",
+        "rpcUrl": "https://rpc.osmosis.zone",
+        "hrp": "osmo",
+        "coinType": 118,
+        "out_port": "transfer",
+        "out_channel": "channel-208",
+        "stakeCurrency": {
+          "coinDenom": "OSMO",
+          "coinMinimalDenom": "uosmo",
+          "coinDecimals": 6
+        },
+        "mintscan": "osmosis"
+      },
+      "axelar": {
+          "Env": "mainnet",
+          "chain": "osmosis",
+          "transferTime": -1
+      },
+      "tokens": [
+        {
+          "symbol": "axlUSDC",
+          "denom": "uusdc",
+          "description": "Axelar USDC",
+          "ibcDenom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+          "coinDecimals": 6,
+          "isEVMNative": false,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlDAI",
+          "denom": "dai-wei",
+          "description": "Axelar DAI",
+          "ibcDenom": "ibc/0CD3A0285E1341859B5E86B6AB7682F023D03E97607CCC1DC95706411D866DF7",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "dai.logo.svg",
+          "fromImage": "dai.png",
+          "toImage": "sdai.png",
+          "animation": "wrap/wrap-dai.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": ""
+        },
+        {
+          "symbol": "axlWBTC",
+          "denom": "wbtc-satoshi",
+          "description": "Axelar Wrapped BTC",
+          "ibcDenom": "ibc/D1542AA8762DB13087D8364F3EA6509FD6F009A34F00426AF9E4F9FA85CBBF1F",
+          "coinDecimals": 8,
+          "isEVMNative": false,
+          "icon": "wbtc-satoshi.logo.svg",
+          "fromImage": "wbtc.png",
+          "toImage": "swbtc.png",
+          "animation": "wrap/wrap-btc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlWETH",
+          "denom": "weth-wei",
+          "description": "Axelar Wrapped ETH",
+          "ibcDenom": "ibc/EA1D43981D5C9A1C4AAEA9C23BB1D4FA126BA9BC7020A25E0AE4AA841EA25DC5",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "weth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
+          "symbol": "axlWBNB",
+          "denom": "wbnb-wei",
+          "description": "Axelar Wrapped BNB",
+          "ibcDenom": "ibc/F4A070A6D78496D53127EA85C094A9EC87DFC1F36071B8CCDDBD020F933D213D",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "wbnb-wei.logo.svg",
+          "fromImage": "wbnb-wei.png",
+          "toImage": "swbnb-wei.png",
+          "animation": "wrap/wrap-bnb.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        }
+      ]
+    },
+    {
       "name": "Axelar",
       "icon": "axelar.logo.svg",
       "type": "cosmos",
+      "enableForMobile": false,
       "chainInfo": {
         "chainId": "axelar-dojo-1",
         "rest": "https://lcd-axelar.imperator.co",
@@ -327,6 +428,7 @@
       "name": "Ethereum",
       "icon": "ethereum.logo.svg",
       "type": "evm",
+      "enableForMobile": false,      
       "chainInfo": {
         "chainId": "1",
         "rpcUrls": ["https://eth.llamarpc.com"],
@@ -469,6 +571,7 @@
       "name": "Binance",
       "icon": "binance.logo.svg",
       "type": "evm",
+      "enableForMobile": false,      
       "chainInfo": {
         "chainId": "56",
         "rpcUrls": ["https://endpoints.omniatech.io/v1/bsc/mainnet/public"],
@@ -533,6 +636,7 @@
       "name": "Avalanche",
       "icon": "avalanche.logo.svg",
       "type": "evm",
+      "enableForMobile": false,      
       "chainInfo": {
         "chainId": "43114",
         "rpcUrls": ["https://api.avax.network/ext/bc/C/rpc"],
@@ -609,107 +713,10 @@
       ]
     },
     {
-      "name": "Osmosis",
-      "icon": "osmosis.logo.svg",
-      "type": "cosmos",
-      "chainInfo": {
-        "chainId": "osmosis-1",
-        "rest": "https://lcd.osmosis.zone",
-        "rpcUrl": "https://rpc.osmosis.zone",
-        "hrp": "osmo",
-        "coinType": 118,
-        "out_port": "transfer",
-        "out_channel": "channel-208",
-        "stakeCurrency": {
-          "coinDenom": "OSMO",
-          "coinMinimalDenom": "uosmo",
-          "coinDecimals": 6
-        },
-        "mintscan": "osmosis"
-      },
-      "axelar": {
-          "Env": "mainnet",
-          "chain": "osmosis",
-          "transferTime": -1
-      },
-      "tokens": [
-        {
-          "symbol": "axlUSDC",
-          "denom": "uusdc",
-          "description": "Axelar USDC",
-          "ibcDenom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
-          "coinDecimals": 6,
-          "isEVMNative": false,
-          "icon": "uausdc.logo.svg",
-          "fromImage": "uausdc.png",
-          "toImage": "suausdc.png",
-          "animation": "wrap/wrap-usdc.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlDAI",
-          "denom": "dai-wei",
-          "description": "Axelar DAI",
-          "ibcDenom": "ibc/0CD3A0285E1341859B5E86B6AB7682F023D03E97607CCC1DC95706411D866DF7",
-          "isEVMNative": false,
-          "coinDecimals": 18,
-          "icon": "dai.logo.svg",
-          "fromImage": "dai.png",
-          "toImage": "sdai.png",
-          "animation": "wrap/wrap-dai.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
-        {
-          "symbol": "axlWBTC",
-          "denom": "wbtc-satoshi",
-          "description": "Axelar Wrapped BTC",
-          "ibcDenom": "ibc/D1542AA8762DB13087D8364F3EA6509FD6F009A34F00426AF9E4F9FA85CBBF1F",
-          "coinDecimals": 8,
-          "isEVMNative": false,
-          "icon": "wbtc-satoshi.logo.svg",
-          "fromImage": "wbtc.png",
-          "toImage": "swbtc.png",
-          "animation": "wrap/wrap-btc.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlWETH",
-          "denom": "weth-wei",
-          "description": "Axelar Wrapped ETH",
-          "ibcDenom": "ibc/EA1D43981D5C9A1C4AAEA9C23BB1D4FA126BA9BC7020A25E0AE4AA841EA25DC5",
-          "coinDecimals": 18,
-          "isEVMNative": false,
-          "icon": "weth-wei.logo.svg",
-          "fromImage": "eth-wei.png",
-          "toImage": "seth-wei.png",
-          "animation": "wrap/wrap-eth.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        },
-        {
-          "symbol": "axlWBNB",
-          "denom": "wbnb-wei",
-          "description": "Axelar Wrapped BNB",
-          "ibcDenom": "ibc/F4A070A6D78496D53127EA85C094A9EC87DFC1F36071B8CCDDBD020F933D213D",
-          "coinDecimals": 18,
-          "isEVMNative": false,
-          "icon": "wbnb-wei.logo.svg",
-          "fromImage": "wbnb-wei.png",
-          "toImage": "swbnb-wei.png",
-          "animation": "wrap/wrap-bnb.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": ""
-        }
-      ]
-    },
-    {
       "name": "Arbitrum",
       "icon": "arbitrum.svg",
       "type": "evm",
+      "enableForMobile": false,      
       "chainInfo": {
         "chainId": "42161",
         "rpcUrls": ["https://arb1.arbitrum.io/rpc"],
@@ -789,6 +796,7 @@
       "name": "Polygon",
       "icon": "polygon.svg",
       "type": "evm",
+      "enableForMobile": false,      
       "chainInfo": {
         "chainId": "137",
         "rpcUrls": ["https://polygon-rpc.com/"],
