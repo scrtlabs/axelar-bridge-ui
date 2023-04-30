@@ -12,6 +12,14 @@ const getTokenViewingKey = async (contractAddress, chainId, retry) => {
   return viewingKey;
 };
 
+export const checkIfTokenInKeplr = async (chainId, contractAddress) => {
+  try {
+    await window.keplr.getSecret20ViewingKey(chainId, contractAddress);
+    return true;
+  } catch (err) {}
+  return false;
+}
+
 export const getTokenBalance = async (secretJS, contract, chainId, walletAddress, permit) => {
   if (permit) {
     const msg = {
