@@ -49,6 +49,15 @@
           <li>Sometimes relayers take their time to transfer packets from one network to another. Even if you receive timeout, the funds will make it to their destination, or in the worst case will go back to your account</li>
         </ul>
 
+        <h3 class="faq-title">Why wETH?</h3>
+        <ul class="faq-content">
+          <li>
+            When transferring saWETH to Ethereum, you can check the "Auto Unwrap" checkbox below the asset list.<br>If you forgot to check it, you will receive wETH on Ethereum.<br/>
+            You can unwrap the asset directly from the wETH contract on Ethereum. Axelar provides instructions on how to do it <a class="link-style" href="https://docs.axelar.dev/resources/wrapped-tokens" target="_blank">here</a>
+          </li>
+        </ul>
+
+
 
         <div style="height: 100px"></div>
       </div>

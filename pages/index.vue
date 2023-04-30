@@ -181,6 +181,15 @@
                   </template>
                   <span>This asset cannot be transferred to the selected network</span>
                 </v-tooltip>
+
+                <v-tooltip top v-if="tokenInKeplr !== -1">
+                  <template v-slot:activator="{ on, attrs }">
+                    <img :disabled="tokenInKeplr === true" @click="addAssetToKeplr" v-bind="attrs" v-on="on" :src="require('~/assets/wallets/kepler.logo.svg')" width="20" height="20" style="cursor: pointer; margin-top: 7px" :style="tokenInKeplr === true ? 'filter: grayscale(100%);' : ''" alt="keplr logo"/>
+                    <!-- <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon> -->
+                  </template>
+                  <span>{{ tokenInKeplr === true ? "Asset already in your Keplr wallet" : "Add asset to Keplr wallet" }}</span>
+                </v-tooltip>
+
               </div>
               <v-text-field
                 :disabled="transferInProgress"
@@ -325,6 +334,7 @@ import TokenSelector from '~/components/TokenSelector.vue';
 
 import _ from 'lodash';
 import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secretjs';
+import { checkIfTokenInKeplr } from '../store/token.js'
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'; // import lottie-vuejs
 import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } from '@axelar-network/axelarjs-sdk';
 const Web3 = require('web3');
@@ -667,8 +677,8 @@ export default {
       refreshBalance: false,
       autounwrap: false,
 
-      selfCheckApproved: false
-
+      selfCheckApproved: false,
+      tokenInKeplr: -1
     };
   },
   watch: {
@@ -686,6 +696,14 @@ export default {
 
       let limit = await this.getMaxTransfer();
       this.maxTransfer = limit.display;
+
+      if (token && token.SNIP20_address !== "") {
+        this.tokenInKeplr = await checkIfTokenInKeplr(this.fromChain.chainInfo.chainId, token.SNIP20_address);
+        console.log("this.tokenInKeplr = ", this.tokenInKeplr);
+      } else {
+        this.tokenInKeplr = -1;
+      }
+
     },
 
     tokenBalance(newBalance, oldBalance) {
@@ -882,6 +900,18 @@ export default {
 
 
     /******* AXELAR *******/
+
+    async addAssetToKeplr() {
+      if (this.tokenInKeplr === false) {
+        await window.keplr.suggestToken(this.fromChain.chainInfo.chainId, this.selectedToken.SNIP20_address);
+        try {
+          this.tokenInKeplr = await checkIfTokenInKeplr(this.fromChain.chainInfo.chainId, this.selectedToken.SNIP20_address);
+        } catch (err) {
+          console.log(err);
+          this.tokenInKeplr = -1;
+        }
+      }
+    },
 
     autoFill() {
       if (this.toChain.type === "evm" && this.isMMConnected) { // EVM
