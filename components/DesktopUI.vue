@@ -40,6 +40,20 @@
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
           </div>
 
+          <div :style="styleSurgeObject" class="wallet-item">
+            <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px;">
+              Surge
+              <img :src="require('~/assets/images/surge-icon.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
+            </div>
+            <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
+              <v-btn @click="goToWeb('https://app.shadeprotocol.io/swap/pools')" >Shade</v-btn>
+              <v-btn @click="goToWeb('https://blizzard.finance/')" >Blizzard</v-btn>
+              <v-btn @click="goToWeb('https://app.sienna.network/swap/pool')">Sienna</v-btn>
+              <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
+            </div>
+            <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
+          </div>          
+
         </div>
 
         <div style="position: absolute; top: -30px; right: -150px; z-index: 1">
@@ -163,6 +177,16 @@
                   </template>
                   <span>This asset cannot be transferred to the selected network</span>
                 </v-tooltip>
+
+                <v-tooltip top v-if="tokenInKeplr !== -1">
+                  <template v-slot:activator="{ on, attrs }">
+                    <img :disabled="tokenInKeplr === true" @click="addAssetToKeplr" v-bind="attrs" v-on="on" :src="require('~/assets/wallets/kepler.logo.svg')" width="20" height="20" style="cursor: pointer; margin-top: 7px" :style="tokenInKeplr === true ? 'filter: grayscale(100%);' : ''" alt="keplr logo"/>
+                    <!-- <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon> -->
+                  </template>
+                  <span>{{ tokenInKeplr === true ? "Asset already in your Keplr wallet" : "Add asset to Keplr wallet" }}</span>
+                </v-tooltip>
+
+
               </div>
               <v-text-field
                 :disabled="transferInProgress"
@@ -309,6 +333,10 @@ export default {
   name: "DesktopUI",
   mixins: [mainMixin],  
   components: { SubChainSelector, TokenSelector },
+  data() {
+    return {
+    }
+  }  
 };
 </script>
 

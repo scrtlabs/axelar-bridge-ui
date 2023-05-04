@@ -10,6 +10,7 @@ import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secret
 import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } from '@axelar-network/axelarjs-sdk';
 import commonMixin from './commonMixin';
 //const Web3 = require('web3');
+import { checkIfTokenInKeplr } from '../store/token.js'
 
 var mixin = {
   mixins: [commonMixin],
@@ -191,6 +192,22 @@ var mixin = {
       };
     },
 
+    styleSurgeObject() {
+      return {
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "flex-start",
+        "align-items": "flex-end",
+        '--width': '42px',
+        '--width-hover': '150px',
+        '--overflow': 'hidden',
+        '--overflow-hover': 'none',
+        '--height': '40px',
+        '--height-hover': '230px'
+      };
+    },    
+
+
     disableUI() {
       return !this.isKeplrConnected; // || !this.isMMConnected;
     },
@@ -341,7 +358,10 @@ var mixin = {
       refreshBalance: false,
       autounwrap: false,
 
-      selfCheckApproved: false
+      selfCheckApproved: false,
+
+      tokenInKeplr: -1
+
 
     };
   },
@@ -360,6 +380,13 @@ var mixin = {
 
       let limit = await this.getMaxTransfer();
       this.maxTransfer = limit.display;
+
+      if (token && token.SNIP20_address !== "") {
+        this.tokenInKeplr = await checkIfTokenInKeplr(this.fromChain.chainInfo.chainId, token.SNIP20_address);
+      } else {
+        this.tokenInKeplr = -1;
+      }
+
     },
 
     tokenBalance(newBalance, oldBalance) {
@@ -558,6 +585,19 @@ var mixin = {
 
     /******* AXELAR *******/
 
+    async addAssetToKeplr() {
+      if (this.tokenInKeplr === false) {
+        await window.keplr.suggestToken(this.fromChain.chainInfo.chainId, this.selectedToken.SNIP20_address);
+        try {
+          this.tokenInKeplr = await checkIfTokenInKeplr(this.fromChain.chainInfo.chainId, this.selectedToken.SNIP20_address);
+        } catch (err) {
+          console.log(err);
+          this.tokenInKeplr = -1;
+        }
+      }
+    },
+
+
     autoFill() {
       if (this.toChain.type === "evm" && this.isMMConnected) { // EVM
         this.destinationAddress = this.MMAccounts[0];
@@ -685,6 +725,11 @@ var mixin = {
     goToAxelar() {
       window.open(`${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}s`, '_blank');
     },
+
+    goToWeb(url) {
+      window.open(url, '_blank');
+    },
+
 
     async getBalance() {
       try {

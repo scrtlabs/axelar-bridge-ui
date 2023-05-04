@@ -72,6 +72,16 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog  v-model="showSurge" width="601" height="338">
+      <div class="surge-ad">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <div><v-btn large color="red" style="margin-top: 200px; font-size: 16px; border-radius: 10px;" @click="goToWeb('https://scrt.network/secret-surge')">Learn More</v-btn></div>
+          <div style="margin-top: 10px; padding-top: 2px; padding-bottom: 2px; padding-left: 5px; padding-right: 5px; background-color: black;"><a @click="closeAd()" style="color: white; font-weight: bold; font-size: 14px;">Close</a></div>
+        </div>
+      </div>
+    </v-dialog>
+
+
     <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
         <div style="flex: 1; margin-left: 10px ">Version: {{ version }}</div>
@@ -93,12 +103,38 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'DefaultLayout',
+  created() {
+    if (window.localStorage.getItem('Surge_dontshow')) {
+      this.showSurge = false;
+    } else {
+      this.showSurge = true;
+    }
+  },
   data() {
     return {
       dialog: false,
-      version: "0.2.2"
+      version: "0.2.2",
+      showSurge: false
     };
   },
+  watch: {
+    showSurge(value) {
+      if (value === false) {
+        window.localStorage.setItem('Surge_dontshow', 1);
+      }
+    }
+  },
+  methods: {
+    goToWeb(url) {
+      window.open(url, '_blank');
+      this.closeAd();
+    },
+    closeAd() {
+      this.showSurge = false;
+      window.localStorage.setItem('Surge_dontshow', 1);
+    }
+  },
+
   computed: {
     ...mapGetters({
       isMobile: 'isMobile'
@@ -181,4 +217,14 @@ body {
   font-display: swap;
   unicode-range: U+0000-00FF;
 }
+
+.surge-ad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 600px; height: 338px; background-color: red; border-radius: 15px;
+  border: 3px dashed white;
+  background: url('~/assets/images/surge-ad.jpg') no-repeat center top transparent;  
+}
+
 </style>
