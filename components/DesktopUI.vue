@@ -1,0 +1,737 @@
+<template>
+  <div>
+    <div
+      class="main"
+      style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
+    >
+      <lottie-wrapper
+        style="position: absolute; top: 410px; left: 90px; z-index: 2"
+        :speed="0.5"
+        :height="200"
+        :path="require('../assets/animations/flame.json')"
+      />
+      <div class="mountain"></div>
+
+      <div class="main-section-wrapper">
+        <div class="wallet-item-container">
+          <div :style="styleObject" class="wallet-item" @click="connect()">
+            Keplr
+            <img :src="require('~/assets/wallets/kepler.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" alt="keplr logo"/>
+            <div :class="isKeplrConnected ? 'green-dot' : 'red-dot'"></div>
+          </div>
+
+          <div :style="styleObject" class="wallet-item" @click="connectMM()">
+            MetaMask
+            <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" alt="metamask logo"/>
+            <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
+          </div>
+
+          <div :style="styleTroubleshootingObject" class="wallet-item">
+            <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px">
+              Help
+              <img :src="require('~/assets/images/info-icon.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
+            </div>
+            <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
+              <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
+              <v-btn @click="goToAxelar" >Axelarscan</v-btn>
+              <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <v-btn @click="switchSite" :color="isTestnet ? '#892323' : '#61a722'" >{{ isTestnet ? "MAINNET" : "TESTNET" }}</v-btn>
+            </div>
+            <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
+          </div>
+
+          <div :style="styleSurgeObject" class="wallet-item">
+            <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px;">
+              Surge
+              <img :src="require('~/assets/images/surge-icon.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
+            </div>
+            <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
+              <v-btn @click="goToWeb('https://app.shadeprotocol.io/swap/pools')" >Shade</v-btn>
+              <v-btn @click="goToWeb('https://blizzard.finance/')" >Blizzard</v-btn>
+              <v-btn @click="goToWeb('https://app.sienna.network/swap/pool')">Sienna</v-btn>
+              <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
+            </div>
+            <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
+          </div>          
+
+        </div>
+
+        <div style="position: absolute; top: -30px; right: -150px; z-index: 1">
+          <lottie-wrapper
+            v-if="showArrowComputed"
+            style="filter: invert(48%); transform: scaleX(-1); z-index: 2"
+            :speed="1"
+            :height="200"
+            :loop="false"
+            :path="require('../assets/animations/arrow.json')"
+          />
+          <transition name="fade">
+            <img
+              v-show="showArrowText && showArrowComputed"
+              style="position: absolute; filter: invert(48%); top: 135px; left: 75px; width: 150px"
+              :src="require('~/assets/animations/connect-wallets.webp')"
+              alt="arrow pointing to connect wallet buttons"
+            />
+          </transition>
+        </div>
+
+        <template v-if="selectedToken">
+          <div class="input-coin" id="input-coin">
+            <img :src="require('~/assets/tokens/3d/input/' + selectedToken.fromImage)" style="width: 100px" alt="token used to animate source network"/>
+          </div>
+
+          <div class="output-coin" id="output-coin">
+            <img :src="require('~/assets/tokens/3d/output/' + selectedToken.toImage)" style="width: 90px" alt="token used to animate destination network" />
+          </div>
+        </template>
+
+        <div class="right-cave" />
+        <div class="left-cave" />
+
+        <div class="input-sign" v-if="fromChain != undefined">
+          <svg
+            version="1.1"
+            id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 185 156"
+            style="enable-background: new 0 0 185 156"
+            xml:space="preserve"
+          >
+            <style type="text/css">
+              .st0 {
+                fill: none;
+                stroke: none;
+                stroke-miterlimit: 10;
+              }
+            </style>
+            <path id="SVGID_x5F_1_x5F_" class="st0" d="M27.8,61.3c64.5-16.4,129.5-5.4,129.5-5.4" />
+            <text>
+              <textPath class="input-name" xlink:href="#SVGID_x5F_1_x5F_" startOffset="5.0884%">{{ shortNetworkName(fromChain.name) }}</textPath>
+            </text>
+          </svg>
+
+          <!-- <div class="input-name"> {{ fromChain.name }}</div> -->
+        </div>
+        <div class="output-sign" v-if="toChain != undefined">
+          <svg version="1.1" x="0px" y="0px" viewBox="0 0 185 156" style="enable-background: new 0 0 185 156" xml:space="preserve">
+            <style type="text/css">
+              .st1 {
+                fill: red;
+                stroke: none;
+                stroke-miterlimit: 10;
+              }
+            </style>
+            <path id="SVGID_x5F_1_x5F_2" class="st0" d="M35.6,56.1c32.1-5.9,111.6-1.5,133,4.7" />
+            <text>
+              <textPath class="output-name" startOffset="27.4042%" href="#SVGID_x5F_1_x5F_2">{{ shortNetworkName(toChain.name) }}</textPath>
+            </text>
+          </svg>
+        </div>
+
+        <div class="testnet-indicator" v-if="isTestnet">TESTNET</div>
+        <!-- <div class="testnet-indicator" style="width: 180px" v-else>!! MAINNET - REAL MONEY !!</div> -->
+        <div class="main-section">
+          <div class="main-section-tab"  :style="tabStyleObject">
+          <div v-if="disableUI" class="main-section-disable"></div>
+          <!-- From & To Start -->
+          <div style="background-color: transparent; display: flex; justify-content: space-between; width: 100%; gap: 10px">
+            <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
+              <sub-chain-selector :disabled="transferInProgress" lable="From" v-model="fromChain" :chains="availableChains[fromChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+            </div>
+
+            <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
+              <v-btn @click="swapChains(true)" :disabled="disableUI" icon width="70" height="70">
+                <img :src="require('~/assets/images/swap-button.webp')" width="60" height="60" alt="swap token button" />
+              </v-btn>
+            </div>
+
+            <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
+              <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="availableChains[toChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+            </div>
+          </div>
+          <!-- From & To End -->
+
+          <div v-if="fromChain != null" class="assets-to-transfer" style="">
+            <div style="display: flex; justify-content: space-between">
+              <div style="font-family: 'BalsamiqSans-Regular">Asset to transfer:</div>
+              <div>
+                <v-btn :disabled="transferInProgress || getNormalizedCurrentBalance == -1 " dense x-small @click="amount = getNormalizedCurrentBalance">MAX</v-btn>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 10px">
+              <div style="display: flex; align-items: flex-start; gap: 10px">
+                <token-selector :disabled="transferInProgress" :tokens="fromChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" :to="toChain" style="max-width: 200px"></token-selector>
+                <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
+                  </template>
+                  <span>This asset can be auto-unwrap to native coin</span>
+                </v-tooltip>
+
+                <v-tooltip top  v-if="!isValidTransferAsset">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon style="margin-top: 5px" color="orange" v-bind="attrs" v-on="on">mdi-alert-rhombus</v-icon>
+                  </template>
+                  <span>This asset cannot be transferred to the selected network</span>
+                </v-tooltip>
+
+                <v-tooltip top v-if="tokenInKeplr !== -1">
+                  <template v-slot:activator="{ on, attrs }">
+                    <img :disabled="tokenInKeplr === true" @click="addAssetToKeplr" v-bind="attrs" v-on="on" :src="require('~/assets/wallets/kepler.logo.svg')" width="20" height="20" style="cursor: pointer; margin-top: 7px" :style="tokenInKeplr === true ? 'filter: grayscale(100%);' : ''" alt="keplr logo"/>
+                    <!-- <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon> -->
+                  </template>
+                  <span>{{ tokenInKeplr === true ? "Asset already in your Keplr wallet" : "Add asset to Keplr wallet" }}</span>
+                </v-tooltip>
+
+
+              </div>
+              <v-text-field
+                :disabled="transferInProgress"
+                class="right-input number-input"
+                type="number"
+                style="max-width: 150px; font-family: 'BalsamiqSans-Regular' !important"
+                color="orange"
+                background-color="rgba(0,0,0,0.5)"
+                label="Amount"
+                solo
+                flat
+                v-model="amount"
+                dense
+                 @focus="$event.target.select()"
+                :suffix="selectedToken == null ? 'unknown' : selectedToken.symbol"
+              ></v-text-field>
+            </div>
+            <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px; overflow: hidden">
+                <div v-if="selectedToken && selectedToken.allow_autounwap">
+                  <v-checkbox color="green" dense :ripple="false" hide-details style="margin-top: -8px;" v-model="autounwrap">
+                    <template v-slot:label>
+                      <span style="font-size: 12px">Auto Unwrap</span>
+                    </template>
+                  </v-checkbox>
+                </div>
+                <div v-else></div>
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden">
+                  <div>Balance: </div>
+                  <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>
+                  <div v-if="refreshBalance">
+                    <lottie-wrapper
+                      style="z-index: 2"
+                      :speed="1"
+                      :height="20"
+                      :path="require('../assets/animations/wait.json')"
+                    />
+                  </div>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon dense x-small v-bind="attrs" v-on="on" @click="getBalance">
+                        <v-icon size="16">mdi-refresh</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Refresh balance</span>
+                  </v-tooltip>
+                </div>
+              </div>
+            </div>
+            <div style="padding-top: 10px">
+              <div style="margin-bottom: 5px; font-family: 'BalsamiqSans-Regular">From address: {{ fromAccountName }}</div>
+              <div>
+                <v-text-field disabled class="address-input pa-0 ma-0" color="orange" flat dense label="" :value="sourceAddress" spellcheck="false"></v-text-field>
+              </div>
+              <div style="margin-bottom: 5px; font-family: 'BalsamiqSans-Regular">To address:</div>
+              <div>
+                <v-text-field
+                  :disabled="transferInProgress"
+                  class="address-input pa-0 ma-0"
+                  background-color="rgb(54, 53, 73)"
+                  color="orange"
+                  flat
+                  dense
+                  label=""
+                  ref="destinationAddress"
+                  v-model="destinationAddress"
+                  spellcheck="false"
+                >
+                <v-btn :disabled="transferInProgress" slot="append" style="margin-top: 5px; margin-right: 8px" x-small @click="autoFill">Auto Fill</v-btn>
+                </v-text-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="transfer-info">
+            <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px; font-family: 'BalsamiqSans-Regular">Info:</div>
+            <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
+            <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
+            <div v-if="!transferInProgress && maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
+            <div style="font-size: 14px;" v-html="axelarStatus"></div>
+            <div v-if="tx == ''"></div>
+            <div v-else>
+              {{ tx }}
+              <br />
+              {{ ibcTx }}
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
+              <template v-slot:label>
+                <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>
+              </template>
+            </v-checkbox>
+
+            <div v-if="!isMetaMaskChainCorrect" class="error-styling">
+              Metamask doesn't match selected network<br>Please change it manually
+            </div>
+
+            <div v-if="info_error != ''" class="error-styling">
+              <v-icon size="16" color="error">mdi-alert</v-icon> {{ info_error }}
+            </div>
+          </div>
+
+          <div v-if="showProcessAnimation">
+            <lottie-wrapper
+              style="z-index: 2"
+              :speed="1"
+              :height="100"
+              :path="require('../assets/animations/processing.json')"
+            />
+          </div>
+
+          <div v-if="showWrapAnimation">
+            <lottie-wrapper
+              style="z-index: 20"
+              :speed="1"
+              :width="100"
+              :height="100"
+              :loop="false"
+              :path="require('../assets/animations/' + selectedToken.animation)"
+            />
+          </div>
+          </div>
+          <div class="main-section-tab" style="background-color: transparent">
+            <faq @hide="page = 0"></faq>
+          </div>
+        </div>
+      </div>
+      <fire-fly></fire-fly>
+    </div>
+  </div>
+</template>
+
+<script>
+import SubChainSelector from '~/components/SubChainSelector.vue';
+import TokenSelector from '~/components/TokenSelector.vue';
+
+import mainMixin from '../mixins/mainMixin';
+
+
+export default {
+  name: "DesktopUI",
+  mixins: [mainMixin],  
+  components: { SubChainSelector, TokenSelector },
+  data() {
+    return {
+    }
+  }  
+};
+</script>
+
+<style scoped>
+.main {
+  /* background-color: transparent !important; */
+}
+
+.input-coin {
+  position: absolute;
+  left: -200px;
+  bottom: 320px;
+  opacity: 0;
+}
+
+.output-coin {
+  position: absolute;
+  right: 200px;
+  bottom: 270px;
+  opacity: 0;
+}
+
+.input-coin-start {
+  animation: input-coin-anim 2s linear;
+}
+
+.output-coin-start {
+  animation: output-coin-anim 2s linear;
+}
+
+@keyframes input-coin-anim {
+  0% {
+    transform: translate(0px, 250px);
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  90.1% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(400px, 0px);
+    opacity: 0;
+  }
+}
+
+@keyframes output-coin-anim {
+  0% {
+    transform: translate(0px, 0px);
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(430px, 250px);
+    opacity: 0;
+  }
+}
+
+.wallet-item-container {
+  position: absolute;
+  top: 40px;
+  left: 847px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-item {
+  position: relative;
+  cursor: pointer;
+  width: var(--width);
+  height: var(--height);
+  margin-bottom: 10px;
+  z-index: 2;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+  transition-duration: 0.3s;
+  border-radius: 0 10px 10px 0;
+  font-family: 'Banana';
+
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(7px);
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  overflow: var(--overflow);
+}
+
+.wallet-item:hover {
+  width: var(--width-hover);
+  height: var(--height-hover);
+  overflow: var(--overflow-hover);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.styled-button {
+  background: linear-gradient(90deg, #ea7534 0%, #7ec9cf 100%) !important;
+  width: 230px;
+  height: 48px;
+  color: white;
+  font-size: 16px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.testnet-indicator {
+  position: absolute;
+  top: -30px;
+  height: 25px;
+  width: 70px;
+  background-color: rgb(158, 4, 4);
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-section-wrapper {
+  position: relative;
+  top: 130px;
+  width: 1095px;
+  min-height: 889px !important;
+  flex-direction: column;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.main-section-tab {
+  width: 600px;
+  height: 670px !important;
+  position: relative;
+  padding: 20px;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+  transition-duration: 0.5s;
+}
+
+.main-section {
+  width: 600px !important;
+  height: 670px !important;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+
+
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(7px);
+  overflow: hidden;
+}
+
+.main-section-disable {
+  position: absolute;
+  width: 600px;
+  height: 670px;
+  background-color: rgba(0, 0, 0, 0.6);
+  opacity: 0.4;
+  z-index: 2;
+  margin-top: -20px;
+  margin-left: -20px;
+  border-radius: 20px;
+  border-color: white;
+  border-style: dashed;
+  backdrop-filter: blur(7px);
+}
+
+.assets-to-transfer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: rgba(20, 25, 36, 0.7);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 0 2px #000;
+}
+
+.transfer-info {
+  position: relative;
+  /*font-family: 'BalsamiqSans-Regular';*/
+  margin-top: 20px;
+  width: 100%;
+  background-color: rgba(100, 100, 100, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 0 2px #000;
+
+  min-height: 105px;
+}
+
+.right-cave {
+  position: absolute;
+  z-index: 5;
+  bottom: 149px;
+  right: 146px;
+  background: url('~/assets/images/right-cave.webp') no-repeat center center;
+  width: 176px;
+  height: 319px;
+}
+
+.left-cave {
+  position: absolute;
+  z-index: 5;
+  bottom: 180px;
+  left: 143px;
+  background: url('~/assets/images/left-cave.webp') no-repeat center center;
+  width: 143px;
+  height: 272px;
+}
+
+.input-sign {
+  position: absolute;
+  z-index: 5;
+  bottom: 252px;
+  left: -60px;
+  /* background: url('~/assets/images/input-sign.png') no-repeat center center;  */
+  width: 185px;
+  height: 156px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.input-sign .input-name {
+  font-family: 'Banana';
+  color: black;
+  font-size: 22px;
+}
+
+.output-sign {
+  position: absolute;
+  z-index: 1;
+  bottom: 230px;
+  right: -30px;
+  /* background: url('~/assets/images/output-sign.png') no-repeat center center;  */
+  width: 185px;
+  height: 156px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.output-sign .output-name {
+  font-family: 'Banana';
+  color: black;
+  font-size: 22px;
+}
+
+>>> .right-input input::selection {
+  background-color: #ff8c00;
+}
+
+>>> .right-input input {
+  text-align: right;
+}
+
+.address-input >>> input::selection {
+  background-color: #ff8c00;
+}
+
+.address-input {
+  border-radius: 10px !important;
+}
+
+.address-input >>> input {
+  padding: 10px !important;
+  background-color: rgb(54, 53, 73) !important;
+  border-radius: 10px !important;
+}
+
+.address-input >>> .v-input__slot::before {
+  border-style: none !important;
+}
+
+.address-input >>> .v-input__slot::after {
+  border-style: none !important;
+}
+
+/* Hide the arrows of number field */
+.number-input >>> input::-webkit-outer-spin-button,
+.number-input >>> input::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.connect-wallet-section {
+  width: 600px !important;
+  text-align: left;
+  margin-bottom: 10px;
+
+  z-index: 2;
+}
+
+.wallet-menu-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.red-dot {
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 5px;
+  background-color: red;
+  margin-right: 10px;
+}
+
+.green-dot {
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 5px;
+  background-color: green;
+  margin-right: 10px;
+}
+
+.mountain {
+  position: absolute;
+  top: 0px;
+  /* width: 1095px; */
+  width: 1205px;
+  min-height: 899px !important;
+  height: 899px !important;
+  background: url('~/assets/images/mountain-bg.webp') no-repeat center top transparent;
+  z-index: 0;
+}
+</style>
+
+<style scoped>
+.main-section-wrapper-mobile {
+  width: 100vw;
+  /* min-height: 889px !important; */
+  flex-direction: column;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.assets-to-transfer-mobile {
+  width: 90%;
+  height: 300px;
+  overflow-y: scroll;
+  font-family: 'BalsamiqSans-Regular' !important;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-radius: 15px;
+  padding: 0px;
+  box-shadow: inset 0 0 2px #000;
+}
+
+.error-styling {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  margin-top: 4px;
+  color: rgb(226, 76, 76);
+  font-weight: bold;
+  text-align: center;
+}
+</style>

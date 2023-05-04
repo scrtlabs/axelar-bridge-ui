@@ -80,7 +80,7 @@
         </div>
       </div>
     </v-dialog>
-    
+
 
     <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
@@ -107,13 +107,17 @@ export default {
     if (window.localStorage.getItem('Surge_dontshow')) {
       this.showSurge = false;
     } else {
-      this.showSurge = true;
+      if (!this.isMobile) {
+        this.showSurge = true;
+      }
+
+      
     }
   },
   data() {
     return {
       dialog: false,
-      version: "0.2.2",
+      version: "0.3.0",
       showSurge: false
     };
   },
@@ -134,6 +138,7 @@ export default {
       window.localStorage.setItem('Surge_dontshow', 1);
     }
   },
+
   computed: {
     ...mapGetters({
       isMobile: 'isMobile'
@@ -225,4 +230,5 @@ body {
   border: 3px dashed white;
   background: url('~/assets/images/surge-ad.jpg') no-repeat center top transparent;  
 }
+
 </style>
