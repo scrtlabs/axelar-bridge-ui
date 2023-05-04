@@ -1,12 +1,42 @@
 <template>
-  <div class="main-section-wrapper-mobile">
+  <div class="main-section-wrapper-mobile mx-auto overflow-hidden">
+    <v-app-bar-nav-icon @click.stop="drawer = !drawer" style="position: absolute; left: 2px; top: 2px"></v-app-bar-nav-icon>
+    <v-navigation-drawer
+      v-model="drawer"
+      absolute
+      left
+      temporary
+      style="z-index: 99999"
+    >
+      <v-list
+        nav
+        dense
+      >
+        <v-list-item-group
+          active-class=""
+        >
+          <v-list-item>
+            <v-list-item-title @click="clearPermit">
+              <!-- <v-btn  :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn> -->
+              {{ clearPermitText }}
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-title>FAQ</v-list-item-title>
+          </v-list-item>
+
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+
     <div>
       <img :src="require('~/assets/images/mobile-title.webp')" />
     </div>
 
-    <div style="">
+    <!-- <div style="">
       <v-btn @click="connect()">Connect</v-btn>
-    </div>
+    </div> -->
 
     <!-- TODO: Add -->
     <!-- <div class="wallet-item-container">
@@ -25,14 +55,18 @@
         <!-- <template v-for="(chain, chainIdx) in availableChains[fromChainKey]"> -->
           <v-list-group active-class="orange--text" v-for="(chain, chainIdx) in filteredChains" value="" :key="'chain-title-' + chainIdx">
             <template v-slot:activator>
-              <v-list-item-title>{{ chain.name }}</v-list-item-title>
+              <v-list-item-title dense>
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                  {{ chain.name }}
+                  <img v-if="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId" :src="require('~/assets/tokens/' + selectedToken.icon)" :width="24" :height="24" />
+                </div>
+                
+              </v-list-item-title>
             </template>
             <template v-slot:prependIcon>
-              <img :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
+              <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
             </template>
-
-
-            <v-list-item v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index">
+            <v-list-item v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
               <v-list-item-icon>
                 <img :src="require('~/assets/tokens/' + token.icon)" :width="itemIconSize" :height="itemIconSize" />
               </v-list-item-icon>
@@ -47,27 +81,43 @@
       </v-list>
     </div>
 
-    <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="availableChains[toChainKey]" :icon-size="itemIconSize" style="width: 90%"></sub-chain-selector>
+    <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="toChainsForMobile" :icon-size="itemIconSize" style="width: 90%"></sub-chain-selector>
 
-    <div v-if="fromChain != null" class="" style="margin-top: 10px; width: 90%; font-family: 'BalsamiqSans-Regular' !important">
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 5px">
+    <div v-if="fromChain != null" class="" style="margin-top: -10px;  width: 90%; font-family: 'BalsamiqSans-Regular' !important">
+      <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;">
         <v-text-field
           class="right-input number-input"
           type="number"
-          style="max-width: 200px"
+          pattern="[\d\.]*"
+          style="width: 100%"
           color="orange"
-          background-color=""
+          background-color="black"
           label="Amount"
           solo
           flat
           v-model="amount"
           dense
+          hide-details="true"
+          @focus="$event.target.select()"
           :suffix="selectedToken == null ? 'unknown' : selectedToken.symbol"
         >
           <v-btn slot="append" dense x-small @click="amount = getNormalizedCurrentBalance">MAX</v-btn>
         </v-text-field>
-        <div style="margin-top: -26px"></div>
-        <div v-if="true" style="margin-top: -26px">Balance: {{ showCurrentBalance }}</div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden;">
+          <div>Balance: </div>
+          <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>
+          <div v-if="refreshBalance" style="width: 20px">
+            <lottie-wrapper
+              style="z-index: 2"
+              :speed="1"
+              :height="20"
+              :path="require('../assets/animations/wait.json')"
+            />
+          </div>
+          <v-btn icon dense x-small @click="getBalance">
+            <v-icon size="16">mdi-refresh</v-icon>
+          </v-btn>
+        </div>
       </div>
 
       <div>
@@ -88,6 +138,20 @@
           ></v-text-field>
         </div>
       </div>
+
+      <div style="padding-bottom: 20px; margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+        <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
+          <template v-slot:label>
+            <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>
+          </template>
+        </v-checkbox>
+
+        <div v-if="info_error != ''" class="error-styling">
+          <v-icon size="16" color="error">mdi-alert</v-icon> {{ info_error }}
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -101,6 +165,7 @@ export default {
   components: {  },
   data() {
     return {
+      drawer: false,
       search: '',
       signClient: null,
       web3Modal: null,
@@ -194,6 +259,10 @@ export default {
     chainsForMobile() {
       return this.allChains.filter(chain => chain.enableForMobile === true);
     },
+    toChainsForMobile() {
+      return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+    },
+
     filteredChains() {
       if (!this.search) {
         return this.chainsForMobile;
@@ -270,9 +339,13 @@ export default {
     },
     testClick(token, chainId) {
       if (chainId != this.fromChain.chainInfo.chainId) {
-        this.swapChains(false);
+        this.swapChains(true);
+      } else {
+        console.log("---")
+        console.log(token)
+        console.log("---")
+        this.selectedToken = token;
       }
-      this.selectedToken = token;
     },    
   }
 };
@@ -637,7 +710,7 @@ export default {
 
 .assets-to-transfer-mobile {
   width: 90%;
-  height: 220px;
+  height: 230px;
   overflow-y: scroll;
   /* font-family: 'BalsamiqSans-Regular' !important; */
   background-color: rgba(50, 50, 50, 0.7);

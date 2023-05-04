@@ -34,7 +34,7 @@ var mixin = {
 
         self.getBalance();
 
-        if (self.isMobile) {
+        if (self.isMobile && self.selectedToken === null) {
           self.selectedToken = self.fromChain.tokens[0];
         }
       });
@@ -109,7 +109,7 @@ var mixin = {
       });
 
       var connectedBefore = window.localStorage.getItem('connectedBefore');
-      if (connectedBefore) {
+      if (connectedBefore || this.isMobile) {
         this.connect();
         //this.connectMM();
       } else {
@@ -281,7 +281,7 @@ var mixin = {
     isValidTransferAsset() {
       if (this.selectedToken) {
         for (let i = 0; i < this.toChain.tokens.length; i++) {
-          if (this.toChain.tokens[i].denom.indexOf(this.selectedToken.denom) != -1 ) {
+          if (this.toChain.tokens[i].denom.indexOf(this.selectedToken.denom) !== -1 ) {
             return true;
           }
         }
