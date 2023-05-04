@@ -1039,7 +1039,6 @@ var mixin = {
 
           this.axelarStatus = "Transaction was submitted, please wait..."
           this.animateInput();
-
           this.tx = '';
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
@@ -1068,6 +1067,7 @@ var mixin = {
           }
           this.animateProcessing();
         } catch (err) {
+          alert(err);
           this.tx = undefined;
           this.ack = -1;
           this.ibcTx = '';

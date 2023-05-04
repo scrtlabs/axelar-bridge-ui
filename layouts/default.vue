@@ -107,13 +107,17 @@ export default {
     if (window.localStorage.getItem('Surge_dontshow')) {
       this.showSurge = false;
     } else {
-      this.showSurge = true;
+      if (!this.isMobile) {
+        this.showSurge = true;
+      }
+
+      
     }
   },
   data() {
     return {
       dialog: false,
-      version: "0.2.2",
+      version: "0.3.0",
       showSurge: false
     };
   },

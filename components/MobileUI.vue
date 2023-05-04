@@ -1,5 +1,6 @@
 <template>
   <div class="main-section-wrapper-mobile mx-auto overflow-hidden">
+    <div style="height: 20px"></div>
     <v-app-bar-nav-icon @click.stop="drawer = !drawer" style="position: absolute; left: 2px; top: 2px"></v-app-bar-nav-icon>
     <v-navigation-drawer
       v-model="drawer"
@@ -17,7 +18,6 @@
         >
           <v-list-item>
             <v-list-item-title @click="clearPermit">
-              <!-- <v-btn  :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn> -->
               {{ clearPermitText }}
             </v-list-item-title>
           </v-list-item>
@@ -34,21 +34,8 @@
       <img :src="require('~/assets/images/mobile-title.webp')" />
     </div>
 
-    <!-- <div style="">
-      <v-btn @click="connect()">Connect</v-btn>
-    </div> -->
-
-    <!-- TODO: Add -->
-    <!-- <div class="wallet-item-container">
-      <div :style="styleObject2" class="wallet-item">
-        Connect Wallet
-        <img :src="require('~/assets/wallets/metamask.logo.svg')" width="24" height="24" style="margin-left: 10px; margin-right: 5px" alt="metamask logo"/>
-        <div :class="isMMConnected ? 'green-dot' : 'red-dot'"></div>
-      </div>    
-
-    </div> -->
-
-    <div class="assets-to-transfer-mobile">
+    <template v-if="isFina">
+      <div class="assets-to-transfer-mobile">
       <div style="margin-top: 5px; margin-left: 10px; font-size: 14px">Asset to transfer:</div>      
       <v-text-field hide-details="true" v-model="search" label="Search" clearable style="padding-left: 10px; padding-right: 10px"></v-text-field>
       <v-list v-if="fromChain != null" style="background-color: transparent">
@@ -139,6 +126,20 @@
         </div>
       </div>
 
+      <div class="transfer-info">
+        <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px; font-family: 'BalsamiqSans-Regular">Info:</div>
+        <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
+        <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
+        <div v-if="!transferInProgress && maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
+        <div style="font-size: 14px;" v-html="axelarStatus"></div>
+        <div v-if="tx == ''"></div>
+        <div v-else>
+          {{ tx }}
+          <br />
+          {{ ibcTx }}
+        </div>
+      </div>
+
       <div style="padding-bottom: 20px; margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
         <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
         <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
@@ -152,11 +153,51 @@
         </div>
       </div>
 
+      <div v-if="showProcessAnimation">
+        <lottie-wrapper
+          style="z-index: 2"
+          :speed="1"
+          :height="100"
+          :path="require('../assets/animations/processing.json')"
+        />
+      </div>
+
+      <div v-if="showWrapAnimation">
+        <lottie-wrapper
+          style="z-index: 20"
+          :speed="1"
+          :width="100"
+          :height="100"
+          :loop="false"
+          :path="require('../assets/animations/' + selectedToken.animation)"
+        />
+      </div>
+
+
     </div>
+
+    </template>
+    <template v-else>
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="font-size: 16px; text-align: center; margin-bottom: 10px">
+          To use Secret Tunnel with mobile device,<br>please use Fina Wallet
+        </div>
+        <v-btn v-if="isFina === false" @click="goToFina"><img :src="require('~/assets/images/fina.webp')" style="width: 24px; height: 24px; margin-right: 10px"/>Go To Fina</v-btn>
+        <div style="font-size: 16px; text-align: center; margin-top: 10px">
+          For better experience, we recommand to use the desktop version
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
+const fallbackURLAndroid = "https://play.google.com/store/apps/details?id=com.fina.secret&hl=en&gl=US";
+const fallbackURLiOS = "https://apps.apple.com/us/app/fina-wallet/id1636168233";
+
+const isAndroid = /Android/i.test(navigator.userAgent);
+const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 import mainMixin from '../mixins/mainMixin';
 
 export default {
@@ -186,76 +227,15 @@ export default {
   mounted() {
     var self = this;
     this.$nextTick(async () => {
-
-      // self.provider = new WalletConnectProvider({
-      //   rpc: {
-      //     1: "https://mainnet.infura.io/v3/",
-      //     56: "https://bsc-dataseed.binance.org/",
-      //   },
-      //   qrcodeModalOptions: {
-      //     mobileLinks: [
-      //       "metamask",
-      //       "trust",
-      //       "kepler"
-      //     ],
-      //   },
-      // });
-
-      // self.web3 = new Web3(this.provider);
-
-      // self.provider.on("accountsChanged", (accounts) => {
-      //   console.log(accounts);
-      // });
-
-      // // Subscribe to chainId change
-      // self.provider.on("chainChanged", (chainId) => {
-      //   console.log(chainId);
-      // });
-
-      // // Subscribe to session disconnection
-      // self.provider.on("disconnect", (code, reason) => {
-      //   console.log(code, reason);
-      // });
-
-
-
-      // self.signClient = await SignClient.init({
-      //   projectId: WALLET_CONNECT_PROJECT_ID,
-      //   // optional parameters
-      //   relayUrl: "http://10.0.0.116:3000",
-      //   metadata: {
-      //     name: "Example Dapp",
-      //     description: "Example Dapp",
-      //     url: "#",
-      //     icons: ["https://walletconnect.com/walletconnect-logo.png"],
-      //   },
-      // });
-
-      // self.signClient.on("session_event", ({ event }) => {
-      //   // Handle session events, such as "chainChanged", "accountsChanged", etc.
-      // });
-
-      // self.signClient.on("session_update", ({ topic, params }) => {
-      //   const { namespaces } = params;
-      //   const _session = self.signClient.session.get(topic);
-      //   // Overwrite the `namespaces` of the existing session with the incoming one.
-      //   const updatedSession = { ..._session, namespaces };
-      //   // Integrate the updated session state into your dapp state.
-      //   onSessionUpdate(updatedSession);
-      // });
-
-      // self.signClient.on("session_delete", () => {
-      //   // Session was deleted -> reset the dapp state, clean up from user session, etc.
-      // });
-
-      // self.web3Modal = new Web3Modal({
-      //   projectId: WALLET_CONNECT_PROJECT_ID,
-      //   // `standaloneChains` can also be specified when calling `web3Modal.openModal(...)` later on.
-      //   standaloneChains: ["eip155:1"],
-      // });
     });
   },
   computed: {
+    isFina() {
+      return window.fina !== undefined || window.keplr !== undefined;
+    },
+    a() {
+      return `isiOS: ${isiOS}, isAndroid: ${isAndroid}`;
+    },
     chainsForMobile() {
       return this.allChains.filter(chain => chain.enableForMobile === true);
     },
@@ -277,73 +257,61 @@ export default {
         }
       })
       return filteredItems
-    },
-    // styleObject() {
-    //   return {
-    //     '--color': 'red',
-    //     '--color-hover': 'blue',
-    //     '--width': '50px',
-    //     // '--width-hover': '150px',
-    //     '--overflow': 'hidden',
-    //     '--overflow-hover': 'hidden',
-    //     '--height': '40px',
-    //     '--height-hover': '40px'
-    //   };
-    // },
+    }
   },
   methods: {
-    async walletConnect() {
-      try {
-        await this.provider.enable();
-        alert("connected")
-        const accounts = await this.web3.eth.getAccounts();
-        alert(accounts);
-      } catch (err) {
-        console.log(err);
+    goToFina() {
+      const urlSearchParams = new URLSearchParams();
+      urlSearchParams.append("network", "secret-4");
+      urlSearchParams.append("url", window.location.href);
+
+      let deepLinkURL;
+      let fallbackURL;
+
+      if (isAndroid) {
+        deepLinkURL = `fina://wllet/dapps?${urlSearchParams.toString()}`;
+        fallbackURL = fallbackURLAndroid;
+      } else if (isiOS) {
+        deepLinkURL = `fina://wllet/dapps?${urlSearchParams.toString()}`;
+        fallbackURL = fallbackURLiOS;
+      } else {
+        return;
       }
 
-      // try {
-      //   const { uri, approval } = await this.signClient.connect({
-      //     // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
-      //     pairingTopic: pairing?.topic,
-      //     // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
-      //     requiredNamespaces: {
-      //       eip155: {
-      //         methods: [
-      //           "eth_sendTransaction",
-      //           "eth_signTransaction",
-      //           "eth_sign",
-      //           "personal_sign",
-      //           "eth_signTypedData",
-      //         ],
-      //         chains: ["eip155:1"],
-      //         events: ["chainChanged", "accountsChanged"],
-      //       },
-      //     },
-      //   });
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = deepLinkURL;
+      document.body.appendChild(iframe);
 
-      //   // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
-      //   if (uri) {
-      //     this.web3Modal.openModal({ uri });
-      //     // Await session approval from the wallet.
-      //     const session = await approval();
-      //     // Handle the returned session (e.g. update UI to "connected" state).
-      //     // * You will need to create this function *
-      //     onSessionConnect(session);
-      //     // Close the QRCode modal in case it was open.
-      //     this.web3Modal.closeModal();
-      //   }
-      // } catch (e) {
-      //   console.error(e);
-      // }
-    },
+      const timer = setTimeout(() => {
+        window.location = fallbackURL;
+      }, 500);
+
+      window.addEventListener("blur", () => {
+        clearTimeout(timer);
+      });
+
+    },    
+    // async walletConnect() {
+    //   try {
+    //     await this.provider.enable();
+    //     alert("connected")
+    //     const accounts = await this.web3.eth.getAccounts();
+    //     alert(accounts);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // },
     testClick(token, chainId) {
       if (chainId != this.fromChain.chainInfo.chainId) {
-        this.swapChains(true);
+        let slectedChain = this.availableChains[this.fromChainKey].filter(chain => chain.chainInfo.chainId === chainId );
+        if (slectedChain.length > 0) {
+          this.fromChain = slectedChain[0];
+          this.selectedToken = token;
+        } else {
+          this.swapChains(true);
+        }
       } else {
-        console.log("---")
-        console.log(token)
-        console.log("---")
         this.selectedToken = token;
       }
     },    
@@ -360,14 +328,6 @@ export default {
   /* background-color: transparent !important; */
 }
 
-/* .stone-button {
-  background: url('~/assets/images/stone-button.png') no-repeat center center; 
-  background-size: cover;
-  background-color: transparent !important;
-  width: 149px;
-  min-height: 56px;
-  color: black
-} */
 
 .input-coin {
   position: absolute;
