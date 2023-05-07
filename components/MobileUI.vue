@@ -23,12 +23,25 @@
           </v-list-item>
 
           <v-list-item>
-            <v-list-item-title>FAQ</v-list-item-title>
+            <v-list-item-title @click="showMobileFAQ">FAQ</v-list-item-title>
           </v-list-item>
 
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+
+    <v-dialog
+      v-model="mobileFAQ"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <faq @hide="mobileFAQ = false"></faq>
+      </v-card>
+    
+    </v-dialog>
+
 
     <div>
       <img :src="require('~/assets/images/mobile-title.webp')" />
@@ -212,6 +225,7 @@ export default {
       web3Modal: null,
       provider: null,
       web3: null,
+      mobileFAQ: false,
       styleObject2: {
         '--color': 'red',
         '--color-hover': 'blue',
@@ -260,6 +274,10 @@ export default {
     }
   },
   methods: {
+    showMobileFAQ() {
+      this.drawer = false;
+      this.mobileFAQ = true;
+    },
     goToFina() {
       const urlSearchParams = new URLSearchParams();
       urlSearchParams.append("network", "secret-4");
@@ -269,10 +287,10 @@ export default {
       let fallbackURL;
 
       if (isAndroid) {
-        deepLinkURL = `fina://wllet/dapps?${urlSearchParams.toString()}`;
+        deepLinkURL = `fina://wallet/dapps?${urlSearchParams.toString()}`;
         fallbackURL = fallbackURLAndroid;
       } else if (isiOS) {
-        deepLinkURL = `fina://wllet/dapps?${urlSearchParams.toString()}`;
+        deepLinkURL = `fina://wallet/dapps?${urlSearchParams.toString()}`;
         fallbackURL = fallbackURLiOS;
       } else {
         return;

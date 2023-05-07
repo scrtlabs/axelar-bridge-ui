@@ -711,6 +711,9 @@ var mixin = {
       }
       setTimeout(function() {
         self.clearPermitText = "Clear Permit";
+        if (self.drawer !== undefined) {
+          self.drawer = false;
+        }
       }, 1000);
     },
 
