@@ -213,7 +213,7 @@
         </div>
         <v-btn v-if="isFina === false" @click="goToFina"><img :src="require('~/assets/images/fina.webp')" style="width: 24px; height: 24px; margin-right: 10px"/>Go To Fina</v-btn>
         <div style="font-size: 16px; text-align: center; margin-top: 10px">
-          For better experience, we recommend to use the desktop version
+          For a better experience, we recommend using the desktop version
         </div>
       </div>
     </template>
