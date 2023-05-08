@@ -51,10 +51,21 @@
       <div class="assets-to-transfer-mobile">
       <div style="margin-top: 5px; margin-left: 10px; font-size: 14px">Asset to transfer:</div>      
       <v-text-field hide-details="true" v-model="search" label="Search" clearable style="padding-left: 10px; padding-right: 10px"></v-text-field>
-      <v-list v-if="fromChain != null" style="background-color: transparent">
+      <v-list dense v-if="fromChain != null" style="background-color: transparent">
         <!-- <template v-for="(chain, chainIdx) in availableChains[fromChainKey]"> -->
-          <v-list-group active-class="orange--text" v-for="(chain, chainIdx) in filteredChains" value="" :key="'chain-title-' + chainIdx">
-            <template v-slot:activator>
+          <template v-for="(chain, chainIdx) in filteredChains" >
+          <!-- <v-list-group active-class="orange--text" v-for="(chain, chainIdx) in filteredChains" value="" :key="'chain-title-' + chainIdx"> -->
+            <v-list-item class="network-title" :key="'chain-title-' + chainIdx">
+              <v-list-item-icon>
+                <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ chain.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <!-- <template v-slot:activator>
               <v-list-item-title dense>
                 <div style="display: flex; justify-content: space-between; align-items: center">
                   {{ chain.name }}
@@ -65,19 +76,24 @@
             </template>
             <template v-slot:prependIcon>
               <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
-            </template>
-            <v-list-item v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
+            </template> -->
+
+            <v-list-item :class="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol ? 'green--text' : ''" v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
               <v-list-item-icon>
                 <img :src="require('~/assets/tokens/' + token.icon)" :width="itemIconSize" :height="itemIconSize" />
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title>{{ token.symbol }}</v-list-item-title>
+                <v-list-item-title style="display: flex; justify-content: space-between; align-items: center">
+                  {{ token.symbol }}
+                  <v-icon color="green" v-if="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol">mdi-check-all</v-icon>
+                </v-list-item-title>
                 <!-- <div v-if="data.item.description" :style="descriptionStyle" class="token-item-description">{{ data.item.description }}</div> -->
 
               </v-list-item-content>
             </v-list-item>            
-          </v-list-group>
+          <!-- </v-list-group> -->
+          </template>
       </v-list>
     </div>
 
@@ -197,7 +213,7 @@
         </div>
         <v-btn v-if="isFina === false" @click="goToFina"><img :src="require('~/assets/images/fina.webp')" style="width: 24px; height: 24px; margin-right: 10px"/>Go To Fina</v-btn>
         <div style="font-size: 16px; text-align: center; margin-top: 10px">
-          For better experience, we recommand to use the desktop version
+          For better experience, we recommend to use the desktop version
         </div>
       </div>
     </template>
@@ -216,7 +232,7 @@ import mainMixin from '../mixins/mainMixin';
 export default {
   name: "MobileUI",
   mixins: [mainMixin],  
-  components: {  },
+  components: {   },
   data() {
     return {
       drawer: false,
@@ -602,6 +618,16 @@ export default {
   font-family: 'Banana';
   color: black;
   font-size: 22px;
+}
+
+.network-title {
+  
+}
+
+>>> .network-title {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  background-color: black; 
 }
 
 >>> .right-input input {
