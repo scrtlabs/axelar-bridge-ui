@@ -20,6 +20,7 @@ export const checkIfTokenInKeplr = async (chainId, contractAddress) => {
   return false;
 }
 
+
 export const getTokenBalance = async (secretJS, contract, chainId, walletAddress, permit) => {
   if (permit) {
     const msg = {
