@@ -78,7 +78,7 @@
               <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
             </template> -->
 
-            <v-list-item :class="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol ? 'green--text' : ''" v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
+            <v-list-item :class="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol ? 'green--text' : ''" v-for="(token, index) in chain.tokens" @click="selectToken(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
               <v-list-item-icon>
                 <img :src="require('~/assets/tokens/' + token.icon)" :width="itemIconSize" :height="itemIconSize" />
               </v-list-item-icon>
@@ -259,6 +259,18 @@ export default {
   mounted() {
     var self = this;
     this.$nextTick(async () => {
+      this.$nuxt.$on('secretjs-loaded', async () => {
+        if (self.isMobile && self.selectedToken === null) {
+          if (this.isMetaMask) {
+            if (self.chainsForMobile.length > 0) {
+              self.selectToken(self.chainsForMobile[0].tokens[0], self.chainsForMobile[0].chainInfo.chainId);
+              //self.selectedToken = self.chainsForMobile[0].tokens[0];
+            }
+          } else {
+            self.selectedToken = self.fromChain.tokens[0];
+          }
+        }
+      });
     });
   },
   computed: {
@@ -280,7 +292,11 @@ export default {
       
     },
     toChainsForMobile() {
-      return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+      if (this.isFina) {
+        return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+      } else if (this.isMetaMask) {
+        return this.availableChains[this.toChainKey].filter(chain => chain.type === "evm" || (chain.name.toLowerCase() === "secret network"));
+      }
     },
 
     filteredChains() {
@@ -338,7 +354,7 @@ export default {
     },    
 
     goToMetaMask() { 
-      window.location = "https://metamask.app.link/dapp/192.168.0.42:3000";
+      window.location = "https://metamask.app.link/dapp/tunnel.scrt.network/";
     },
     // async walletConnect() {
     //   try {
@@ -350,14 +366,15 @@ export default {
     //     console.log(err);
     //   }
     // },
-    testClick(token, chainId) {
+    selectToken(token, chainId) {
       if (chainId != this.fromChain.chainInfo.chainId) {
         let slectedChain = this.availableChains[this.fromChainKey].filter(chain => chain.chainInfo.chainId === chainId );
         if (slectedChain.length > 0) {
           this.fromChain = slectedChain[0];
           this.selectedToken = token;
         } else {
-          this.swapChains(true);
+          this.swapChains(false);
+          this.selectedToken = token;
         }
       } else {
         this.selectedToken = token;

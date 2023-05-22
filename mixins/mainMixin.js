@@ -35,9 +35,6 @@ var mixin = {
 
         self.getBalance();
 
-        if (self.isMobile && self.selectedToken === null) {
-          self.selectedToken = self.fromChain.tokens[0];
-        }
       });
 
       this.$nuxt.$on('keystorechange', async () => {
@@ -369,7 +366,7 @@ var mixin = {
     async selectedToken(token) {
       this.getBalance();
       if (!this.shouldUseMMAddress) {
-        if (this.isKeplrConnected) this.fromAccountName = '(' + (await window.keplr.getKey(this.fromChain.chainInfo.chainId)).name + ')';
+        if (!this.isMobile && this.isKeplrConnected) this.fromAccountName = '(' + (await window.keplr.getKey(this.fromChain.chainInfo.chainId)).name + ')';
       } else {
         this.fromAccountName = '';
       }
@@ -659,34 +656,39 @@ var mixin = {
     },
 
     connect(disconnect, chain, requireConnectedBefore) {
-      if (requireConnectedBefore) {
-        var connectedBefore = window.localStorage.getItem('connectedBefore');
-        if (!connectedBefore) {
-          this.connectionRequestQueue.set(chain.chainId, chain);
-          return;
-        }
-      }
-
-
-      if (disconnect) {
-        this.$store.dispatch('disconnectKeplr');
+      if (this.isMobile && this.isMetaMask) {
+        this.$dispatchQueue.addToQueue('connectSecretWithMetaMask', this.availableChains["main-chain"][0].chainInfo);
       } else {
-        this.showArrow = false; //this.showArrowText
-        if (typeof chain === 'undefined') { // Clicked on connect wallet
-          var self = this;
-          if (this.connectionRequestQueue.size > 0) {
-            this.connectionRequestQueue.forEach( (value, key) => {
-              self.$dispatchQueue.addToQueue('initKeplr', value);
-            });
-            this.connectionRequestQueue.clear();
-          } else {
-            this.$dispatchQueue.addToQueue('initKeplr', this.availableChains["main-chain"][0].chainInfo);
+        if (requireConnectedBefore) {
+          var connectedBefore = window.localStorage.getItem('connectedBefore');
+          if (!connectedBefore) {
+            this.connectionRequestQueue.set(chain.chainId, chain);
+            return;
           }
-        } else {
-          this.$dispatchQueue.addToQueue('initKeplr', chain);
         }
-
+  
+  
+        if (disconnect) {
+          this.$store.dispatch('disconnectKeplr');
+        } else {
+          this.showArrow = false; //this.showArrowText
+          if (typeof chain === 'undefined') { // Clicked on connect wallet
+            var self = this;
+            if (this.connectionRequestQueue.size > 0) {
+              this.connectionRequestQueue.forEach( (value, key) => {
+                self.$dispatchQueue.addToQueue('initKeplr', value);
+              });
+              this.connectionRequestQueue.clear();
+            } else {
+              this.$dispatchQueue.addToQueue('initKeplr', this.availableChains["main-chain"][0].chainInfo);
+            }
+          } else {
+            this.$dispatchQueue.addToQueue('initKeplr', chain);
+          }
+  
+        }
       }
+
     },
     connectMM() {
 
