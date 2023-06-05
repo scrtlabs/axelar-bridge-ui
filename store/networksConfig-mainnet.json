@@ -170,8 +170,8 @@
       "enableForMobile": true,      
       "chainInfo": {
         "chainId": "osmosis-1",
-        "rest": "https://lcd.osmosis.zone",
-        "rpcUrl": "https://rpc.osmosis.zone",
+        "rest": "https://osmosis-api.lavenderfive.com",
+        "rpcUrl": "https://osmosis-rpc.lavenderfive.com/",
         "hrp": "osmo",
         "coinType": 118,
         "out_port": "transfer",

@@ -1,6 +1,6 @@
-import { SecretNetworkClient } from 'secretjs'
+import { MetaMaskWallet, SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance, getPermit } from './token'
-import { connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
+import { getPermitMM, connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
 
 const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
 
@@ -45,6 +45,29 @@ export const state = () => ({
 });
 
 export const actions = {
+
+  async connectSecretWithMetaMask({ commit, state, getters }, selectedChain) {
+    commit('setKeplrLoading', true)
+    const [ethAddress] = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    const wallet = await MetaMaskWallet.create(window.ethereum, ethAddress);
+
+    let wallet2 = _.cloneDeep(wallet); // Workaround since something (is secretjs) is trying to change wallet outside a mutation
+
+    let accounts = Object.assign([], getters.getAccounts);
+
+    accounts[selectedChain.chainId] = new SecretNetworkClient({
+      url: selectedChain.rest,
+      chainId: selectedChain.chainId,
+      wallet: wallet2,
+      walletAddress: wallet2.address
+    });
+
+    commit('setAccounts', accounts);
+    commit('setKeplrLoading', false)
+  },  
+
   async initKeplr({ commit, state, getters }, selectedChain) {
 
     const suggestChain = async (chainInfo) => {
@@ -183,7 +206,7 @@ export const actions = {
     
   },
 
-  async disconnectKeplr({ commit, state }) {
+  async disconnectKeplr({ commit, state, getters }) {
     window.localStorage.removeItem('connectedBefore');
     window.location.reload();
   },
@@ -201,8 +224,22 @@ export const actions = {
         contracts.push(token.SNIP20_address);
       }
     }
+    
+    let permit = null;
 
-    let permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
+    if (getters.isMobile() && window.ethereum !== undefined) {
+      permit = await getPermitMM(payload.account.wallet, chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress); 
+    } else {
+      permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
+    }
+
+    if (getters.isMobile()) {
+      //alert("permit");
+      //alert(JSON.stringify(permit));
+    } else {
+      console.log(permit);
+    }
+    
     let balance = await getTokenBalance(
       payload.account,
       payload.contract,

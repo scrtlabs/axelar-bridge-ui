@@ -2,6 +2,9 @@ const Web3 = require('web3');
 
 import ABI from './erc20_abi.json';
 import axelarConfig from './axelarConfig.json'
+import { sha256 } from "@noble/hashes/sha256";
+import { fromHex, toHex, toUtf8, toBase64 } from 'secretjs';
+
 
 const APP_TESTNET_CHAIN_ID = Web3.utils.toHex(5);
 const APP_MAINNET_CHAIN_ID = Web3.utils.toHex(1);
@@ -44,7 +47,7 @@ export const connectMM = async (chainId, chains) => {
     } else {
       selectedChain = chainId != -1 ? Web3.utils.toHex(chainId) : APP_MAINNET_CHAIN_ID
     }
-
+    
     if (Web3.givenProvider) {
       await window.ethereum.request({method: 'eth_requestAccounts'});
       _web3 = new Web3(Web3.givenProvider);
@@ -68,7 +71,7 @@ export const connectMM = async (chainId, chains) => {
     }
   } catch (err) {
       console.log(err);
-      if (err.code === 4902) {
+      if (err.code === 4902 || (err.data && err.data.originalError.code === 4902)) {
         for (let i = 0; i < chains.length; i++) {
           try {
             if (chains[i].chainId == chainId) {
@@ -248,4 +251,124 @@ export const checkTxConfirmation = async (receipt) => {
     }
 
   }, AVG_ETH_BLOCK_TIME_SEC * 1000);
+}
+
+export const getPermitMM = async (wallet, chainId, contracts, address) => {
+  let contractsString = contracts.join('_');
+  var permKey = `perm_${chainId}_${contractsString}_${address}`;
+  var permit = null;
+
+  try {
+    permit = JSON.parse(window.localStorage.getItem(permKey));
+  } catch (err) {}
+  
+  if (!permit) {
+      console.log('Loading new permit');
+      try {                
+        const msg = {
+            chain_id: chainId,
+            account_number: '0',
+            sequence: '0',
+            fee: {
+                amount: [{ denom: 'uscrt', amount: '0' }], 
+                gas: '1'
+            },
+            msgs: [
+                {
+                    type: 'query_permit',
+                    value: {
+                        permit_name: 'secret-bridge-balance',
+                        allowed_tokens: contracts,
+                        permissions: ['balance']
+                    }
+                }
+            ],
+            memo: ''
+        }
+
+        //TODO: Move it to secret.js (create permit for MetaMask wallet)
+        const sortedObject = (obj) => {
+          if (typeof obj !== "object" || obj === null) {
+            return obj;
+          }
+          if (Array.isArray(obj)) {
+            return obj.map(sortedObject);
+          }
+          const sortedKeys = Object.keys(obj).sort();
+          const result = {};
+          sortedKeys.forEach((key) => {
+            result[key] = sortedObject(obj[key]);
+          });
+          return result;
+        }
+
+        const JsonSortedStringify = (obj) => {
+          return JSON.stringify(sortedObject(obj));
+        }
+
+        const encodeSecp256k1Pubkey = (pubkey) => {
+          if (pubkey.length !== 33 || (pubkey[0] !== 0x02 && pubkey[0] !== 0x03)) {
+            throw new Error(
+              "Public key must be compressed secp256k1, i.e. 33 bytes starting with 0x02 or 0x03",
+            );
+          }
+          return {
+            type: "tendermint/PubKeySecp256k1",
+            value: toBase64(pubkey),
+          };
+        }
+
+        
+        const encodeSecp256k1Signature = (pubkey, signature) => {
+          if (signature.length !== 64) {
+            throw new Error(
+              "Signature must be 64 bytes long. Cosmos SDK uses a 2x32 byte fixed length encoding for the secp256k1 signature integers r and s.",
+            );
+          }
+        
+          return {
+            pub_key: encodeSecp256k1Pubkey(pubkey),
+            signature: toBase64(signature),
+          };
+        }
+        
+
+        const messageHash = sha256(toUtf8(JsonSortedStringify(msg)));
+        const sigResult = await window.ethereum.request({
+          method: "eth_sign",
+          params: [wallet.ethAddress, "0x" + toHex(messageHash)],
+        });
+    
+        // strip leading 0x and trailing recovery id
+        const sig = fromHex(sigResult.slice(2, -2));
+        const result = {
+          signed: msg,
+          signature: encodeSecp256k1Signature(wallet.publicKey, sig),
+        };
+
+        permit = { 
+          params: {
+            permit_name: 'secret-bridge-balance',
+            allowed_tokens: contracts,
+            chain_id: chainId,
+            permissions: ['balance']
+          },
+          signature: result.signature
+        }
+        window.localStorage.setItem(permKey, JSON.stringify(permit));
+
+      } catch (err) {
+        if (typeof err === "object") {
+          alert(JSON.stringify(err));
+        } else {
+          alert(err);
+        }
+        
+        
+        console.log("--- PERMIT ERROR ---")
+        console.log(err)
+        console.log("--- PERMIT ERROR ---")
+      }            
+  }
+  return permit;
 }

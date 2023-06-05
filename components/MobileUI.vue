@@ -1,7 +1,7 @@
 <template>
   <div class="main-section-wrapper-mobile mx-auto overflow-hidden">
     <div style="height: 20px"></div>
-    <v-app-bar-nav-icon @click.stop="drawer = !drawer" style="position: absolute; left: 2px; top: 2px"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon v-if="isFina || isMetaMask" @click.stop="drawer = !drawer" style="position: absolute; left: 2px; top: 2px"></v-app-bar-nav-icon>
     <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -47,7 +47,7 @@
       <img :src="require('~/assets/images/mobile-title.webp')" />
     </div>
 
-    <template v-if="isFina">
+    <template v-if="isFina || isMetaMask">
       <div class="assets-to-transfer-mobile">
       <div style="margin-top: 5px; margin-left: 10px; font-size: 14px">Asset to transfer:</div>      
       <v-text-field hide-details="true" v-model="search" label="Search" clearable style="padding-left: 10px; padding-right: 10px"></v-text-field>
@@ -78,7 +78,7 @@
               <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
             </template> -->
 
-            <v-list-item :class="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol ? 'green--text' : ''" v-for="(token, index) in chain.tokens" @click="testClick(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
+            <v-list-item :class="selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId && selectedToken.symbol == token.symbol ? 'green--text' : ''" v-for="(token, index) in chain.tokens" @click="selectToken(token, chain.chainInfo.chainId)" :key="'token-from-item-' + chainIdx + '_' + index" style="margin-left: 30px">
               <v-list-item-icon>
                 <img :src="require('~/assets/tokens/' + token.icon)" :width="itemIconSize" :height="itemIconSize" />
               </v-list-item-icon>
@@ -209,11 +209,13 @@
     <template v-else>
       <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <div style="font-size: 16px; text-align: center; margin-bottom: 10px">
-          To use Secret Tunnel with mobile device,<br>please use Fina Wallet
+          To use Secret Tunnel with mobile device,<br>please use Fina Wallet for Cosmos chains or MetaMask for EVMs
         </div>
         <v-btn v-if="isFina === false" @click="goToFina"><img :src="require('~/assets/images/fina.webp')" style="width: 24px; height: 24px; margin-right: 10px"/>Go To Fina</v-btn>
+        <br/><br/>
+        <v-btn v-if="isMetaMask === false" @click="goToMetaMask"><img :src="require('~/assets/wallets/metamask.logo.svg')" style="width: 24px; height: 24px; margin-right: 10px"/>Go To MetaMask</v-btn>
         <div style="font-size: 16px; text-align: center; margin-top: 10px">
-          For better experience, we recommend to use the desktop version
+          For a better experience, we recommend using the desktop version
         </div>
       </div>
     </template>
@@ -257,20 +259,44 @@ export default {
   mounted() {
     var self = this;
     this.$nextTick(async () => {
+      this.$nuxt.$on('secretjs-loaded', async () => {
+        if (self.isMobile && self.selectedToken === null) {
+          if (this.isMetaMask) {
+            if (self.chainsForMobile.length > 0) {
+              self.selectToken(self.chainsForMobile[0].tokens[0], self.chainsForMobile[0].chainInfo.chainId);
+              //self.selectedToken = self.chainsForMobile[0].tokens[0];
+            }
+          } else {
+            self.selectedToken = self.fromChain.tokens[0];
+          }
+        }
+      });
     });
   },
   computed: {
     isFina() {
       return window.fina !== undefined || window.keplr !== undefined;
     },
+    isMetaMask() {
+      return window.ethereum !== undefined;
+    },
     a() {
       return `isiOS: ${isiOS}, isAndroid: ${isAndroid}`;
     },
     chainsForMobile() {
-      return this.allChains.filter(chain => chain.enableForMobile === true);
+      if (this.isFina) {
+        return this.allChains.filter(chain => chain.enableForMobile === true && chain.type === "cosmos" );
+      } else if (this.isMetaMask) {
+        return this.allChains.filter(chain => chain.type === "evm" || (chain.name.toLowerCase() === "secret network") );
+      }
+      
     },
     toChainsForMobile() {
-      return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+      if (this.isFina) {
+        return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+      } else if (this.isMetaMask) {
+        return this.availableChains[this.toChainKey].filter(chain => chain.type === "evm" || (chain.name.toLowerCase() === "secret network"));
+      }
     },
 
     filteredChains() {
@@ -326,6 +352,10 @@ export default {
       });
 
     },    
+
+    goToMetaMask() { 
+      window.location = "https://metamask.app.link/dapp/tunnel.scrt.network/";
+    },
     // async walletConnect() {
     //   try {
     //     await this.provider.enable();
@@ -336,14 +366,15 @@ export default {
     //     console.log(err);
     //   }
     // },
-    testClick(token, chainId) {
+    selectToken(token, chainId) {
       if (chainId != this.fromChain.chainInfo.chainId) {
         let slectedChain = this.availableChains[this.fromChainKey].filter(chain => chain.chainInfo.chainId === chainId );
         if (slectedChain.length > 0) {
           this.fromChain = slectedChain[0];
           this.selectedToken = token;
         } else {
-          this.swapChains(true);
+          this.swapChains(false);
+          this.selectedToken = token;
         }
       } else {
         this.selectedToken = token;
