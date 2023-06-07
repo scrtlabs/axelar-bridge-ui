@@ -11,6 +11,9 @@
     "lint": "npm run lint:prettier",
     "lintfix": "prettier --write --list-different ."
   },
+  "overrides": {
+    "webpack-dev-middleware": "5.0.0"
+  },
   "dependencies": {
     "@axelar-network/axelarjs-sdk": "^0.12.6",
     "@metamask/detect-provider": "^2.0.0",

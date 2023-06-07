@@ -55,13 +55,17 @@
         <!-- <template v-for="(chain, chainIdx) in availableChains[fromChainKey]"> -->
           <template v-for="(chain, chainIdx) in filteredChains" >
           <!-- <v-list-group active-class="orange--text" v-for="(chain, chainIdx) in filteredChains" value="" :key="'chain-title-' + chainIdx"> -->
-            <v-list-item class="network-title" :key="'chain-title-' + chainIdx">
-              <v-list-item-icon>
+            <v-list-item class="network-title" :key="'chain-title-' + chainIdx" style="position: sticky; top: 0px; z-index: 99">
+              <v-list-item-icon style="margin-top: 3px">
                 <img  :src="require('~/assets/chains/' + chain.icon)" :width="32" :height="32" />
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ chain.name }}
+                  {{ chain.name }} 
+                  <span v-if="(selectedToken && fromChain && fromChain.chainInfo.chainId === chain.chainInfo.chainId)">
+                    <v-icon size="10">mdi-arrow-left</v-icon>
+                    (SELECTED)
+                  </span>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -97,7 +101,12 @@
       </v-list>
     </div>
 
-    <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="toChainsForMobile" :icon-size="itemIconSize" style="width: 90%"></sub-chain-selector>
+    <div style="position: relative">
+      <div style="height: 30px; width: 30px; margin-left: -15px; border-radius: 15px; background-color: grey; display: flex; justify-content: center; position: absolute; z-index: 999; top: -10px; box-shadow: 2px 2px 2px rgba(0,0,0,0.6);">
+        <v-icon size="20">mdi-arrow-down</v-icon>
+      </div>
+    </div>
+    <sub-chain-selector :disabled="transferInProgress" lable="" v-model="toChain" :chains="toChainsForMobile" :icon-size="itemIconSize" style="width: 90%; margin-top: 10px"></sub-chain-selector>
 
     <div v-if="fromChain != null" class="" style="margin-top: -10px;  width: 90%; font-family: 'BalsamiqSans-Regular' !important">
       <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;">
