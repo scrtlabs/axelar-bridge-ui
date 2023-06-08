@@ -819,6 +819,12 @@ var mixin = {
           this.estimatedFee = ""
         }
 
+        if (this.bankBalances.get(this.selectedTokenTransferDenom) === undefined) {
+          this.info_error = "Insufficient balance";
+          this.axelarStatus = "";
+          return;
+        }
+
         if (BigInt(this.bankBalances.get(this.selectedTokenTransferDenom)) < BigInt(amount)) {
           this.info_error = "Insufficient balance";
           this.axelarStatus = "";
@@ -1072,7 +1078,6 @@ var mixin = {
           }
           this.animateProcessing();
         } catch (err) {
-          alert(err);
           this.tx = undefined;
           this.ack = -1;
           this.ibcTx = '';
