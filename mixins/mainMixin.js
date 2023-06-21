@@ -202,7 +202,7 @@ var mixin = {
         '--height': '40px',
         '--height-hover': '230px'
       };
-    },    
+    },
 
 
     disableUI() {
@@ -450,7 +450,7 @@ var mixin = {
         }
       }
 
-    }, 
+    },
   },
   methods: {
 
@@ -533,7 +533,7 @@ var mixin = {
 
 
       if (maxAmount.normalAmount != -1 && parseFloat(amount) > maxAmount.normalAmount) {
-        this.info_error = "Requested amount is excceding the maximum allowed transfer";
+        this.info_error = "Requested amount exceeds the maximum allowed transfer";
         this.axelarStatus = "";
         return;
       }
@@ -546,7 +546,7 @@ var mixin = {
       }
       let minAmount = fee["normalAmount"] * 2;
       if (parseFloat(amount) < minAmount) {
-        this.info_error = `Minimun transfer is (${minAmount} ${fee.symbol})`;
+        this.info_error = `Minimum transfer is (${minAmount} ${fee.symbol})`;
         this.axelarStatus = "";
         return;
       }
@@ -666,8 +666,8 @@ var mixin = {
             return;
           }
         }
-  
-  
+
+
         if (disconnect) {
           this.$store.dispatch('disconnectKeplr');
         } else {
@@ -685,7 +685,7 @@ var mixin = {
           } else {
             this.$dispatchQueue.addToQueue('initKeplr', chain);
           }
-  
+
         }
       }
 
@@ -968,14 +968,14 @@ var mixin = {
 
 
       if (maxAmount.amount != -1 && parseFloat(amount) > maxAmount.amount) {
-        this.info_error = "Requested amount is excceding the maximum allowed transfer";
+        this.info_error = "Requested amount exceeds the maximum allowed transfer";
         this.axelarStatus = "";
         return;
       }
 
       if (this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address != '') {
         // console.log(`${this.tokenBalance.balance.amount} < ${amount}`);
-        if (this.tokenBalance.balance.amount < amount) {
+        if (BigInt(this.tokenBalance.balance.amount) < BigInt(amount)) {
           this.info_error = "Insufficient balance";
           this.axelarStatus = "";
           return;
@@ -984,7 +984,7 @@ var mixin = {
 
       let minAmount = fee.amount * 2;
       if (parseFloat(amount) < minAmount) {
-        this.info_error = `Minimun transfer is (${fee["normalAmount"] * 2} ${fee.symbol})`;
+        this.info_error = `Minimum transfer is (${fee["normalAmount"] * 2} ${fee.symbol})`;
         this.axelarStatus = "";
         return;
       }
