@@ -94,7 +94,10 @@ var mixin = {
 
       this.$nuxt.$on('MM-connected', async () => {
         this.activeMMChainId = window.ethereum.networkVersion;
-        this.$store.dispatch('getMMAccounts');
+        await this.$store.dispatch('getMMAccounts');
+        if (this.toChain.type === "evm") {
+          this.destinationAddress = this.MMAccounts[0];
+        }
       });
 
       this.$nuxt.$on('MM-account-changed', async (accounts) => {
@@ -429,6 +432,9 @@ var mixin = {
         if (newChain.type === "evm") { // EVM
           if (this.isMMConnected) {
             this.destinationAddress = this.MMAccounts[0];
+          } else {
+            this.destinationAddress = "";
+            this.connectMM();
           }
         } else {
           try {
