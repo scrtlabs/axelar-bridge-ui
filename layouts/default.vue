@@ -111,13 +111,13 @@ export default {
         this.showSurge = true;
       }
 
-      
+
     }
   },
   data() {
     return {
       dialog: false,
-      version: "0.4.0",
+      version: "0.4.1",
       showSurge: false
     };
   },
@@ -228,7 +228,7 @@ body {
   align-items: center;
   width: 600px; height: 338px; background-color: red; border-radius: 15px;
   border: 3px dashed white;
-  background: url('~/assets/images/surge-ad.jpg') no-repeat center top transparent;  
+  background: url('~/assets/images/surge-ad.jpg') no-repeat center top transparent;
 }
 
 </style>
