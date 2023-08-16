@@ -1,8 +1,6 @@
 import axelarConfig from '../store/axelarConfig.json'
 import { mapGetters } from 'vuex';
-import SubChainSelector from '~/components/SubChainSelector.vue';
-import TokenSelector from '~/components/TokenSelector.vue';
-// import LottieWrapper from '~/components/LottieWrapper.vue';
+import { getTokenBalance} from '../store/token'
 
 import _ from 'lodash';
 import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secretjs';
@@ -11,6 +9,7 @@ import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } fro
 import commonMixin from './commonMixin';
 //const Web3 = require('web3');
 import { checkIfTokenInKeplr } from '../store/token.js'
+import tokenListForMigration from '../store/migration.json'
 
 var mixin = {
   mixins: [commonMixin],
@@ -24,7 +23,7 @@ var mixin = {
   },
   mounted() {
     let self = this;
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
       this.$nuxt.$on('secretjs-loaded', async () => {
         if (self.toChain.type === "cosmos") {
           self.destinationAddress = self.receiverAccount.address;
@@ -36,6 +35,15 @@ var mixin = {
         self.getBalance();
 
       });
+
+      //if (self.isTestnet === false) {
+        //let ethTokens = await axios.get("https://api-bridge-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
+        //let bscTokens = await axios.get("https://bridge-bsc-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
+
+        
+        self.migrationTokens = tokenListForMigration.tokens; 
+        //self.migrationTokens = [...ethTokens.data.tokens, ...bscTokens.data.tokens];
+      //}
 
       this.$nuxt.$on('keystorechange', async () => {
         //self.destinationAddress = self.receiverAccount.address;
@@ -188,7 +196,7 @@ var mixin = {
         '--overflow': 'hidden',
         '--overflow-hover': 'none',
         '--height': '40px',
-        '--height-hover': '230px'
+        '--height-hover': '250px'
       };
     },
 
@@ -360,7 +368,17 @@ var mixin = {
 
       selfCheckApproved: false,
 
-      tokenInKeplr: -1
+      tokenInKeplr: -1,
+
+      migrationTokens: null, 
+      migrationAmount: 0,
+      migrationSelectedToken: null,
+      tokenMigrationBalance: -1,
+      tokenMigrationBalanceDisplay: -1,
+      tokenMigrationBalanceCheck: false,
+      tokenMigrationInProgress: false,
+      tokenMigrationError: "",
+      tokenMigrationCompleteSuccess: false
 
 
     };
@@ -522,7 +540,105 @@ var mixin = {
 
     },
 
+    async refreshMigrationBalance() {
+      const getBalance = async () => {
+        const result = await getTokenBalance(
+          this.accounts['secret-4'],
+          { address: this.migrationSelectedToken.dst_address, codeHash: ''},
+          'secret-4',
+          this.accounts['secret-4'].address
+        );
+        return result.balance.amount;
+      }
 
+      this.tokenMigrationBalance = -1;
+      this.tokenMigrationBalanceDisplay = -1;
+      this.tokenMigrationBalanceCheck = true;
+
+      try {
+        this.tokenMigrationBalance = await getBalance();
+      } catch (err) {
+        console.error(err);
+        // Retrying one more time
+        this.tokenMigrationBalance = await getBalance();
+      }
+      this.tokenMigrationBalanceCheck = false;
+      this.tokenMigrationBalanceDisplay = this.tokenMigrationBalance;
+      try {
+        if (this.tokenMigrationBalanceDisplay > 0) {
+          this.tokenMigrationBalanceDisplay = (this.tokenMigrationBalanceDisplay / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
+        }
+      } catch (err) { console.error(err); }  
+     
+      console.log("------- BALANCE ---------");
+      console.log(this.tokenMigrationBalance);
+      console.log("------- BALANCE ---------");
+    },
+
+    async handleTokenMigrationChange(token) {
+      if (!this.isKeplrConnected)
+        return;
+
+      this.migrationSelectedToken = token;
+      this.refreshMigrationBalance();
+
+    },
+
+    async doMigration() {
+      var self = this;
+
+      if (this.migrationSelectedToken === null)  {
+        return
+      }
+      
+      this.tokenMigrationError = false;
+      this.tokenMigrationInProgress = true;
+      this.tokenMigrationCompleteSuccess = false;
+      
+      let amount = BigInt(Math.round(this.migrationAmount * 10 ** this.migrationSelectedToken.decimals)).toString();
+       
+      console.log(amount);
+      try {
+        let tx = await this.accounts['secret-4'].tx.snip20.send(
+          {
+            sender: this.accounts['secret-4'].address,
+            contract_address: this.migrationSelectedToken.dst_address,
+            code_hash: '',
+            msg: {
+              send: {
+                recipient: tokenListForMigration.contract.address,
+                amount: amount,
+              }
+            },
+          },
+          {
+            gasLimit: 300_000
+          }
+        );
+        console.log(tx);
+
+        if (tx) {
+          if (tx.code !== 0) {
+            if (tx.rawLog.indexOf("insufficient funds") != -1) {
+              this.tokenMigrationError = "Cannot migrate tokens (insufficient funds), please contact us";
+            } else {
+              this.tokenMigrationError = "Error code: " + tx.code;
+            }
+          } else {
+            setTimeout(function () {
+              self.tokenMigrationCompleteSuccess = false;
+              self.migrationAmount = 0
+            }, 3000);
+            this.tokenMigrationCompleteSuccess = true;
+            this.refreshMigrationBalance();
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        this.tokenMigrationError = "Error";
+      }
+      this.tokenMigrationInProgress = false;
+    },
 
     async sendFromEVM(amount) {
 

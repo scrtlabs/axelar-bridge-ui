@@ -1,9 +1,81 @@
 <template>
   <div>
+    <v-dialog  v-model="showMigrationDialog" persistent width="450" height="260">
+      <div class="migration-dialog">
+        <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <div style="width: 100%; font-size: 20px; font-weight: bold; padding: 5px  10px 5px 15px;  margin-bottom: 10px; background-color: black; display: flex; justify-content: space-between;">
+            <div>Token Migration</div>
+            <div>
+              <v-btn icon dense x-small @click="showMigrationDialog = false">
+                <v-icon size="16">mdi-close</v-icon>
+              </v-btn>              
+            </div>
+          </div>
+          <template v-if="tokenMigrationCompleteSuccess == false">
+            <div>
+              <v-select :disabled="tokenMigrationInProgress || migrationTokens === null || migrationTokens.length < 1" label="Select Token" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo :items="migrationTokens" dense item-text="name" return-object @change="handleTokenMigrationChange" style="max-width: 300px;">
+                <template slot="selection" slot-scope="data">
+                  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
+                    <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
+                    <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
+                  </div>
+                </template>
+                <template slot="item" slot-scope="data">
+                  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
+                    <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
+                    <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
+                  </div>
+                </template>
+              </v-select>
+
+              <div style=" margin-top: -24px; margin-bottom: 30px; font-size: 10px; text-align: end">Balance: {{ tokenMigrationBalanceCheck ? 'refreshing...' : (tokenMigrationBalance < 0 ? 'unknown' : tokenMigrationBalanceDisplay) }}</div>
+              <v-text-field
+                :disabled="tokenMigrationInProgress"
+                class="right-input number-input"
+                type="number"
+                style="font-family: 'BalsamiqSans-Regular' !important"
+                color="orange"
+                v-model="migrationAmount"
+                label="Amount"
+                
+                flat
+                dense
+                  @focus="$event.target.select()"
+              >
+              <template slot="append">
+                <v-btn :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1" dense x-small style="margin-left: 10px" @click="migrationAmount = tokenMigrationBalanceDisplay">MAX</v-btn>
+              </template>
+            </v-text-field>
+
+          </div>
+
+          <v-btn color="orange" :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
+          <div v-if="tokenMigrationError != ''" style="margin-top: 5px; color: rgb(238, 132, 132)">{{ tokenMigrationError }}</div>
+
+          </template>
+          <template v-else>
+            <div style="font-size: 30px; font-weight: bold">Migration Complete!</div>
+            <div style="margin-top: -40px">
+              <lottie-wrapper
+                style=""
+                :speed="1"
+                :height="200"
+                :loop="false"
+                :path="require('../assets/animations/success.json')"
+              />
+
+            </div>
+          </template>
+        </div>
+      </div>
+    </v-dialog>
+
     <div
       class="main"
       style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
     >
+
+
       <lottie-wrapper
         style="position: absolute; top: 410px; left: 90px; z-index: 2"
         :speed="0.5"
@@ -35,6 +107,7 @@
               <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
               <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
+              <v-btn :disabled="!isKeplrConnected" @click="showMigrationDialog = true">Token Migration</v-btn>
               <v-btn @click="switchSite" :color="isTestnet ? '#892323' : '#61a722'" >{{ isTestnet ? "MAINNET" : "TESTNET" }}</v-btn>
             </div>
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
@@ -51,8 +124,7 @@
               <v-btn @click="goToWeb('https://app.sienna.network/swap/pool')">Sienna</v-btn>
               <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
             </div>
-            <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
-          </div>          
+          </div>
 
         </div>
 
@@ -181,7 +253,6 @@
                 <v-tooltip top v-if="tokenInKeplr !== -1">
                   <template v-slot:activator="{ on, attrs }">
                     <img :disabled="tokenInKeplr === true" @click="addAssetToKeplr" v-bind="attrs" v-on="on" :src="require('~/assets/wallets/kepler.logo.svg')" width="20" height="20" style="cursor: pointer; margin-top: 7px" :style="tokenInKeplr === true ? 'filter: grayscale(100%);' : ''" alt="keplr logo"/>
-                    <!-- <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon> -->
                   </template>
                   <span>{{ tokenInKeplr === true ? "Asset already in your Keplr wallet" : "Add asset to Keplr wallet" }}</span>
                 </v-tooltip>
@@ -335,6 +406,7 @@ export default {
   components: { SubChainSelector, TokenSelector },
   data() {
     return {
+      showMigrationDialog: false
     }
   }  
 };
@@ -358,6 +430,19 @@ export default {
   bottom: 270px;
   opacity: 0;
 }
+
+.migration-dialog {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 450px; height: 260px; 
+  background-color: rgba(35, 52, 71, 0.8); border-radius: 15px;
+  backdrop-filter: blur(7px);
+  border: 3px dashed white;
+  overflow: hidden;
+}
+
 
 .input-coin-start {
   animation: input-coin-anim 2s linear;
