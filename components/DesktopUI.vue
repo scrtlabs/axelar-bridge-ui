@@ -130,7 +130,6 @@
               <v-btn @click="page = page == 1 ? 0 : 1" >FAQ</v-btn>
               <v-btn @click="goToAxelar" >Axelarscan</v-btn>
               <v-btn @click="clearPermit" :disabled="clearPermitText != 'Clear Permit'">{{ clearPermitText }}</v-btn>
-              <v-btn :disabled="!isKeplrConnected" @click="showMigrationDialog = true">Token Migration</v-btn>
               <v-btn @click="switchSite" :color="isTestnet ? '#892323' : '#61a722'" >{{ isTestnet ? "MAINNET" : "TESTNET" }}</v-btn>
             </div>
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
