@@ -1,6 +1,6 @@
 import axelarConfig from '../store/axelarConfig.json'
 import { mapGetters } from 'vuex';
-import { getTokenBalance} from '../store/token'
+import { getTokenBalance, getPermit} from '../store/token'
 
 import _ from 'lodash';
 import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secretjs';
@@ -24,6 +24,9 @@ var mixin = {
   mounted() {
     let self = this;
     this.$nextTick(async () => {
+
+      this.tokenMigrationHelp = this.isMigrationFirstTime;
+
       this.$nuxt.$on('secretjs-loaded', async () => {
         if (self.toChain.type === "cosmos") {
           self.destinationAddress = self.receiverAccount.address;
@@ -147,6 +150,13 @@ var mixin = {
       MMTx: 'getMMTx',
       isMobile: 'isMobile'
     }),
+    isMigrationFirstTime() {
+      
+      if (window.localStorage.getItem('migration_dontshow')) {
+        return false;
+      }
+    },
+   
     allChains() {
       return [...this.availableChains["sub-chains"], ...this.availableChains["main-chain"]];
     },
@@ -212,6 +222,21 @@ var mixin = {
         '--overflow-hover': 'none',
         '--height': '40px',
         '--height-hover': '230px'
+      };
+    },
+
+    styleTokenMigrationObject() {
+      return {
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "flex-start",
+        "align-items": "flex-end",
+        '--width': '42px',
+        '--width-hover': '160px',
+        '--overflow': 'hidden',
+        '--overflow-hover': 'none',
+        '--height': '40px',
+        '--height-hover': '100px'
       };
     },
 
@@ -374,11 +399,13 @@ var mixin = {
       migrationAmount: 0,
       migrationSelectedToken: null,
       tokenMigrationBalance: -1,
+      tokenMigrationBalanceNew: -1, 
       tokenMigrationBalanceDisplay: -1,
       tokenMigrationBalanceCheck: false,
       tokenMigrationInProgress: false,
       tokenMigrationError: "",
-      tokenMigrationCompleteSuccess: false
+      tokenMigrationCompleteSuccess: false,
+      tokenMigrationHelp: false
 
 
     };
@@ -484,18 +511,28 @@ var mixin = {
       try {
         let microAmount = this.getMicroAmount(this.selectedToken, amount);
         const result = await this.axelarQuery.getTransferFee(this.fromChain.axelar.chain, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
+        
         var display = result.fee.amount + " " + result.fee.denom;
         var symbol = result.fee.denom;
         let normal = 0;
         if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(result.fee.denom)) {
           let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][result.fee.denom];
           normal = parseFloat(result.fee.amount) / Math.pow(10, tokenInfo.decimal);
-          if (this.selectedToken.isEVMNative) {
-            symbol = this.selectedToken.symbol;
-          } else {
-            symbol = tokenInfo.symbol;
+          symbol = this.selectedToken.symbol;
+          // if (this.selectedToken.isEVMNative) {
+          //   symbol = this.selectedToken.symbol;
+          // } else {
+          //   symbol = tokenInfo.symbol;
+          // }
+
+
+
+          display = parseFloat(normal.toFixed(8)); //.toLocaleString() + " " + symbol;
+          if (display > 1) {
+            display = display.toLocaleString();
           }
-          display = parseFloat(normal.toFixed(6)).toLocaleString() + " " + symbol;
+          display = display + " " + symbol;
+
         }
         result.fee["display"] = display;
         result.fee["symbol"] = symbol;
@@ -529,7 +566,7 @@ var mixin = {
             let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][this.selectedToken.denom];
             result.amount = parseInt(limit);
             result.normalAmount = parseFloat(limit) / Math.pow(10, tokenInfo.decimal);
-            result.display = result.normalAmount.toLocaleString() + " " + tokenInfo.symbol;
+            result.display = result.normalAmount.toLocaleString() + " " + this.selectedToken.symbol;
             result.symbol = tokenInfo.symbol;
             result.denom = this.selectedToken.denom;
           }
@@ -541,27 +578,44 @@ var mixin = {
     },
 
     async refreshMigrationBalance() {
-      const getBalance = async () => {
+      const getBalance = async (address, codeHash) => {
+        let permit = undefined;
+        if (codeHash != '') {
+          permit = await getPermit('secret-4', [address], this.accounts['secret-4'].address);
+        }
+        
         const result = await getTokenBalance(
           this.accounts['secret-4'],
-          { address: this.migrationSelectedToken.dst_address, codeHash: ''},
+          { address, codeHash},
           'secret-4',
-          this.accounts['secret-4'].address
+          this.accounts['secret-4'].address,
+          permit
         );
         return result.balance.amount;
       }
 
       this.tokenMigrationBalance = -1;
+      this.tokenMigrationBalanceNew = -1;
       this.tokenMigrationBalanceDisplay = -1;
       this.tokenMigrationBalanceCheck = true;
 
       try {
-        this.tokenMigrationBalance = await getBalance();
+        this.tokenMigrationBalance = await getBalance(this.migrationSelectedToken.dst_address, "");
       } catch (err) {
         console.error(err);
         // Retrying one more time
-        this.tokenMigrationBalance = await getBalance();
+        this.tokenMigrationBalance = await getBalance(this.migrationSelectedToken.dst_address, "");
       }
+
+      let newBalance = -1;
+      try {
+        newBalance = await getBalance(this.migrationSelectedToken.new_address, this.migrationSelectedToken.new_codeHash);
+      } catch (err) {
+        console.error(err);
+        // Retrying one more time
+        newBalance = await getBalance(this.migrationSelectedToken.new_address, this.migrationSelectedToken.new_codeHash);
+      }
+
       this.tokenMigrationBalanceCheck = false;
       this.tokenMigrationBalanceDisplay = this.tokenMigrationBalance;
       try {
@@ -569,6 +623,15 @@ var mixin = {
           this.tokenMigrationBalanceDisplay = (this.tokenMigrationBalanceDisplay / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
         }
       } catch (err) { console.error(err); }  
+
+      this.tokenMigrationBalanceNew = newBalance;
+      try {
+        if (this.tokenMigrationBalanceNew > 0) {
+          this.tokenMigrationBalanceNew = (newBalance / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
+        }
+      } catch (err) { console.error(err); }        
+
+      
      
       console.log("------- BALANCE ---------");
       console.log(this.tokenMigrationBalance);
@@ -1078,7 +1141,7 @@ var mixin = {
       this.tx = undefined;
       this.ack = -1;
       this.ibcTx = undefined;
-
+      
       this.axelarStatus = "Please wait...";
       this.info_error = "";
       //let microAmount = await this.getMicroAmount(amount);

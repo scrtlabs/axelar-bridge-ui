@@ -1,68 +1,91 @@
 <template>
   <div>
-    <v-dialog  v-model="showMigrationDialog" persistent width="450" height="260">
+    <v-dialog  v-model="showMigrationDialog" persistent width="460" height="260">
       <div class="migration-dialog">
         <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <div style="width: 100%; font-size: 20px; font-weight: bold; padding: 5px  10px 5px 15px;  margin-bottom: 10px; background-color: black; display: flex; justify-content: space-between;">
             <div>Token Migration</div>
             <div>
-              <v-btn icon dense x-small @click="showMigrationDialog = false">
+              
+              <v-btn icon dense x-small @click="tokenMigrationHelp = !tokenMigrationHelp">
+                <v-icon size="16">mdi-help</v-icon>
+              </v-btn>
+
+              <v-btn icon dense x-small @click="closeMigrationWindow()">
                 <v-icon size="16">mdi-close</v-icon>
-              </v-btn>              
+              </v-btn>
             </div>
           </div>
-          <template v-if="tokenMigrationCompleteSuccess == false">
-            <div>
-              <v-select :disabled="tokenMigrationInProgress || migrationTokens === null || migrationTokens.length < 1" label="Select Token" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo :items="migrationTokens" dense item-text="name" return-object @change="handleTokenMigrationChange" style="max-width: 300px;">
-                <template slot="selection" slot-scope="data">
-                  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
-                    <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
-                    <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
-                  </div>
+          <template v-if="tokenMigrationHelp === false">
+            <template v-if="tokenMigrationCompleteSuccess === false">
+              <div>
+                <v-select :disabled="tokenMigrationInProgress || migrationTokens === null || migrationTokens.length < 1" label="Select Token" item-color="orange" background-color="rgba(0,0,0,0.5)" flat solo :items="migrationTokens" dense item-text="name" return-object @change="handleTokenMigrationChange" style="max-width: 300px;">
+                  <template slot="selection" slot-scope="data">
+                    <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
+                      <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
+                      <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
+                    </div>
+                  </template>
+                  <template slot="item" slot-scope="data">
+                    <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
+                      <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
+                      <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
+                    </div>
+                  </template>
+                </v-select>
+
+                <div style=" margin-top: -24px; margin-bottom: 30px; font-size: 10px; text-align: end">Balance: {{ tokenMigrationBalanceCheck ? 'refreshing...' : (tokenMigrationBalance < 0 ? 'unknown' : tokenMigrationBalanceDisplay) }}</div>
+                <v-text-field
+                  :disabled="tokenMigrationInProgress"
+                  class="right-input number-input"
+                  type="number"
+                  style="font-family: 'BalsamiqSans-Regular' !important"
+                  color="orange"
+                  v-model="migrationAmount"
+                  label="Amount"
+                  
+                  flat
+                  dense
+                    @focus="$event.target.select()"
+                >
+                <template slot="append">
+                  <v-btn :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1" dense x-small style="margin-left: 10px" @click="migrationAmount = tokenMigrationBalanceDisplay">MAX</v-btn>
                 </template>
-                <template slot="item" slot-scope="data">
-                  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 10px; font-size: 16px; ">
-                    <div><img :src="require(`~/assets/chains/${data.item.src_network.toLowerCase() === 'ethereum' ? 'ethereum.logo.svg' : 'binance.logo.svg'}`)" :width="24" :height="24" /></div>
-                    <div style="font-family: 'BalsamiqSans-Regular' !important;">{{ data.item.name }}</div>
-                  </div>
-                </template>
-              </v-select>
+              </v-text-field>
 
-              <div style=" margin-top: -24px; margin-bottom: 30px; font-size: 10px; text-align: end">Balance: {{ tokenMigrationBalanceCheck ? 'refreshing...' : (tokenMigrationBalance < 0 ? 'unknown' : tokenMigrationBalanceDisplay) }}</div>
-              <v-text-field
-                :disabled="tokenMigrationInProgress"
-                class="right-input number-input"
-                type="number"
-                style="font-family: 'BalsamiqSans-Regular' !important"
-                color="orange"
-                v-model="migrationAmount"
-                label="Amount"
-                
-                flat
-                dense
-                  @focus="$event.target.select()"
-              >
-              <template slot="append">
-                <v-btn :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1" dense x-small style="margin-left: 10px" @click="migrationAmount = tokenMigrationBalanceDisplay">MAX</v-btn>
-              </template>
-            </v-text-field>
+            </div>
 
-          </div>
+            <v-btn color="orange" :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
+            <div v-if="tokenMigrationError != ''" style="margin-top: 5px; color: rgb(238, 132, 132)">{{ tokenMigrationError }}</div>
 
-          <v-btn color="orange" :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
-          <div v-if="tokenMigrationError != ''" style="margin-top: 5px; color: rgb(238, 132, 132)">{{ tokenMigrationError }}</div>
+            </template>
+            <template v-else>
+              <div style="font-size: 30px; font-weight: bold">Migration Complete!</div>
+              <div style="margin-top: -40px">
+                <lottie-wrapper
+                  style=""
+                  :speed="1"
+                  :height="200"
+                  :loop="false"
+                  :path="require('../assets/animations/success.json')"
+                />
+              </div>
+              <div style="margin-top: -40px">Updated Balance: {{  tokenMigrationBalanceNew }}</div>
+            </template>            
 
-          </template>
+          </template> <!-- tokenMigrationHelp -->
           <template v-else>
-            <div style="font-size: 30px; font-weight: bold">Migration Complete!</div>
-            <div style="margin-top: -40px">
-              <lottie-wrapper
-                style=""
-                :speed="1"
-                :height="200"
-                :loop="false"
-                :path="require('../assets/animations/success.json')"
-              />
+            <div style="padding: 10px; font-size: 14px; line-height: 18px; overflow-y: scroll; height: 200px">
+              <span style="font-size: 20px; font-weight: bold;">Greetings, Fox!</span><br><br>
+              As you all probably heard, we are shutting down our old <a style="color: white; font-weight: bold;" href="https://bridge.scrt.network/tokens" target="_blank">Ethereum-Secret bridge</a>.
+              You don’t have to worry, we’ve got you covered.<br>
+              In order to make life easier, we created this migration window so that you can migrate your tokens safely and easily.
+              <br><br><b>How should you proceed?</b> Select the asset you wish to migrate, set the amount, and click the Migrate button. It’s as easy as it sounds.
+              <br><br><b>What’s going on under the hood?</b> By using the Axelar bridge, a new synthetic token will be created that will connect Ethereum and Secret, and will therefore have a different ticker than the old one.
+              <br><br><b>What difference does it make to you?</b> Nothing really, same original token, same value.
+              <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px">
+                <v-btn @click="tokenMigrationHelp = false" color="success" rounded>Ok, I got it</v-btn>
+              </div>
 
             </div>
           </template>
@@ -125,6 +148,17 @@
               <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
             </div>
           </div>
+
+          <div :style="styleTokenMigrationObject" class="wallet-item">
+            <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px; white-space: nowrap;">
+              Token Migration
+              <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
+            </div>
+            <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%">
+              <v-btn  :disabled="!isKeplrConnected" @click="showMigrationDialog = true">Migrate</v-btn>
+            </div>
+          </div>
+
 
         </div>
 
@@ -408,7 +442,13 @@ export default {
     return {
       showMigrationDialog: false
     }
-  }  
+  },
+  methods: {
+    closeMigrationWindow() {
+      this.showMigrationDialog = false;
+      window.localStorage.setItem('migration_dontshow', 1);
+    }
+  }
 };
 </script>
 
@@ -436,7 +476,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  width: 450px; height: 260px; 
+  width: 460px; height: 260px; 
   background-color: rgba(35, 52, 71, 0.8); border-radius: 15px;
   backdrop-filter: blur(7px);
   border: 3px dashed white;
@@ -591,6 +631,17 @@ export default {
 .main-section-tab {
   width: 600px;
   height: 670px !important;
+  position: relative;
+  padding: 20px;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+  transition-duration: 0.5s;
+}
+
+
+.migration-section-tab {
+  width: 100%;
+
   position: relative;
   padding: 20px;
   transition-property: all;

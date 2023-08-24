@@ -9,7 +9,7 @@
         <span>Back</span>
       </v-tooltip>
     </div>
-    <div style="background-image: linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0); height: 2px; width: 100%; opacity: 0.7"></div>
+    <div style="background-image: linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)); height: 2px; width: 100%; opacity: 0.7"></div>
     <div class="faq-section">
       <div style="margin-top: 20px; width: 99%; background-color: rgba(0, 0, 0, 0.5);">
         <h3 class="faq-title">What Do?</h3>
