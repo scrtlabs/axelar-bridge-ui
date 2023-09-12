@@ -7,7 +7,7 @@
       "enableForMobile": true,
       "chainInfo": {
         "chainId": "secret-4",
-        "rest": "https://lcd-secret.scrtlabs.com/lcd",
+        "rest": "https://lcd.secret.express",
         "rpcUrl": "https://rpc.secret.express",
         "hrp": "secret",
         "coinType": 529,
