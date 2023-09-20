@@ -5,12 +5,12 @@
       "icon": "secret.logo.svg",
       "type": "cosmos",
       "chainInfo": {
-        "chainId": "pulsar-2",
-        "rest": "https://api.pulsar.scrttestnet.com",
-        "rpcUrl": "https://rpc.testnet.secretsaturn.net",
+        "chainId": "pulsar-3",
+        "rest": "https://api.pulsar3.scrttestnet.com",
+        "rpcUrl": "https://rpc.pulsar3.scrttestnet.com",
         "hrp": "secret",
         "coinType": 529,
-        "out_port": "wasm.secret1c4envjuzy8j36c3w7qtyaeelfl3je6egxa85ve",
+        "out_port": "wasm.secret1vfht4c30h4st7e254ww86p6whwyy0uux2ns5ck",
         "ICS_code_hash": "2976a2577999168b89021ecb2e09c121737696f71c4342f9a922ce8654e98662",
         "out_channel": "channel-182",
         "stakeCurrency": {
@@ -35,8 +35,8 @@
           "fromImage": "suaxl.png",
           "toImage": "uaxl.png",
           "animation": "unwrap/unwrap-axl.json",
-          "SNIP20_address": "secret1tf9uyn2qpe3j56p8sf4f03nnphccq3lmp4aa93",
-          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+          "SNIP20_address": "secret1kkcrt0t9ep7suervnx2y7u9s3u8huq643l4cnj",
+          "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
           "symbol": "saUSDC",
@@ -47,8 +47,8 @@
           "fromImage": "suausdc.png",
           "toImage": "uausdc.png",
           "animation": "unwrap/unwrap-usdc.json",
-          "SNIP20_address": "secret1xmvmqj3rdzarmnyml62kzpfylw8p2el64emcgc",
-          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+          "SNIP20_address": "secret1l3jm9e8rtgkyar9pzteqjflgvycnjn5sectpha",
+          "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
           "symbol": "saWETH",
@@ -59,21 +59,8 @@
           "fromImage": "seth-wei.png",
           "toImage": "eth-wei.png",
           "animation": "unwrap/unwrap-eth.json",
-          "SNIP20_address": "secret1sfurfnr2aj3z9zqrvgk9728fp80agmnkzwhw8k",
-          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
-        },
-        {
-          "symbol": "ETH",
-          "denom": "eth-wei",
-          "isEVMNative": false,
-          "allow_autounwap": true,
-          "coinDecimals": 18,
-          "icon": "eth.logo.svg",
-          "fromImage": "seth-wei.png",
-          "toImage": "eth-wei.png",
-          "animation": "unwrap/unwrap-eth.json",
-          "SNIP20_address": "secret1sfurfnr2aj3z9zqrvgk9728fp80agmnkzwhw8k",
-          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+          "SNIP20_address": "secret10u2ak8n3wthew0cpc8zhvvkgd2a38ca22szdlm",
+          "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
           "symbol": "saWBNB",
@@ -84,8 +71,8 @@
           "fromImage": "swbnb-wei.png",
           "toImage": "wbnb-wei.png",
           "animation": "unwrap/unwrap-bnb.json",
-          "SNIP20_address": "secret1lw9e3cm93zw5swgejd92d095f6m0qcsgpt7eya",
-          "SNIP20_code_hash": "1c211b6fe32492e439a03a91f82fdb62e14e2388eefdd2a1cae837438ce472a6"
+          "SNIP20_address": "secret19lp7rfkx7h4wzx4sqg0u2q8pgqr36d6pxtjlw3",
+          "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         }
       ]
     }    
