@@ -317,7 +317,19 @@
                     </template>
                   </v-checkbox>
                 </div>
-                <div v-else></div>
+                <div v-else>
+                  <div v-if="fromChain && fromChain.name != 'Secret Network'" style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: nowrap; gap: 5px">
+                    <div>Asset to receive:</div>
+                    <div style="z-index: 999">
+                      <v-tooltip right>
+                        <template v-slot:activator="{on, attrs}">
+                          <div v-bind="attrs" v-on="on" style="text-decoration-style: dotted; text-decoration:underline; color: orange; cursor: pointer;">{{ willReceiveTokenName }}</div>
+                        </template>
+                        <span>Asset received in Secret Network smart contract</span>
+                      </v-tooltip>
+                    </div>
+                  </div> 
+                </div>
                 <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; overflow: hidden">
                   <div>Balance: </div>
                   <div v-if="!refreshBalance">{{ showCurrentBalance }}</div>

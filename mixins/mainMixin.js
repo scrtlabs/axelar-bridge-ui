@@ -150,6 +150,22 @@ var mixin = {
       MMTx: 'getMMTx',
       isMobile: 'isMobile'
     }),
+    willReceiveTokenName() {
+      if (this.selectedToken) {
+        if (this.selectedToken.symbol.indexOf("axl") != -1) {
+          return this.selectedToken.symbol.replace("axl", "sa");
+        } else if (this.selectedToken.symbol === "AXL") {
+          return "sAXL";
+        } else {
+          if (this.selectedToken.symbol === "ETH" || this.selectedToken.symbol === "BNB") {
+            return "saW" + this.selectedToken.symbol;  
+          }
+          return "sa" + this.selectedToken.symbol;
+        }
+      }
+      return "";
+      
+    },
     isMigrationFirstTime() {
       
       if (window.localStorage.getItem('migration_dontshow')) {
