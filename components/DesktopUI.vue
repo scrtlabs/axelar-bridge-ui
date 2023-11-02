@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-dialog  v-model="showMigrationDialog" persistent width="460" height="260">
-      <div class="migration-dialog">
+      <div v-if="false" class="migration-dialog">
         <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <div style="width: 100%; font-size: 20px; font-weight: bold; padding: 5px  10px 5px 15px;  margin-bottom: 10px; background-color: black; display: flex; justify-content: space-between;">
             <div>Token Migration</div>
@@ -148,7 +148,7 @@
             </div>
           </div>
 
-          <div :style="styleTokenMigrationObject" class="wallet-item">
+          <div v-if="false" :style="styleTokenMigrationObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px; white-space: nowrap;">
               Token Migration
               <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
