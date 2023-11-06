@@ -28,7 +28,9 @@
       "busd-wei": { "decimal": 18, "symbol": "axlBUSD"},
       "frax-wei": { "decimal": 18, "symbol": "axlFRAX"},
       "uni-wei": { "decimal": 18, "symbol": "axlUNI"},
-      "wbtc-satoshi": { "decimal": 8, "symbol": "axlWBTC"}
+      "wbtc-satoshi": { "decimal": 8, "symbol": "axlWBTC"},
+      "wsteth-wei": { "decimal": 18, "symbol": "axlwstETH"}
+      
     }
   }
 }

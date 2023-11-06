@@ -527,7 +527,6 @@ var mixin = {
       try {
         let microAmount = this.getMicroAmount(this.selectedToken, amount);
         const result = await this.axelarQuery.getTransferFee(this.fromChain.axelar.chain, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
-        
         var display = result.fee.amount + " " + result.fee.denom;
         var symbol = result.fee.denom;
         let normal = 0;

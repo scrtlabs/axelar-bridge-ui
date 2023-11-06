@@ -68,6 +68,20 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
+          "symbol": "sawstETH",
+          "denom": "wsteth-wei",
+          "description": "Secret Axelar wstETH",
+          "isEVMNative": false,
+          "allow_autounwap": true,
+          "coinDecimals": 18,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "seth-wei.png",
+          "toImage": "eth-wei.png",
+          "animation": "unwrap/unwrap-eth.json",
+          "SNIP20_address": "secret148jzxkagwe0xulf8jt3sw4nuh2shdh788z3gyd",
+          "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
+        },
+        {
           "symbol": "saWBTC",
           "denom": "wbtc-satoshi",
           "description": "Secret Axelar WBTC",
@@ -247,6 +261,20 @@
           "SNIP20_code_hash": ""
         },
         {
+          "symbol": "axlwstETH",
+          "denom": "wsteth-wei",
+          "description": "Axelar Wrapped stETH",
+          "ibcDenom": "ibc/B2BD584CD2A0A9CE53D4449667E26160C7D44A9C41AF50F602C201E5B3CCA46C",
+          "coinDecimals": 18,
+          "isEVMNative": false,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },
+        {
           "symbol": "axlWBNB",
           "denom": "wbnb-wei",
           "description": "Axelar Wrapped BNB",
@@ -340,6 +368,20 @@
           "SNIP20_address": "",
           "SNIP20_code_hash": ""
         },
+        {
+          "symbol": "axlwstETH",
+          "denom": "wsteth-wei",
+          "description": "Axelar Wrapped stETH",
+          "isEVMNative": false,
+          "allow_autounwap": true,
+          "coinDecimals": 18,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "seth-wei.png",
+          "toImage": "eth-wei.png",
+          "animation": "unwrap/unwrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": ""
+        },        
         {
           "symbol": "axlWBNB",
           "denom": "wbnb-wei",
@@ -472,6 +514,20 @@
           "SNIP20_address": "",
           "SNIP20_code_hash": "",
           "ERC20_address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        },
+        {
+          "symbol": "wstETH",
+          "denom": "wsteth-wei",
+          "description": "Wrapped stETH",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"
         },
         {
           "symbol": "WBTC",
@@ -789,6 +845,20 @@
           "SNIP20_address": "",
           "SNIP20_code_hash": "",
           "ERC20_address": "0x406Cde76a3fD20e48bc1E0F60651e60Ae204B040"
+        },
+        {
+          "symbol": "wstETH",
+          "denom": "wsteth-wei",
+          "description": "Wrapped stETH",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x9cfB13E6c11054ac9fcB92BA89644F30775436e4"
         }
       ]
     },      
@@ -869,6 +939,20 @@
           "SNIP20_address": "",
           "SNIP20_code_hash": "",
           "ERC20_address": "0x53Adc464b488bE8C5d7269B9ABBCe8bA74195C3a"
+        },
+        {
+          "symbol": "wstETH",
+          "denom": "wsteth-wei",
+          "description": "Wrapped stETH",
+          "isEVMNative": false,
+          "coinDecimals": 18,
+          "icon": "wsteth-wei.logo.svg",
+          "fromImage": "eth-wei.png",
+          "toImage": "seth-wei.png",
+          "animation": "wrap/wrap-eth.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0xd7Bb095a60D7666D4A6f236423B47DDD6ae6Cfa7"
         }
       ]
     },
