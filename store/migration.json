@@ -1,0 +1,27 @@
+{
+  "contract": {
+    "address": "secret1lygpknaneapf72gjqd6v47wnye9kcss6wjd6je",
+    "code_hash": "c533eb0a2dff8ac721291052e40e9d67013f823ba3d0c07e2a2a3b112651a9d7"
+  },
+  "tokens": 
+    [
+      {
+        "src_network": "Ethereum",
+        "src_coin": "Tether",
+        "src_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "dst_network": "Secret",
+        "dst_address": "secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f",
+        "new_address": "secret1wk5j2cntwg2fgklf0uta3tlkvt87alfj7kepuw",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "dst_coin": "secret-Tether",
+        "decimals": 6,
+        "name": "Tether",
+        "display_props": {
+          "symbol": "USDT",
+          "min_to_scrt": "1",
+          "min_from_scrt": "50",
+          "label": "Tether"
+        }
+      }    
+  ]
+}

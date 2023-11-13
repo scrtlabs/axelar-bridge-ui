@@ -5,7 +5,7 @@ import { getPermitMM, connectMM, getMMAccounts, getMMContractBalance, getMMBankB
 const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
 
 import chainsMainnet from './networksConfig-mainnet.json'
-import chainsTestnet from './networksConfig-testnet.json'
+import chainsTestnet from './networksConfig-pulsar-3.json' 
 
 var chains = SITE_ENV == "mainnet" ? chainsMainnet : chainsTestnet;
 var _getTokenDebounce = false;

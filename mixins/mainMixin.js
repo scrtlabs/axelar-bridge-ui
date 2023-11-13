@@ -1,8 +1,6 @@
 import axelarConfig from '../store/axelarConfig.json'
 import { mapGetters } from 'vuex';
-import SubChainSelector from '~/components/SubChainSelector.vue';
-import TokenSelector from '~/components/TokenSelector.vue';
-// import LottieWrapper from '~/components/LottieWrapper.vue';
+import { getTokenBalance, getPermit} from '../store/token'
 
 import _ from 'lodash';
 import { MsgExecuteContract, MsgTransfer, toBase64, toUtf8, toHex } from 'secretjs';
@@ -11,6 +9,7 @@ import { AxelarAssetTransfer, AxelarQueryAPI, AxelarGMPRecoveryAPI, CHAINS } fro
 import commonMixin from './commonMixin';
 //const Web3 = require('web3');
 import { checkIfTokenInKeplr } from '../store/token.js'
+import tokenListForMigration from '../store/migration.json'
 
 var mixin = {
   mixins: [commonMixin],
@@ -24,7 +23,10 @@ var mixin = {
   },
   mounted() {
     let self = this;
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
+
+      this.tokenMigrationHelp = this.isMigrationFirstTime;
+
       this.$nuxt.$on('secretjs-loaded', async () => {
         if (self.toChain.type === "cosmos") {
           self.destinationAddress = self.receiverAccount.address;
@@ -36,6 +38,15 @@ var mixin = {
         self.getBalance();
 
       });
+
+      //if (self.isTestnet === false) {
+        //let ethTokens = await axios.get("https://api-bridge-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
+        //let bscTokens = await axios.get("https://bridge-bsc-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
+
+        
+        self.migrationTokens = tokenListForMigration.tokens; 
+        //self.migrationTokens = [...ethTokens.data.tokens, ...bscTokens.data.tokens];
+      //}
 
       this.$nuxt.$on('keystorechange', async () => {
         //self.destinationAddress = self.receiverAccount.address;
@@ -139,6 +150,29 @@ var mixin = {
       MMTx: 'getMMTx',
       isMobile: 'isMobile'
     }),
+    willReceiveTokenName() {
+      if (this.selectedToken) {
+        if (this.selectedToken.symbol.indexOf("axl") != -1) {
+          return this.selectedToken.symbol.replace("axl", "sa");
+        } else if (this.selectedToken.symbol === "AXL") {
+          return "sAXL";
+        } else {
+          if (this.selectedToken.symbol === "ETH" || this.selectedToken.symbol === "BNB") {
+            return "saW" + this.selectedToken.symbol;  
+          }
+          return "sa" + this.selectedToken.symbol;
+        }
+      }
+      return "";
+      
+    },
+    isMigrationFirstTime() {
+      
+      if (window.localStorage.getItem('migration_dontshow')) {
+        return false;
+      }
+    },
+   
     allChains() {
       return [...this.availableChains["sub-chains"], ...this.availableChains["main-chain"]];
     },
@@ -188,7 +222,7 @@ var mixin = {
         '--overflow': 'hidden',
         '--overflow-hover': 'none',
         '--height': '40px',
-        '--height-hover': '230px'
+        '--height-hover': '250px'
       };
     },
 
@@ -204,6 +238,21 @@ var mixin = {
         '--overflow-hover': 'none',
         '--height': '40px',
         '--height-hover': '230px'
+      };
+    },
+
+    styleTokenMigrationObject() {
+      return {
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "flex-start",
+        "align-items": "flex-end",
+        '--width': '42px',
+        '--width-hover': '160px',
+        '--overflow': 'hidden',
+        '--overflow-hover': 'none',
+        '--height': '40px',
+        '--height-hover': '100px'
       };
     },
 
@@ -360,7 +409,19 @@ var mixin = {
 
       selfCheckApproved: false,
 
-      tokenInKeplr: -1
+      tokenInKeplr: -1,
+
+      migrationTokens: null, 
+      migrationAmount: 0,
+      migrationSelectedToken: null,
+      tokenMigrationBalance: -1,
+      tokenMigrationBalanceNew: -1, 
+      tokenMigrationBalanceDisplay: -1,
+      tokenMigrationBalanceCheck: false,
+      tokenMigrationInProgress: false,
+      tokenMigrationError: "",
+      tokenMigrationCompleteSuccess: false,
+      tokenMigrationHelp: false
 
 
     };
@@ -472,12 +533,21 @@ var mixin = {
         if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"].hasOwnProperty(result.fee.denom)) {
           let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][result.fee.denom];
           normal = parseFloat(result.fee.amount) / Math.pow(10, tokenInfo.decimal);
-          if (this.selectedToken.isEVMNative) {
-            symbol = this.selectedToken.symbol;
-          } else {
-            symbol = tokenInfo.symbol;
+          symbol = this.selectedToken.symbol;
+          // if (this.selectedToken.isEVMNative) {
+          //   symbol = this.selectedToken.symbol;
+          // } else {
+          //   symbol = tokenInfo.symbol;
+          // }
+
+
+
+          display = parseFloat(normal.toFixed(8)); //.toLocaleString() + " " + symbol;
+          if (display > 1) {
+            display = display.toLocaleString();
           }
-          display = parseFloat(normal.toFixed(6)).toLocaleString() + " " + symbol;
+          display = display + " " + symbol;
+
         }
         result.fee["display"] = display;
         result.fee["symbol"] = symbol;
@@ -511,7 +581,7 @@ var mixin = {
             let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["fee-decimals"][this.selectedToken.denom];
             result.amount = parseInt(limit);
             result.normalAmount = parseFloat(limit) / Math.pow(10, tokenInfo.decimal);
-            result.display = result.normalAmount.toLocaleString() + " " + tokenInfo.symbol;
+            result.display = result.normalAmount.toLocaleString() + " " + this.selectedToken.symbol;
             result.symbol = tokenInfo.symbol;
             result.denom = this.selectedToken.denom;
           }
@@ -522,7 +592,131 @@ var mixin = {
 
     },
 
+    async refreshMigrationBalance() {
+      const getBalance = async (address, codeHash) => {
+        let permit = undefined;
+        if (codeHash != '') {
+          permit = await getPermit('secret-4', [address], this.accounts['secret-4'].address);
+        }
+        
+        const result = await getTokenBalance(
+          this.accounts['secret-4'],
+          { address, codeHash},
+          'secret-4',
+          this.accounts['secret-4'].address,
+          permit
+        );
+        return result.balance.amount;
+      }
 
+      this.tokenMigrationBalance = -1;
+      this.tokenMigrationBalanceNew = -1;
+      this.tokenMigrationBalanceDisplay = -1;
+      this.tokenMigrationBalanceCheck = true;
+
+      try {
+        this.tokenMigrationBalance = await getBalance(this.migrationSelectedToken.dst_address, "");
+      } catch (err) {
+        console.error(err);
+        // Retrying one more time
+        this.tokenMigrationBalance = await getBalance(this.migrationSelectedToken.dst_address, "");
+      }
+
+      let newBalance = -1;
+      try {
+        newBalance = await getBalance(this.migrationSelectedToken.new_address, this.migrationSelectedToken.new_codeHash);
+      } catch (err) {
+        console.error(err);
+        // Retrying one more time
+        newBalance = await getBalance(this.migrationSelectedToken.new_address, this.migrationSelectedToken.new_codeHash);
+      }
+
+      this.tokenMigrationBalanceCheck = false;
+      this.tokenMigrationBalanceDisplay = this.tokenMigrationBalance;
+      try {
+        if (this.tokenMigrationBalanceDisplay > 0) {
+          this.tokenMigrationBalanceDisplay = (this.tokenMigrationBalanceDisplay / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
+        }
+      } catch (err) { console.error(err); }  
+
+      this.tokenMigrationBalanceNew = newBalance;
+      try {
+        if (this.tokenMigrationBalanceNew > 0) {
+          this.tokenMigrationBalanceNew = (newBalance / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
+        }
+      } catch (err) { console.error(err); }        
+
+      
+     
+      console.log("------- BALANCE ---------");
+      console.log(this.tokenMigrationBalance);
+      console.log("------- BALANCE ---------");
+    },
+
+    async handleTokenMigrationChange(token) {
+      if (!this.isKeplrConnected)
+        return;
+
+      this.migrationSelectedToken = token;
+      this.refreshMigrationBalance();
+
+    },
+
+    async doMigration() {
+      var self = this;
+
+      if (this.migrationSelectedToken === null)  {
+        return
+      }
+      
+      this.tokenMigrationError = false;
+      this.tokenMigrationInProgress = true;
+      this.tokenMigrationCompleteSuccess = false;
+      
+      let amount = BigInt(Math.round(this.migrationAmount * 10 ** this.migrationSelectedToken.decimals)).toString();
+       
+      console.log(amount);
+      try {
+        let tx = await this.accounts['secret-4'].tx.snip20.send(
+          {
+            sender: this.accounts['secret-4'].address,
+            contract_address: this.migrationSelectedToken.dst_address,
+            code_hash: '',
+            msg: {
+              send: {
+                recipient: tokenListForMigration.contract.address,
+                amount: amount,
+              }
+            },
+          },
+          {
+            gasLimit: 300_000
+          }
+        );
+        console.log(tx);
+
+        if (tx) {
+          if (tx.code !== 0) {
+            if (tx.rawLog.indexOf("insufficient funds") != -1) {
+              this.tokenMigrationError = "Cannot migrate tokens (insufficient funds), please contact us";
+            } else {
+              this.tokenMigrationError = "Error code: " + tx.code;
+            }
+          } else {
+            setTimeout(function () {
+              self.tokenMigrationCompleteSuccess = false;
+              self.migrationAmount = 0
+            }, 3000);
+            this.tokenMigrationCompleteSuccess = true;
+            this.refreshMigrationBalance();
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        this.tokenMigrationError = "Error";
+      }
+      this.tokenMigrationInProgress = false;
+    },
 
     async sendFromEVM(amount) {
 
@@ -962,7 +1156,7 @@ var mixin = {
       this.tx = undefined;
       this.ack = -1;
       this.ibcTx = undefined;
-
+      
       this.axelarStatus = "Please wait...";
       this.info_error = "";
       //let microAmount = await this.getMicroAmount(amount);

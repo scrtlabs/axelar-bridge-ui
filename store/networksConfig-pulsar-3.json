@@ -12,7 +12,7 @@
         "coinType": 529,
         "out_port": "wasm.secret1vfht4c30h4st7e254ww86p6whwyy0uux2ns5ck",
         "ICS_code_hash": "2976a2577999168b89021ecb2e09c121737696f71c4342f9a922ce8654e98662",
-        "out_channel": "channel-182",
+        "out_channel": "channel-1",
         "stakeCurrency": {
           "coinDenom": "SCRT",
           "coinMinimalDenom": "uscrt",
@@ -22,13 +22,14 @@
       },        
       "axelar": {
           "Env": "testnet",
-          "chain": "secret-snip-2",
+          "chain": "secret-snip-3",
           "transferTime": -1
       },
       "tokens": [
         {
           "symbol": "sAXL",
           "denom": "uaxl",
+          "description": "Secret Axelar",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uaxl.logo.svg",
@@ -41,6 +42,7 @@
         {
           "symbol": "saUSDC",
           "denom": "uausdc",
+          "description": "Secret Axelar USDC",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -53,6 +55,7 @@
         {
           "symbol": "saWETH",
           "denom": "eth-wei",
+          "description": "Secret Axelar WETH",
           "isEVMNative": false,
           "coinDecimals": 18,
           "icon": "weth-wei.logo.svg",
@@ -65,6 +68,7 @@
         {
           "symbol": "saWBNB",
           "denom": "wbnb-wei",
+          "description": "Secret Axelar WBNB",
           "isEVMNative": false,
           "coinDecimals": 18,
           "icon": "wbnb-wei.logo.svg",
@@ -90,7 +94,7 @@
         "coinType": 118,
         "out_port": "transfer",
         "ICS_code_hash": "",
-        "out_channel": "channel-201",
+        "out_channel": "channel-285",
         "stakeCurrency": {
           "coinDenom": "AXL",
           "coinMinimalDenom": "uaxl",
