@@ -72,14 +72,14 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog  v-model="showSurge" width="601" height="338">
+    <!-- <v-dialog  v-model="showSurge" width="601" height="338">
       <div class="surge-ad">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <div><v-btn large color="red" style="margin-top: 200px; font-size: 16px; border-radius: 10px;" @click="goToWeb('https://scrt.network/secret-surge')">Learn More</v-btn></div>
           <div style="margin-top: 10px; padding-top: 2px; padding-bottom: 2px; padding-left: 5px; padding-right: 5px; background-color: black;"><a @click="closeAd()" style="color: white; font-weight: bold; font-size: 14px;">Close</a></div>
         </div>
       </div>
-    </v-dialog>
+    </v-dialog> -->
 
 
     <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
@@ -104,15 +104,15 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'DefaultLayout',
   created() {
-    if (window.localStorage.getItem('Surge_dontshow')) {
-      this.showSurge = false;
-    } else {
-      if (!this.isMobile) {
-        this.showSurge = true;
-      }
+    // if (window.localStorage.getItem('Surge_dontshow')) {
+    //   this.showSurge = false;
+    // } else {
+    //   if (!this.isMobile) {
+    //     this.showSurge = true;
+    //   }
 
 
-    }
+    // }
   },
   data() {
     return {
