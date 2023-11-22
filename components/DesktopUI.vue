@@ -269,7 +269,7 @@
             <div style="display: flex; justify-content: space-between; gap: 10px">
               <div style="display: flex; align-items: flex-start; gap: 10px">
                 <token-selector :disabled="transferInProgress" :tokens="fromChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" :to="toChain" style="max-width: 200px"></token-selector>
-                <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
+                <v-tooltip top  v-if="allowUnwrap">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
                   </template>
@@ -310,7 +310,7 @@
             </div>
             <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px;">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px; overflow: hidden">
-                <div v-if="selectedToken && selectedToken.allow_autounwap">
+                <div v-if="allowUnwrap">
                   <v-checkbox color="green" dense :ripple="false" hide-details style="margin-top: -8px;" v-model="autounwrap">
                     <template v-slot:label>
                       <span style="font-size: 12px">Auto Unwrap</span>
@@ -458,6 +458,14 @@ export default {
     closeMigrationWindow() {
       this.showMigrationDialog = false;
       window.localStorage.setItem('migration_dontshow', 1);
+    }
+  },
+  computed: {
+    allowUnwrap() {
+      if (this.selectedToken && this.selectedToken.allow_autounwap) {
+        return (this.selectedToken.autounwap_chain && this.toChain.name === this.selectedToken.autounwap_chain);
+      }
+      return false;
     }
   }
 };
