@@ -47,22 +47,6 @@
       },
       {
         "src_network": "Binance",
-        "dst_address": "secret16euwqyntvsp0fp2rstmggw77w5xgz2z26cpwxj",
-        "new_address": "secret1wk5j2cntwg2fgklf0uta3tlkvt87alfj7kepuw",
-        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
-        "decimals": 6,
-        "name": "USDT (BSC)"
-      },
-      {
-        "src_network": "Binance",
-        "dst_address": "secret1kf45vm4mg5004pgajuplcmkrzvsyp2qtvlklyg",
-        "new_address": "secret1vkq022x4q8t8kx9de3r84u669l65xnwf2lg3e6",
-        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
-        "decimals": 6,
-        "name": "USDC (BSC)"
-      },
-      {
-        "src_network": "Binance",
         "dst_address": "secret1tact8rxxrvynk4pwukydnle4l0pdmj0sq9j9d5",
         "new_address": "secret19xsac2kstky8nhgvvz257uszt44g0cu6ycd5e4",
         "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
@@ -71,11 +55,11 @@
       },
       {
         "src_network": "Binance",
-        "dst_address": "secret1m6a72200733a7jnm76xrznh9cpmt4kf5ql0a6t",
-        "new_address": "secret139qfh3nmuzfgwsx2npnmnjl4hrvj3xq5rmq8a0",
+        "dst_address": "secret1kf45vm4mg5004pgajuplcmkrzvsyp2qtvlklyg",
+        "new_address": "secret1vkq022x4q8t8kx9de3r84u669l65xnwf2lg3e6",
         "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
-        "decimals": 18,
-        "name": "ETH (BSC)"
+        "decimals": 6,
+        "name": "USDC (BSC)"
       }
   ]
 }
