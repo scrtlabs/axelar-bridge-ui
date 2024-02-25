@@ -81,6 +81,25 @@
       </div>
     </v-dialog> -->
 
+    <v-dialog  v-model="showMigrationInfo" width="601" height="338">
+      <div class="migration-ad">
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <div style="width: 100%;  padding-left: 20px; flex: 1; font-size: 16px">
+            <div>Token migration is now available!</div>
+            <div style="display: flex; gap: 5px">
+              <div>If you have tokens in our old bridge you can click on the</div>
+              <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="" alt="info icon" />
+              <div>icon</div>
+            </div>
+            <div>from the right menu, to access the migration UI.</div>
+            <div>If you don't know what we are talking about, please ignore this message.</div>
+          </div>
+          <div style="margin-bottom: 20px; padding-bottom: 2px; padding-bottom: 2px; padding-left: 5px; padding-right: 5px; background-color: black;"><a @click="closeMigrationAd()" style="color: white; font-weight: bold; font-size: 14px;">Close</a></div>
+        </div>
+      </div>
+    </v-dialog>
+
+
 
     <v-footer v-if="!isMobile" color="black" padless fixed style="z-index: 200">
       <div style="width: 100%; display: flex; justify-content: center">
@@ -113,12 +132,21 @@ export default {
 
 
     // }
+
+    if (window.localStorage.getItem('Migration_dontshow')) {
+      this.showMigrationInfo = false;
+    } else {
+      if (!this.isMobile) {
+        this.showMigrationInfo = true;
+      }
+    }    
   },
   data() {
     return {
       dialog: false,
       version: "0.4.6",
-      showSurge: false
+      showSurge: false,
+      showMigrationInfo: false,
     };
   },
   watch: {
@@ -126,7 +154,12 @@ export default {
       if (value === false) {
         window.localStorage.setItem('Surge_dontshow', 1);
       }
-    }
+    },
+    showMigrationInfo(value) {
+      if (value === false) {
+        window.localStorage.setItem('Migration_dontshow', 1);
+      }
+    }    
   },
   methods: {
     goToWeb(url) {
@@ -136,7 +169,12 @@ export default {
     closeAd() {
       this.showSurge = false;
       window.localStorage.setItem('Surge_dontshow', 1);
+    },
+    closeMigrationAd() {
+      this.showMigrationInfo = false;
+      window.localStorage.setItem('Migration_dontshow', 1);
     }
+
   },
 
   computed: {
@@ -226,9 +264,19 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 600px; height: 338px; background-color: red; border-radius: 15px;
+  width: 600px; height: 338px; border-radius: 15px;
   border: 3px dashed white;
   background: url('~/assets/images/surge-ad.jpg') no-repeat center top transparent;
+}
+
+.migration-ad {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  padding-top: 80px;
+  width: 600px; height: 338px; border-radius: 15px;
+  border: 3px dashed white;
+  background: url('~/assets/images/migration-ad.jpg') no-repeat center top black;
 }
 
 </style>

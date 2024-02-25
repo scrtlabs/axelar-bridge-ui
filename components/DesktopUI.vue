@@ -147,7 +147,7 @@
             </div>
           </div>
 
-          <div :style="styleTokenMigrationObject" class="wallet-item wallet-item-open">
+          <div :style="styleTokenMigrationObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px; white-space: nowrap;">
               Token Migration
               <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
