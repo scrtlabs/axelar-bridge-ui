@@ -685,7 +685,7 @@
       "enableForMobile": false,      
       "chainInfo": {
         "chainId": "56",
-        "rpcUrls": ["https://endpoints.omniatech.io/v1/bsc/mainnet/public"],
+        "rpcUrls": ["https://rpc.ankr.com/bsc"],
         "nativeCurrency": {
           "name": "Binance Coin",
           "symbol": "BNB",
