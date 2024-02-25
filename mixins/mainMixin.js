@@ -647,7 +647,7 @@ var mixin = {
       } catch (err) { console.error(err); }        
 
       
-     
+      this.getBalance();
       console.log("------- BALANCE ---------");
       console.log(this.tokenMigrationBalance);
       console.log("------- BALANCE ---------");

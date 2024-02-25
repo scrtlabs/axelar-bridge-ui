@@ -117,7 +117,7 @@ export default {
   data() {
     return {
       dialog: false,
-      version: "0.4.5",
+      version: "0.4.6",
       showSurge: false
     };
   },
