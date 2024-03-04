@@ -7,8 +7,8 @@
       "enableForMobile": true,
       "chainInfo": {
         "chainId": "secret-4",
-        "rest": "https://lcd.secret.express",
-        "rpcUrl": "https://rpc.secret.express",
+        "rest": "https://secret-rest-sl.norm.io",
+        "rpcUrl": "https://secret-rpc-sl.norm.io",
         "hrp": "secret",
         "coinType": 529,
         "out_port": "wasm.secret1yxjmepvyl2c25vnt53cr2dpn8amknwausxee83",
