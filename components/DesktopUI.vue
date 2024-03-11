@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-dialog  v-model="showMigrationDialog" persistent width="460" height="260">
-      <div v-if="false" class="migration-dialog">
+      <div class="migration-dialog">
         <div style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <div style="width: 100%; font-size: 20px; font-weight: bold; padding: 5px  10px 5px 15px;  margin-bottom: 10px; background-color: black; display: flex; justify-content: space-between;">
             <div>Token Migration</div>
@@ -76,13 +76,13 @@
           </template> <!-- tokenMigrationHelp -->
           <template v-else>
             <div style="padding: 10px; font-size: 14px; line-height: 18px; overflow-y: scroll; height: 200px">
-              <span style="font-size: 20px; font-weight: bold;">Greetings, Fox!</span><br><br>
-              As you all probably heard, we are shutting down our old <a style="color: white; font-weight: bold;" href="https://bridge.scrt.network/tokens" target="_blank">Ethereum-Secret bridge</a>.
-              You don’t have to worry, we’ve got you covered.<br>
-              In order to make life easier, we created this migration window so that you can migrate your tokens safely and easily.
-              <br><br><b>How should you proceed?</b> Select the asset you wish to migrate, set the amount, and click the Migrate button. It’s as easy as it sounds.
-              <br><br><b>What’s going on under the hood?</b> By using the Axelar bridge, a new synthetic token will be created that will connect Ethereum and Secret, and will therefore have a different ticker than the old one.
-              <br><br><b>What difference does it make to you?</b> Nothing really, same original token, same value.
+              <span style="font-size: 20px; font-weight: bold;">Greetings, folks!</span><br><br>
+              As you may have already heard, we are phasing out our old <a style="color: white; font-weight: bold;" href="https://bridge.scrt.network/tokens" target="_blank">Ethereum-Secret bridge</a>.
+              But there's no need for concern—we've got everything arranged for a smooth transition.<br>
+              To simplify the process, we've established a migration window allowing for the safe and straightforward migration of your tokens.
+              <br><br><b>How do you go about this?</b> Simply select the asset you wish to migrate, enter the amount, and hit the "Migrate" button. It really is as simple as it sounds.
+              <br><br><b>What happens behind the scenes?</b> Utilizing the Axelar bridge, we'll generate a new synthetic token that links Ethereum and Secret, bearing a different ticker from the previous one.
+              <br><br><b>And what does this mean for you?</b> Essentially, nothing changes. You retain the original token with the same value.
               <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px">
                 <v-btn @click="tokenMigrationHelp = false" color="success" rounded>Ok, I got it</v-btn>
               </div>
@@ -142,13 +142,12 @@
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px">
               <v-btn @click="goToWeb('https://app.shadeprotocol.io/swap/pools')" >Shade</v-btn>
-              <v-btn @click="goToWeb('https://blizzard.finance/')" >Blizzard</v-btn>
               <v-btn @click="goToWeb('https://app.sienna.network/swap/pool')">Sienna</v-btn>
               <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
             </div>
           </div>
 
-          <div v-if="false" :style="styleTokenMigrationObject" class="wallet-item">
+          <div :style="styleTokenMigrationObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px; white-space: nowrap;">
               Token Migration
               <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
@@ -269,7 +268,7 @@
             <div style="display: flex; justify-content: space-between; gap: 10px">
               <div style="display: flex; align-items: flex-start; gap: 10px">
                 <token-selector :disabled="transferInProgress" :tokens="fromChain.tokens" :icon-size="itemIconSize" v-model="selectedToken" :to="toChain" style="max-width: 200px"></token-selector>
-                <v-tooltip top  v-if="selectedToken && selectedToken.allow_autounwap">
+                <v-tooltip top  v-if="allowUnwrap">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon style="margin-top: 5px" v-bind="attrs" v-on="on">mdi-information</v-icon>
                   </template>
@@ -310,7 +309,7 @@
             </div>
             <div v-if="true" style="text-align: right; margin-top: -20px; margin-right: 10px;">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px; overflow: hidden">
-                <div v-if="selectedToken && selectedToken.allow_autounwap">
+                <div v-if="allowUnwrap">
                   <v-checkbox color="green" dense :ripple="false" hide-details style="margin-top: -8px;" v-model="autounwrap">
                     <template v-slot:label>
                       <span style="font-size: 12px">Auto Unwrap</span>
@@ -390,7 +389,6 @@
               {{ ibcTx }}
             </div>
           </div>
-
           <div style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
             <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
             <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
@@ -458,6 +456,14 @@ export default {
     closeMigrationWindow() {
       this.showMigrationDialog = false;
       window.localStorage.setItem('migration_dontshow', 1);
+    }
+  },
+  computed: {
+    allowUnwrap() {
+      if (this.selectedToken && this.selectedToken.allow_autounwap) {
+        return (this.selectedToken.autounwap_chain && this.toChain.name === this.selectedToken.autounwap_chain);
+      }
+      return false;
     }
   }
 };
@@ -596,6 +602,13 @@ export default {
   height: var(--height-hover);
   overflow: var(--overflow-hover);
 }
+
+.wallet-item-open {
+  width: var(--width-hover);
+  height: var(--height-hover);
+  overflow: var(--overflow-hover);
+}
+
 
 .fade-enter-active,
 .fade-leave-active {

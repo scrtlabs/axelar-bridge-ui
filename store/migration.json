@@ -7,21 +7,51 @@
     [
       {
         "src_network": "Ethereum",
-        "src_coin": "Tether",
-        "src_address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        "dst_network": "Secret",
         "dst_address": "secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f",
         "new_address": "secret1wk5j2cntwg2fgklf0uta3tlkvt87alfj7kepuw",
         "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
-        "dst_coin": "secret-Tether",
         "decimals": 6,
-        "name": "Tether",
-        "display_props": {
-          "symbol": "USDT",
-          "min_to_scrt": "1",
-          "min_from_scrt": "50",
-          "label": "Tether"
-        }
-      }    
+        "name": "USDT"
+      },
+      {
+        "src_network": "Ethereum",
+        "dst_address": "secret1h6z05y90gwm4sqxzhz4pkyp36cna9xtp7q0urv",
+        "new_address": "secret1vkq022x4q8t8kx9de3r84u669l65xnwf2lg3e6",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "decimals": 6,
+        "name": "USDC"
+      },
+      {
+        "src_network": "Ethereum",
+        "dst_address": "secret1vnjck36ld45apf8u4fedxd5zy7f5l92y3w5qwq",
+        "new_address": "secret1c2prkwd8e6ratk42l4vrnwz34knfju6hmp7mg7",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "decimals": 18,
+        "name": "DAI"
+      },
+      {
+        "src_network": "Ethereum",
+        "dst_address": "secret1wuzzjsdhthpvuyeeyhfq2ftsn3mvwf9rxy6ykw",
+        "new_address": "secret139qfh3nmuzfgwsx2npnmnjl4hrvj3xq5rmq8a0",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "decimals": 18,
+        "name": "ETH"
+      },
+      {
+        "src_network": "Ethereum",
+        "dst_address": "secret1g7jfnxmxkjgqdts9wlmn238mrzxz5r92zwqv4a",
+        "new_address": "secret1guyayjwg5f84daaxl7w84skd8naxvq8vz9upqx",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "decimals": 8,
+        "name": "WBTC"
+      },
+      {
+        "src_network": "Binance",
+        "dst_address": "secret1tact8rxxrvynk4pwukydnle4l0pdmj0sq9j9d5",
+        "new_address": "secret19xsac2kstky8nhgvvz257uszt44g0cu6ycd5e4",
+        "new_codeHash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e",
+        "decimals": 18,
+        "name": "BNB (BSC)"
+      }
   ]
 }
