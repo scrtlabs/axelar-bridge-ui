@@ -135,7 +135,7 @@
             <!-- <div style="position: absolute; top: 40px; width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(7px);"></div> -->
           </div>
 
-          <div :style="styleSurgeObject" class="wallet-item">
+          <!-- <div :style="styleSurgeObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px;">
               Surge
               <img :src="require('~/assets/images/surge-icon.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
@@ -145,7 +145,7 @@
               <v-btn @click="goToWeb('https://app.sienna.network/swap/pool')">Sienna</v-btn>
               <v-btn @click="goToWeb('https://secretswap.net/pool#Provide')">SecretSwap 2.0</v-btn>
             </div>
-          </div>
+          </div> -->
 
           <div :style="styleTokenMigrationObject" class="wallet-item">
             <div style="display: flex; align-items: center; margin-top: 8px; font-size: 16px; white-space: nowrap;">
