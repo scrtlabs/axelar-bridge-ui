@@ -153,15 +153,21 @@ var mixin = {
     willReceiveTokenName() {
       if (this.selectedToken) {
         if ( this.selectedToken.symbol.indexOf(".axl") != -1 && 
-        !(this.selectedToken.symbol === "USDT.axl" || this.selectedToken.symbol === "USDC.axl" || 
+        !(
+            this.selectedToken.symbol === "USDT.axl" || 
+            this.selectedToken.symbol === "USDC.axl" || 
             this.selectedToken.symbol === "wstETH.axl"
-        )) {
+          )
+        ) {
           return this.selectedToken.symbol.replace(".axl", "");
         } else {
           if (this.selectedToken.symbol === "ETH" || this.selectedToken.symbol === "BNB") {
             return "W" + this.selectedToken.symbol;  
         } else {
-          if (this.selectedToken.symbol === "USDT" || this.selectedToken.symbol === "USDC") {
+          if (this.selectedToken.symbol === "USDT" || 
+              this.selectedToken.symbol === "USDC" || 
+              this.selectedToken.symbol === "wstETH" 
+              ) {
             return this.selectedToken.symbol + ".axl";  
           }
         }
