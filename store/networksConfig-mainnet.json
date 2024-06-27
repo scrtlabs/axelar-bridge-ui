@@ -28,7 +28,7 @@
       },
       "tokens": [
         {
-          "symbol": "sAXL",
+          "symbol": "AXL",
           "denom": "uaxl",
           "description": "Secret Axelar",
           "isEVMNative": false,
@@ -41,7 +41,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Secret Axelar USDC",
           "isEVMNative": false,
@@ -54,7 +54,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saWETH",
+          "symbol": "WETH",
           "denom": "weth-wei",
           "description": "Secret Axelar WETH",
           "isEVMNative": false,
@@ -68,7 +68,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saWBTC",
+          "symbol": "WBTC",
           "denom": "wbtc-satoshi",
           "description": "Secret Axelar WBTC",
           "isEVMNative": false,
@@ -81,7 +81,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saWBNB",
+          "symbol": "WBNB",
           "denom": "wbnb-wei",
           "description": "Secret Axelar WBNB",
           "isEVMNative": false,
@@ -95,7 +95,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saBUSD",
+          "symbol": "BUSD",
           "denom": "busd-wei",
           "description": "Secret Axelar BUSD",
           "isEVMNative": false,
@@ -108,7 +108,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saDAI",
+          "symbol": "DAI",
           "denom": "dai-wei",
           "description": "Secret Axelar DAI",
           "isEVMNative": false,
@@ -121,7 +121,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Secret Axelar USDT",
           "isEVMNative": false,
@@ -134,7 +134,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saUNI",
+          "symbol": "UNI",
           "denom": "uni-wei",
           "description": "Secret Axelar UNI",
           "isEVMNative": false,
@@ -147,7 +147,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
-          "symbol": "saFRAX",
+          "symbol": "FRAX",
           "denom": "frax-wei",
           "description": "Secret Axelar FRAX",
           "isEVMNative": false,
@@ -190,7 +190,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "ibcDenom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
@@ -233,7 +233,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlWETH",
+          "symbol": "WETH",
           "denom": "weth-wei",
           "description": "Axelar Wrapped ETH",
           "ibcDenom": "ibc/EA1D43981D5C9A1C4AAEA9C23BB1D4FA126BA9BC7020A25E0AE4AA841EA25DC5",
@@ -302,7 +302,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "coinDecimals": 6,
@@ -315,7 +315,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Axelar USDT",
           "coinDecimals": 6,
@@ -328,7 +328,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlWETH",
+          "symbol": "WETH",
           "denom": "weth-wei",
           "description": "Axelar Wrapped ETH",
           "coinDecimals": 18,
@@ -341,7 +341,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlWBNB",
+          "symbol": "WBNB",
           "denom": "wbnb-wei",
           "description": "Axelar Wrapped BNB",
           "coinDecimals": 18,
@@ -354,7 +354,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlWBTC",
+          "symbol": "WBTC",
           "denom": "wbtc-satoshi",
           "description": "Axelar Wrapped BTC",
           "coinDecimals": 8,
@@ -367,7 +367,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlFRAX",
+          "symbol": "FRAX",
           "denom": "frax-wei",
           "description": "Axelar FRAX",
           "isEVMNative": false,
@@ -381,7 +381,7 @@
           "ERC20_address": ""
         },
         {
-          "symbol": "axlDAI",
+          "symbol": "DAI",
           "denom": "dai-wei",
           "description": "Axelar DAI",
           "isEVMNative": false,
@@ -395,7 +395,7 @@
           "ERC20_address": ""
         },
         {
-          "symbol": "axlBUSD",
+          "symbol": "BUSD",
           "description": "Axelar BUSD",
           "denom": "busd-wei",
           "isEVMNative": false,
@@ -409,7 +409,7 @@
           "ERC20_address": ""
         },
         {
-          "symbol": "axlUNI",
+          "symbol": "UNI",
           "denom": "uni-wei",
           "description": "Axelar UNI",
           "isEVMNative": false,
@@ -617,7 +617,7 @@
           "ERC20_address": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
         },
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "isEVMNative": false,
@@ -655,7 +655,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "isEVMNative": false,
@@ -669,7 +669,7 @@
           "ERC20_address": "0xfaB550568C688d5D8A52C7d794cb93Edc26eC0eC"
         },
         {
-          "symbol": "axlUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Axelar USDT",
           "isEVMNative": false,
@@ -735,7 +735,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "isEVMNative": false,
@@ -749,7 +749,7 @@
           "ERC20_address": "0xEB466342C4d449BC9f53A865D5Cb90586f405215"
         },
         {
-          "symbol": "axlUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Axelar USDT",
           "isEVMNative": false,
@@ -815,7 +815,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "isEVMNative": false,
@@ -829,7 +829,7 @@
           "ERC20_address": "0x750e4C4984a9e0f12978eA6742Bc1c5D248f40ed"
         },
         {
-          "symbol": "axlUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Axelar USDT",
           "isEVMNative": false,
@@ -843,7 +843,7 @@
           "ERC20_address": "0xCeED2671d8634e3ee65000EDbbEe66139b132fBf"
         },
         {
-          "symbol": "axlDAI",
+          "symbol": "DAI",
           "denom": "dai-wei",
           "description": "Axelar DAI",
           "isEVMNative": false,
@@ -857,7 +857,7 @@
           "ERC20_address": "0xDDc9E2891FA11a4CC5C223145e8d14B44f3077c9"
         },
         {
-          "symbol": "axlFRAX",
+          "symbol": "FRAX",
           "denom": "frax-wei",
           "description": "Axelar FRAX",
           "isEVMNative": false,
@@ -899,7 +899,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "ibcDenom": "ibc/295548A78785A1007F232DE286149A6FF512F180AF5657780FC89C009E2C348F",
@@ -913,7 +913,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlUSDT",
+          "symbol": "USDT.axl",
           "denom": "uusdt",
           "description": "Axelar USDT",
           "ibcDenom": "ibc/F2331645B9683116188EF36FC04A809C28BD36B54555E8705A37146D0182F045",
@@ -942,7 +942,7 @@
           "ERC20_address": ""
         },        
         {
-          "symbol": "axlWETH",
+          "symbol": "WETH",
           "denom": "weth-wei",
           "description": "Axelar Wrapped ETH",
           "ibcDenom": "ibc/1B38805B1C75352B28169284F96DF56BDEBD9E8FAC005BDCC8CF0378C82AA8E7",
@@ -984,7 +984,7 @@
       },
       "tokens": [
         {
-          "symbol": "axlUSDC",
+          "symbol": "USDC.axl",
           "denom": "uusdc",
           "description": "Axelar USDC",
           "ibcDenom": "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
@@ -998,7 +998,7 @@
           "SNIP20_code_hash": ""
         },
         {
-          "symbol": "axlWETH",
+          "symbol": "WETH",
           "denom": "weth-wei",
           "description": "Axelar Wrapped ETH",
           "ibcDenom": "ibc/95A45A81521EAFDBEDAEEB6DA975C02E55B414C95AD3CE50709272366A90CA17",

@@ -155,11 +155,15 @@ var mixin = {
         if (this.selectedToken.symbol.indexOf("axl") != -1) {
           return this.selectedToken.symbol.replace("axl", "sa");
         } else if (this.selectedToken.symbol === "AXL") {
-          return "sAXL";
+          return "AXL";
         } else {
           if (this.selectedToken.symbol === "ETH" || this.selectedToken.symbol === "BNB") {
-            return "saW" + this.selectedToken.symbol;  
+            return "W" + this.selectedToken.symbol;  
+        } else {
+          if (this.selectedToken.symbol === "USDT" || this.selectedToken.symbol === "USDC") {
+            return this.selectedToken.symbol + ".axl";  
           }
+        }
           return "sa" + this.selectedToken.symbol;
         }
       }
