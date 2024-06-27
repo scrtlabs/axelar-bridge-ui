@@ -347,7 +347,7 @@
       },
       "tokens": [
         {
-          "symbol": ".axl",
+          "symbol": "AXL",
           "denom": "uaxl",
           "isEVMNative": false,
           "coinDecimals": 6,
