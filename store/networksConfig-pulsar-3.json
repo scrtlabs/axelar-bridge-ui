@@ -7,7 +7,7 @@
       "chainInfo": {
         "chainId": "pulsar-3",
         "rest": "https://api.pulsar3.scrttestnet.com",
-        "rpcUrl": "https://rpc.pulsar3.scrttestnet.com",
+        "rpcUrl": "http://rpc.testnet.secretsaturn.net:26657",
         "hrp": "secret",
         "coinType": 529,
         "out_port": "wasm.secret1vfht4c30h4st7e254ww86p6whwyy0uux2ns5ck",
@@ -89,7 +89,7 @@
       "chainInfo": {
         "chainId": "axelar-testnet-lisbon-3",
         "rest": "https://axelartest-lcd.quantnode.tech",
-        "rpcUrl": "https://rpc-axelar-testnet.imperator.co:443",
+        "rpcUrl": "https://axelar-rpc.norm.io",
         "hrp": "axelar",
         "coinType": 118,
         "out_port": "transfer",
