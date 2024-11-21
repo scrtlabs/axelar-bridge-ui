@@ -5,7 +5,7 @@ import { getPermitMM, connectMM, getMMAccounts, getMMContractBalance, getMMBankB
 const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
 
 import chainsMainnet from './networksConfig-mainnet.json'
-import chainsTestnet from './networksConfig-pulsar-3.json' 
+import chainsTestnet from './networksConfig-pulsar-3.json'
 
 var chains = SITE_ENV == "mainnet" ? chainsMainnet : chainsTestnet;
 var _getTokenDebounce = false;
@@ -23,7 +23,7 @@ var mobileAndTabletCheck = function () {
       )
           check = true;
   })(navigator.userAgent || navigator.vendor || window.opera);
-  
+
   if (window.fina)
     check = true;
 
@@ -66,12 +66,12 @@ export const actions = {
 
     commit('setAccounts', accounts);
     commit('setKeplrLoading', false)
-  },  
+  },
 
   async initKeplr({ commit, state, getters }, selectedChain) {
 
     const suggestChain = async (chainInfo) => {
-  
+
       var addChain = false
       try {
         await window.keplr.enable(chainInfo.chainId);
@@ -130,7 +130,7 @@ export const actions = {
     }
 
     const createSecretJSAccounts = async (chainInfo) => {
-      const keplrOfflineSigner = window.getOfflineSignerOnlyAmino(chainInfo.chainId)
+      const keplrOfflineSigner = window.getOfflineSigner(chainInfo.chainId)
       const signer = await keplrOfflineSigner.getAccounts()
 
       return new SecretNetworkClient({
@@ -161,7 +161,7 @@ export const actions = {
       if (
         !window.keplr ||
         !window.getEnigmaUtils ||
-        !window.getOfflineSignerOnlyAmino
+        !window.getOfflineSigner
       ) {
         console.log('Cannot find Keplr wallet')
         commit('setKeplrLoading', false)
@@ -176,7 +176,7 @@ export const actions = {
           let cosmosChains = getCosmosChainsInfo();
           let accountsChainIds = Object.keys(accounts);
           for (let i = 0; i < accountsChainIds.length; i++ ) {
-            if (accountsChainIds[i] !== selectedChain.chainId) { // Already connected 
+            if (accountsChainIds[i] !== selectedChain.chainId) { // Already connected
               accounts[accountsChainIds[i]] = await createSecretJSAccounts(cosmosChains[accountsChainIds[i]]);
             }
           }
@@ -187,12 +187,12 @@ export const actions = {
 
           // Listen to keplr events when wallet change
           if (!state.keplrEventWasAdded) {
-            commit('setKeplrEventWasAdded', true);            
+            commit('setKeplrEventWasAdded', true);
             window.addEventListener('keplr_keystorechange', async () => {
               keplrConnect()
             })
           }
-          $nuxt.$emit('keystorechange');          
+          $nuxt.$emit('keystorechange');
         } catch (err) {
           console.log(err.message)
           console.log(
@@ -203,7 +203,7 @@ export const actions = {
       }
     }
       await keplrConnect()
-    
+
   },
 
   async disconnectKeplr({ commit, state, getters }) {
@@ -224,11 +224,11 @@ export const actions = {
         contracts.push(token.SNIP20_address);
       }
     }
-    
+
     let permit = null;
 
     if (getters.isMobile() && window.ethereum !== undefined) {
-      permit = await getPermitMM(payload.account.wallet, chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress); 
+      permit = await getPermitMM(payload.account.wallet, chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
     } else {
       permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
     }
@@ -239,7 +239,7 @@ export const actions = {
     } else {
       console.log(permit);
     }
-    
+
     let balance = await getTokenBalance(
       payload.account,
       payload.contract,
@@ -322,7 +322,7 @@ export const actions = {
     checkTxConfirmation(receipt);
   }
 
-  
+
 
 }
 
@@ -386,7 +386,7 @@ export const getters = {
   //     }
   //   }
   //   return subChains;
-  // },  
+  // },
 
   // getSubChainsMobile(state) { // for mobile
   //   let subChains = [];
@@ -399,7 +399,7 @@ export const getters = {
   //     //subChains = subChains.concat(c.subChains);
   //   }
   //   return subChains;
-  // },  
+  // },
   getBankBalances(state) {
     return state.bankBalances;
   },
@@ -414,7 +414,7 @@ export const getters = {
   },
   isMobile(state) {
     var isMobile = mobileAndTabletCheck();
-    
+
     // if (state.windowWidth <= '1145') {
     //     isMobile = true;
     // }
