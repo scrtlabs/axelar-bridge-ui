@@ -1146,7 +1146,7 @@ var mixin = {
           this.getBalance();
 
           if (this.tx_error == '') {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["cosmos-block-explorer"]}/${this.fromChain.chainInfo.mintscan}/txs/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["cosmos-block-explorer"]}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == "testnet" ? "tx" : "txs"}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
             this.transferInProgress = false;
             this.selfCheckApproved = false;
             this.animateProcessing();
