@@ -1,6 +1,6 @@
 {
   "testnet": {
-    "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
+    "axelarscan-api": "https://testnet.api.axelarscan.io/token/searchTransfers",
     "transaction-viewer": "https://testnet.axelarscan.io/transfer",
     "deposit-account-viewer": "https://testnet.axelarscan.io/account",
     "cosmos-block-explorer": "https://testnet.ping.pub",
