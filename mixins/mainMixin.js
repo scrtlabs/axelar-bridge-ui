@@ -43,8 +43,8 @@ var mixin = {
         //let ethTokens = await axios.get("https://api-bridge-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
         //let bscTokens = await axios.get("https://bridge-bsc-mainnet.azurewebsites.net/tokens/?page=0&size=1000");
 
-        
-        self.migrationTokens = tokenListForMigration.tokens; 
+
+        self.migrationTokens = tokenListForMigration.tokens;
         //self.migrationTokens = [...ethTokens.data.tokens, ...bscTokens.data.tokens];
       //}
 
@@ -152,38 +152,38 @@ var mixin = {
     }),
     willReceiveTokenName() {
       if (this.selectedToken) {
-        if ( this.selectedToken.symbol.indexOf(".axl") != -1 && 
+        if ( this.selectedToken.symbol.indexOf(".axl") != -1 &&
         !(
-            this.selectedToken.symbol === "USDT.axl" || 
-            this.selectedToken.symbol === "USDC.axl" || 
+            this.selectedToken.symbol === "USDT.axl" ||
+            this.selectedToken.symbol === "USDC.axl" ||
             this.selectedToken.symbol === "wstETH.axl"
           )
         ) {
           return this.selectedToken.symbol.replace(".axl", "");
         } else {
           if (this.selectedToken.symbol === "ETH" || this.selectedToken.symbol === "BNB") {
-            return "W" + this.selectedToken.symbol;  
+            return "W" + this.selectedToken.symbol;
         } else {
-          if (this.selectedToken.symbol === "USDT" || 
-              this.selectedToken.symbol === "USDC" || 
-              this.selectedToken.symbol === "wstETH" 
+          if (this.selectedToken.symbol === "USDT" ||
+              this.selectedToken.symbol === "USDC" ||
+              this.selectedToken.symbol === "wstETH"
               ) {
-            return this.selectedToken.symbol + ".axl";  
+            return this.selectedToken.symbol + ".axl";
           }
         }
           return this.selectedToken.symbol;
         }
       }
       return "";
-      
+
     },
     isMigrationFirstTime() {
-      
+
       if (window.localStorage.getItem('migration_dontshow')) {
         return false;
       }
     },
-   
+
     allChains() {
       return [...this.availableChains["sub-chains"], ...this.availableChains["main-chain"]];
     },
@@ -422,11 +422,11 @@ var mixin = {
 
       tokenInKeplr: -1,
 
-      migrationTokens: null, 
+      migrationTokens: null,
       migrationAmount: 0,
       migrationSelectedToken: null,
       tokenMigrationBalance: -1,
-      tokenMigrationBalanceNew: -1, 
+      tokenMigrationBalanceNew: -1,
       tokenMigrationBalanceDisplay: -1,
       tokenMigrationBalanceCheck: false,
       tokenMigrationInProgress: false,
@@ -609,7 +609,7 @@ var mixin = {
         if (codeHash != '') {
           permit = await getPermit('secret-4', [address], this.accounts['secret-4'].address);
         }
-        
+
         const result = await getTokenBalance(
           this.accounts['secret-4'],
           { address, codeHash},
@@ -648,16 +648,16 @@ var mixin = {
         if (this.tokenMigrationBalanceDisplay > 0) {
           this.tokenMigrationBalanceDisplay = (this.tokenMigrationBalanceDisplay / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
         }
-      } catch (err) { console.error(err); }  
+      } catch (err) { console.error(err); }
 
       this.tokenMigrationBalanceNew = newBalance;
       try {
         if (this.tokenMigrationBalanceNew > 0) {
           this.tokenMigrationBalanceNew = (newBalance / Math.pow(10, this.migrationSelectedToken.decimals)).toFixed(6);
         }
-      } catch (err) { console.error(err); }        
+      } catch (err) { console.error(err); }
 
-      
+
       this.getBalance();
       console.log("------- BALANCE ---------");
       console.log(this.tokenMigrationBalance);
@@ -679,13 +679,13 @@ var mixin = {
       if (this.migrationSelectedToken === null)  {
         return
       }
-      
+
       this.tokenMigrationError = false;
       this.tokenMigrationInProgress = true;
       this.tokenMigrationCompleteSuccess = false;
-      
+
       let amount = BigInt(Math.round(this.migrationAmount * 10 ** this.migrationSelectedToken.decimals)).toString();
-       
+
       console.log(amount);
       try {
         let tx = await this.accounts['secret-4'].tx.snip20.send(
@@ -1074,7 +1074,8 @@ var mixin = {
           },
           timeout_timestamp: String(Math.floor(Date.now() / 1000) + 10 * 60), // 10 minutes
           sender: this.sourceAddress,
-          receiver: depositAddress
+          receiver: depositAddress,
+          memo: "hi",
         });
 
         console.log(msgTransfer);
@@ -1167,7 +1168,7 @@ var mixin = {
       this.tx = undefined;
       this.ack = -1;
       this.ibcTx = undefined;
-      
+
       this.axelarStatus = "Please wait...";
       this.info_error = "";
       //let microAmount = await this.getMicroAmount(amount);
