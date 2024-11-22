@@ -6,7 +6,7 @@ import { sha256 } from "@noble/hashes/sha256";
 import { fromHex, toHex, toUtf8, toBase64 } from 'secretjs';
 
 
-const APP_TESTNET_CHAIN_ID = Web3.utils.toHex(5);
+const APP_TESTNET_CHAIN_ID = Web3.utils.toHex(11155111);
 const APP_MAINNET_CHAIN_ID = Web3.utils.toHex(1);
 const AVG_ETH_BLOCK_TIME_SEC = 15;
 
@@ -47,7 +47,7 @@ export const connectMM = async (chainId, chains) => {
     } else {
       selectedChain = chainId != -1 ? Web3.utils.toHex(chainId) : APP_MAINNET_CHAIN_ID
     }
-    
+
     if (Web3.givenProvider) {
       await window.ethereum.request({method: 'eth_requestAccounts'});
       _web3 = new Web3(Web3.givenProvider);
@@ -62,7 +62,7 @@ export const connectMM = async (chainId, chains) => {
           console.log('accountsChanges', accounts);
           $nuxt.$emit('MM-account-changed', accounts);
         });
-    
+
         window.ethereum.on('chainChanged', function(networkId){
           $nuxt.$emit('MM-network-changed', networkId);
         });
@@ -99,7 +99,7 @@ export const getMMAccounts = async () => {
 }
 
 export const getMMContractBalance = async (contractAddress, address) => {
-    
+
   try {
     var result = {
       amount: 0,
@@ -145,7 +145,7 @@ export const sendCoins = async (toAxelarAddress, from, amount) => {
         $nuxt.$emit('MM-TX', hash);
       })
       .on('receipt', function(receipt){
-        $nuxt.$emit('MM-receipt', receipt);  
+        $nuxt.$emit('MM-receipt', receipt);
       })
       .on('confirmation', function(confirmationNumber, receipt){
         $nuxt.$emit('MM-confirmation', {confirmationNumber, receipt});
@@ -174,7 +174,7 @@ export const sendMMTokens = async (contractAddress, toAxelarAddress, from, amoun
           $nuxt.$emit('MM-confirmation', {confirmationNumber, receipt});
         })
         .on('receipt', function(receipt) {
-          $nuxt.$emit('MM-receipt', receipt);          
+          $nuxt.$emit('MM-receipt', receipt);
         })
         .on('error', function(error, receipt) {
           $nuxt.$emit('MM-error', {error, receipt});
@@ -215,7 +215,7 @@ export const checkTxConfirmation = async (receipt) => {
         } else if (confirmations > 40) {
           try {
             let status = await $nuxt.$axios.post(axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["axelarscan-api"], {
-              txHash: receipt.transactionHash, 
+              txHash: receipt.transactionHash,
               size: 1
             });
             if (status) {
@@ -240,7 +240,7 @@ export const checkTxConfirmation = async (receipt) => {
                 console.log(err);
               }
             }
-            
+
           } catch (err) {
             console.log("Axios", err);
           }
@@ -261,16 +261,16 @@ export const getPermitMM = async (wallet, chainId, contracts, address) => {
   try {
     permit = JSON.parse(window.localStorage.getItem(permKey));
   } catch (err) {}
-  
+
   if (!permit) {
       console.log('Loading new permit');
-      try {                
+      try {
         const msg = {
             chain_id: chainId,
             account_number: '0',
             sequence: '0',
             fee: {
-                amount: [{ denom: 'uscrt', amount: '0' }], 
+                amount: [{ denom: 'uscrt', amount: '0' }],
                 gas: '1'
             },
             msgs: [
@@ -318,27 +318,27 @@ export const getPermitMM = async (wallet, chainId, contracts, address) => {
           };
         }
 
-        
+
         const encodeSecp256k1Signature = (pubkey, signature) => {
           if (signature.length !== 64) {
             throw new Error(
               "Signature must be 64 bytes long. Cosmos SDK uses a 2x32 byte fixed length encoding for the secp256k1 signature integers r and s.",
             );
           }
-        
+
           return {
             pub_key: encodeSecp256k1Pubkey(pubkey),
             signature: toBase64(signature),
           };
         }
-        
+
 
         const messageHash = sha256(toUtf8(JsonSortedStringify(msg)));
         const sigResult = await window.ethereum.request({
           method: "eth_sign",
           params: [wallet.ethAddress, "0x" + toHex(messageHash)],
         });
-    
+
         // strip leading 0x and trailing recovery id
         const sig = fromHex(sigResult.slice(2, -2));
         const result = {
@@ -346,7 +346,7 @@ export const getPermitMM = async (wallet, chainId, contracts, address) => {
           signature: encodeSecp256k1Signature(wallet.publicKey, sig),
         };
 
-        permit = { 
+        permit = {
           params: {
             permit_name: 'secret-bridge-balance',
             allowed_tokens: contracts,
@@ -363,12 +363,12 @@ export const getPermitMM = async (wallet, chainId, contracts, address) => {
         } else {
           alert(err);
         }
-        
-        
+
+
         console.log("--- PERMIT ERROR ---")
         console.log(err)
         console.log("--- PERMIT ERROR ---")
-      }            
+      }
   }
   return permit;
 }
