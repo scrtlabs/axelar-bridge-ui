@@ -1271,7 +1271,7 @@ var mixin = {
           });
 
           console.log(tx);
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["cosmos-block-explorer"]}/${this.fromChain.chainInfo.mintscan}/txs/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["cosmos-block-explorer"]}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == "testnet" ? "tx" : "txs"}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
           this.ack = 0;
           try {
             const ibcResponses = await Promise.all(tx.ibcResponses);
