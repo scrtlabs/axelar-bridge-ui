@@ -322,7 +322,7 @@
       "icon": "osmosis.logo.svg",
       "type": "cosmos",
       "chainInfo": {
-        "chainId": "osmo-test-4",
+        "chainId": "osmo-test-5",
         "rest": "https://lcd-test.osmosis.zone",
         "rpcUrl": "https://rpc.testnet.osmosis.zone/",
         "hrp": "osmo",
@@ -338,14 +338,14 @@
       },
       "axelar": {
           "Env": "testnet",
-          "chain": "osmosis-5",
+          "chain": "osmosis-7",
           "transferTime": -1
       },
       "tokens": [
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
-          "ibcDenom": "ibc/FF3065989E34457F342D4EFB8692406D49D4E2B5C70F725F127862E22CE6BDCD",
+          "ibcDenom": "ibc/1587E7B54FC9EFDA2350DC690EC2F9B9ECEB6FC31CF11884F9C0C5207ABE3921",
           "coinDecimals": 6,
           "isEVMNative": false,
           "icon": "uausdc.logo.svg",
