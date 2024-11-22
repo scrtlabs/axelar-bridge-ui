@@ -332,7 +332,7 @@
         "hrp": "osmo",
         "coinType": 118,
         "out_port": "transfer",
-        "out_channel": "channel-227",
+        "out_channel": "channel-1946",
         "stakeCurrency": {
           "coinDenom": "OSMO",
           "coinMinimalDenom": "uosmo",
