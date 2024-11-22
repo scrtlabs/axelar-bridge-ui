@@ -327,7 +327,7 @@
       "type": "cosmos",
       "chainInfo": {
         "chainId": "osmo-test-5",
-        "rest": "https://lcd-test.osmosis.zone",
+        "rest": "https://lcd.testnet.osmosis.zone",
         "rpcUrl": "https://rpc.testnet.osmosis.zone/",
         "hrp": "osmo",
         "coinType": 118,
