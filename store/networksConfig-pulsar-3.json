@@ -19,7 +19,7 @@
           "coinDecimals": 6
         },
         "mintscan": "secret"
-      },        
+      },
       "axelar": {
           "Env": "testnet",
           "chain": "secret-snip-3",
@@ -79,7 +79,7 @@
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         }
       ]
-    }    
+    }
   ],
   "sub-chains": [
     {
@@ -101,7 +101,7 @@
           "coinDecimals": 6
         },
         "mintscan": "axelar"
-      },        
+      },
       "axelar": {
           "Env": "testnet",
           "chain": "axelarnet",
@@ -163,20 +163,20 @@
       "icon": "ethereum.logo.svg",
       "type": "evm",
       "chainInfo": {
-        "chainId": "5",
-        "rpcUrls": ["https://goerli.infura.io/v3/"],
+        "chainId": "11155111",
+        "rpcUrls": ["https://1rpc.io/sepolia"],
         "nativeCurrency": {
           "name": "Ethereum",
           "symbol": "ETH",
           "decimals": 18
         },
-        "chainName": "Goerli test network",
-        "blockExplorerUrls": ["https://goerli.etherscan.io"]
+        "chainName": "Sepolia test network",
+        "blockExplorerUrls": ["https://sepolia.etherscan.io"]
       },
       "axelar": {
           "Env": "testnet",
-          "chain": "ethereum-2",
-          "transferTime": 15            
+          "chain": "ethereum-sepolia",
+          "transferTime": 15
       },
       "tokens": [
         {
@@ -194,7 +194,7 @@
         },
         {
           "symbol": "WETH",
-          "denom": "eth-wei",
+          "denom": "sepolia-weth-wei",
           "isEVMNative": false,
           "coinDecimals": 18,
           "icon": "weth-wei.logo.svg",
@@ -203,7 +203,7 @@
           "animation": "wrap/wrap-eth.json",
           "SNIP20_address": "",
           "SNIP20_code_hash": "",
-          "ERC20_address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+          "ERC20_address": "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"
         },
         {
           "symbol": "axlUSDC",
@@ -235,7 +235,7 @@
         },
         "chainName": "BNB Chain Testnet",
         "blockExplorerUrls": ["https://testnet.bscscan.com"]
-      },     
+      },
       "axelar": {
           "Env": "testnet",
           "chain": "binance",
@@ -245,7 +245,7 @@
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
-          "description": "Axelar USDC",          
+          "description": "Axelar USDC",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
@@ -302,13 +302,13 @@
       "axelar": {
           "Env": "testnet",
           "chain": "avalanche",
-          "transferTime": 2            
+          "transferTime": 2
       },
       "tokens": [
         {
           "symbol": "axlUSDC",
           "denom": "uausdc",
-          "description": "Axelar USDC",          
+          "description": "Axelar USDC",
           "isEVMNative": false,
           "coinDecimals": 6,
           "icon": "uausdc.logo.svg",
