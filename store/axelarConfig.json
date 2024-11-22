@@ -3,7 +3,7 @@
     "axelarscan-api": "https://testnet.api.axelarscan.io/cross-chain/transfers",
     "transaction-viewer": "https://testnet.axelarscan.io/transfer",
     "deposit-account-viewer": "https://testnet.axelarscan.io/account",
-    "cosmos-block-explorer": "https://testnet.mintscan.io",
+    "cosmos-block-explorer": "https://testnet.ping.pub",
     "fee-decimals": {
       "uaxl": { "decimal": 6, "symbol": "AXL"},
       "uausdc": { "decimal": 6, "symbol": "axlUSDC"},
@@ -31,7 +31,7 @@
       "wbtc-satoshi": { "decimal": 8, "symbol": "axlWBTC"},
       "wsteth-wei": { "decimal": 18, "symbol": "axlwstETH"},
       "link-wei": { "decimal": 18, "symbol": "axlLINK"}
-      
+
     }
   }
 }
