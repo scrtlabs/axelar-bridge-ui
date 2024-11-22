@@ -1283,6 +1283,7 @@ var mixin = {
               this.selfCheckApproved = false;
             }
           } catch (ackError) {
+            console.log("ACK ERROR", ackError);
               this.axelarStatus = `<div style="color: orange">Looks like we got timeout, don't worry, detailed status can be found <a  style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]["deposit-account-viewer"]}/${depositAddress}" target="_">here</a><br>You should receive your funds shortly</div>`;
               this.transferInProgress = false;
               this.selfCheckApproved = false;
