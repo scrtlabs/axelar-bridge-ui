@@ -130,7 +130,7 @@ export const actions = {
     }
 
     const createSecretJSAccounts = async (chainInfo) => {
-      const keplrOfflineSigner = window.getOfflineSignerOnlyAmino(chainInfo.chainId)
+      const keplrOfflineSigner = window.getOfflineSigner(chainInfo.chainId)
       const signer = await keplrOfflineSigner.getAccounts()
 
       return new SecretNetworkClient({
@@ -161,7 +161,7 @@ export const actions = {
       if (
         !window.keplr ||
         !window.getEnigmaUtils ||
-        !window.getOfflineSignerOnlyAmino
+        !window.getOfflineSigner
       ) {
         console.log('Cannot find Keplr wallet')
         commit('setKeplrLoading', false)
