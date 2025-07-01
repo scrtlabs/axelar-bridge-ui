@@ -26,6 +26,7 @@
       "axelar": {
         "Env": "mainnet",
         "chain": "secret-snip",
+        "native_chain": "secret",
         "transferTime": -1
       },
       "tokens": [

@@ -747,7 +747,7 @@ var mixin = {
         this.axelarStatus = 'Initializing transfer...';
         const depositAddress = await this.axelarTransfer.getDepositAddress({
           fromChain: this.fromChain.axelar.chain,
-          toChain: this.toChain.axelar.chain,
+          toChain: this.selectedToken.isNative ? this.toChain.axelar.native_chain : this.toChain.axelar.chain,
           destinationAddress: this.destinationAddress,
           asset: this.selectedToken.denom
         });
