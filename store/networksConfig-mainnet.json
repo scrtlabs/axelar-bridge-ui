@@ -549,19 +549,6 @@
       },
       "tokens": [
         {
-          "symbol": "ETH",
-          "denom": "eth",
-          "isEVMNative": true,
-          "coinDecimals": 18,
-          "icon": "eth.logo.svg",
-          "fromImage": "eth-wei.png",
-          "toImage": "seth-wei.png",
-          "animation": "wrap/wrap-eth.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
-        {
           "symbol": "SCRT",
           "denom": "uscrt",
           "description": "Secret Token",
