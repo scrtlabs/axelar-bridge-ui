@@ -98,6 +98,42 @@
       style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
     >
 
+      <!-- Squid Router Migration Banner -->
+      <div class="squid-banner">
+        <div class="squid-banner-content">
+          <div class="squid-banner-left">
+            <div class="squid-banner-title">🦑 Token bridging has moved to Squid Router</div>
+            <div class="squid-banner-message">Choose <strong>Secret Network</strong> as your destination chain</div>
+            <a href="https://www.squidrouter.com/" target="_blank" class="squid-banner-link">
+              Go to Squid Router
+              <v-icon small color="white" style="margin-left: 6px">mdi-arrow-right</v-icon>
+            </a>
+          </div>
+          <div class="squid-banner-screenshot" @click="showSquidModal = true">
+            <img src="~/assets/images/squid-screenshot.png" alt="Squid Router" />
+            <div class="squid-screenshot-overlay">
+              <v-icon color="white">mdi-magnify-plus</v-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screenshot Modal -->
+      <v-dialog v-model="showSquidModal" max-width="500">
+        <div class="squid-modal">
+          <img src="~/assets/images/squid-screenshot.png" alt="Squid Router Screenshot" style="width: 100%; border-radius: 8px;" />
+          <div class="squid-modal-caption">
+            Use Squid Router to bridge tokens to Secret Network
+          </div>
+          <div class="squid-modal-actions">
+            <v-btn text @click="showSquidModal = false">Close</v-btn>
+            <v-btn color="pink" href="https://www.squidrouter.com/" target="_blank">
+              Open Squid Router
+              <v-icon small right>mdi-open-in-new</v-icon>
+            </v-btn>
+          </div>
+        </div>
+      </v-dialog>
 
       <lottie-wrapper
         style="position: absolute; top: 410px; left: 90px; z-index: 2"
@@ -449,7 +485,8 @@ export default {
   components: { SubChainSelector, TokenSelector },
   data() {
     return {
-      showMigrationDialog: false
+      showMigrationDialog: false,
+      showSquidModal: false
     }
   },
   methods: {
@@ -472,6 +509,135 @@ export default {
 <style scoped>
 .main {
   /* background-color: transparent !important; */
+}
+
+/* Squid Router Migration Banner */
+.squid-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 16px 24px;
+  border-bottom: 2px solid #e94560;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.squid-banner-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.squid-banner-left {
+  flex: 1;
+}
+
+.squid-banner-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.squid-banner-message {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 12px;
+}
+
+.squid-banner-message strong {
+  color: #e94560;
+  font-weight: bold;
+}
+
+.squid-banner-link {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(90deg, #e94560, #ff6b6b);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+.squid-banner-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+}
+
+.squid-banner-screenshot {
+  position: relative;
+  width: 120px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.squid-banner-screenshot:hover {
+  border-color: #e94560;
+  transform: scale(1.05);
+}
+
+.squid-banner-screenshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.squid-screenshot-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.squid-banner-screenshot:hover .squid-screenshot-overlay {
+  opacity: 1;
+}
+
+/* Screenshot Modal */
+.squid-modal {
+  background: #1a1a2e;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.squid-modal-caption {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.squid-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Adjust main content to account for banner */
+.main-section-wrapper {
+  margin-top: 80px !important;
 }
 
 .input-coin {
