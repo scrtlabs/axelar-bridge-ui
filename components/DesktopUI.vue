@@ -98,6 +98,23 @@
       style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
     >
 
+      <!-- Squid Router Migration Banner -->
+      <div class="squid-banner">
+        <div class="squid-banner-content">
+          <div class="squid-banner-left">
+            <div class="squid-banner-title">⚠️ Service Update</div>
+            <div class="squid-banner-message">
+              Currently Axelar Bridge API is being replaced with Squid Bridge APIs, and bridging from <strong>Secret to EVM chains is not yet available</strong>.
+              We are working to resolve the issue with Axelar and Squid teams.
+              You can also try using the <a href="https://www.squidrouter.com/" target="_blank" class="squid-inline-link">Squid router</a>.
+            </div>
+          </div>
+          <a href="https://www.squidrouter.com/" target="_blank" class="squid-banner-link">
+            Visit Squid Router
+            <v-icon small color="white" style="margin-left: 6px">mdi-open-in-new</v-icon>
+          </a>
+        </div>
+      </div>
 
       <lottie-wrapper
         style="position: absolute; top: 410px; left: 90px; z-index: 2"
@@ -472,6 +489,89 @@ export default {
 <style scoped>
 .main {
   /* background-color: transparent !important; */
+}
+
+/* Squid Router Migration Banner */
+.squid-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 16px 24px;
+  border-bottom: 2px solid #e94560;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.squid-banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.squid-banner-left {
+  flex: 1;
+  min-width: 300px;
+}
+
+.squid-banner-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.squid-banner-message {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.squid-banner-message strong {
+  color: #e94560;
+  font-weight: bold;
+}
+
+.squid-inline-link {
+  color: #00d9ff;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.squid-inline-link:hover {
+  color: #ffffff;
+}
+
+.squid-banner-link {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(90deg, #e94560, #ff6b6b);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.squid-banner-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+}
+
+/* Adjust main content to account for banner */
+.main-section-wrapper {
+  margin-top: 90px !important;
 }
 
 .input-coin {
