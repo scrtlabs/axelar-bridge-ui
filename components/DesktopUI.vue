@@ -104,15 +104,9 @@
           <div class="squid-banner-left">
             <div class="squid-banner-title">⚠️ Service Update</div>
             <div class="squid-banner-message">
-              Currently Axelar Bridge API is being replaced with Squid Bridge APIs, and bridging from <strong>Secret to EVM chains is not yet available</strong>.
-              We are working to resolve the issue with Axelar and Squid teams.
-              You can also try using the <a href="https://www.squidrouter.com/" target="_blank" class="squid-inline-link">Squid router</a>.
+              <strong>Bridging from Secret to EVM chains is not yet available</strong>. We are working to resolve the issue with Axelar team.
             </div>
           </div>
-          <a href="https://www.squidrouter.com/" target="_blank" class="squid-banner-link">
-            Visit Squid Router
-            <v-icon small color="white" style="margin-left: 6px">mdi-open-in-new</v-icon>
-          </a>
         </div>
       </div>
 
@@ -260,7 +254,7 @@
           <!-- From & To Start -->
           <div style="background-color: transparent; display: flex; justify-content: space-between; width: 100%; gap: 10px">
             <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
-              <sub-chain-selector :disabled="transferInProgress" lable="From" v-model="fromChain" :chains="availableChains[fromChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+              <sub-chain-selector :disabled="transferInProgress" lable="From" v-model="fromChain" :chains="filteredFromChains" :icon-size="itemIconSize"></sub-chain-selector>
             </div>
 
             <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
@@ -270,7 +264,7 @@
             </div>
 
             <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
-              <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="availableChains[toChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+              <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="filteredToChains" :icon-size="itemIconSize"></sub-chain-selector>
             </div>
           </div>
           <!-- From & To End -->

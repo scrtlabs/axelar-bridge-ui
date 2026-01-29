@@ -293,18 +293,31 @@ export default {
       return `isiOS: ${isiOS}, isAndroid: ${isAndroid}`;
     },
     chainsForMobile() {
+      // Only show Secret Network and Axelar
       if (this.isFina) {
-        return this.allChains.filter(chain => chain.enableForMobile === true && chain.type === "cosmos" );
+        return this.allChains.filter(chain => 
+          (chain.name === 'Secret Network' || chain.name === 'Axelar') && 
+          chain.enableForMobile === true && 
+          chain.type === "cosmos"
+        );
       } else if (this.isMetaMask) {
-        return this.allChains.filter(chain => chain.type === "evm" || (chain.name.toLowerCase() === "secret network") );
+        return this.allChains.filter(chain => 
+          chain.name === 'Secret Network' || chain.name === 'Axelar'
+        );
       }
       
     },
     toChainsForMobile() {
+      // Only show Secret Network and Axelar
       if (this.isFina) {
-        return this.availableChains[this.toChainKey].filter(chain => chain.enableForMobile === true);
+        return this.availableChains[this.toChainKey].filter(chain => 
+          (chain.name === 'Secret Network' || chain.name === 'Axelar') && 
+          chain.enableForMobile === true
+        );
       } else if (this.isMetaMask) {
-        return this.availableChains[this.toChainKey].filter(chain => chain.type === "evm" || (chain.name.toLowerCase() === "secret network"));
+        return this.availableChains[this.toChainKey].filter(chain => 
+          chain.name === 'Secret Network' || chain.name === 'Axelar'
+        );
       }
     },
 
@@ -377,7 +390,11 @@ export default {
     // },
     selectToken(token, chainId) {
       if (chainId != this.fromChain.chainInfo.chainId) {
-        let slectedChain = this.availableChains[this.fromChainKey].filter(chain => chain.chainInfo.chainId === chainId );
+        // Filter to only Secret Network and Axelar
+        let filteredChains = this.availableChains[this.fromChainKey].filter(chain => 
+          chain.name === 'Secret Network' || chain.name === 'Axelar'
+        );
+        let slectedChain = filteredChains.filter(chain => chain.chainInfo.chainId === chainId );
         if (slectedChain.length > 0) {
           this.fromChain = slectedChain[0];
           this.selectedToken = token;

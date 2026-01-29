@@ -21,7 +21,7 @@
           "coinMinimalDenom": "uscrt",
           "coinDecimals": 6
         },
-        "mintscan": "secret"
+        "zonescan": "secret"
       },
       "axelar": {
         "Env": "mainnet",
@@ -343,8 +343,8 @@
       "enableForMobile": false,
       "chainInfo": {
         "chainId": "axelar-dojo-1",
-        "rest": "https://lcd-axelar.imperator.co",
-        "rpcUrl": "https://rpc-axelar.imperator.co:443",
+        "rest": "https://axelar-lcd.qubelabs.io",
+        "rpcUrl": "https://axelar-rpc.qubelabs.io:443",
         "hrp": "axelar",
         "coinType": 118,
         "out_port": "transfer",
@@ -548,19 +548,6 @@
         "transferTime": 15
       },
       "tokens": [
-        {
-          "symbol": "ETH",
-          "denom": "eth",
-          "isEVMNative": true,
-          "coinDecimals": 18,
-          "icon": "eth.logo.svg",
-          "fromImage": "eth-wei.png",
-          "toImage": "seth-wei.png",
-          "animation": "wrap/wrap-eth.json",
-          "SNIP20_address": "",
-          "SNIP20_code_hash": "",
-          "ERC20_address": ""
-        },
         {
           "symbol": "SCRT",
           "denom": "uscrt",
