@@ -21,7 +21,7 @@
           "coinMinimalDenom": "uscrt",
           "coinDecimals": 6
         },
-        "mintscan": "secret"
+        "zonescan": "secret"
       },
       "axelar": {
         "Env": "mainnet",

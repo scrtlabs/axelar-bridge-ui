@@ -104,15 +104,9 @@
           <div class="squid-banner-left">
             <div class="squid-banner-title">⚠️ Service Update</div>
             <div class="squid-banner-message">
-              Currently Axelar Bridge API is being replaced with Squid Bridge APIs, and bridging from <strong>Secret to EVM chains is not yet available</strong>.
-              We are working to resolve the issue with Axelar and Squid teams.
-              You can also try using the <a href="https://www.squidrouter.com/" target="_blank" class="squid-inline-link">Squid router</a>.
+              <strong>Bridging from Secret to EVM chains is not yet available</strong>. We are working to resolve the issue with Axelar team.
             </div>
           </div>
-          <a href="https://www.squidrouter.com/" target="_blank" class="squid-banner-link">
-            Visit Squid Router
-            <v-icon small color="white" style="margin-left: 6px">mdi-open-in-new</v-icon>
-          </a>
         </div>
       </div>
 

@@ -1230,7 +1230,10 @@ var mixin = {
         }
 
         if (this.tx_error === '') {
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+          const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
 
           this.ack = 0;
           const ibcResponses = await Promise.all(tx.ibcResponses);
@@ -1259,7 +1262,10 @@ var mixin = {
           this.getBalance();
 
           if (this.tx_error == '') {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+            const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+            const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${explorerBase}/${chainId}/${txPath}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
             this.transferInProgress = false;
             this.selfCheckApproved = false;
             this.animateProcessing();
@@ -1394,7 +1400,10 @@ var mixin = {
           console.log(`✅ Transaction submitted! Tx Hash: ${tx.transactionHash}`);
           console.log(`Waiting for IBC acknowledgment...`);
 
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for IBC acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+          const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for IBC acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
           this.ack = 0;
           
           try {
