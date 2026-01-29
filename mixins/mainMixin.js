@@ -18,8 +18,12 @@ var mixin = {
     this.axelarTransfer = new AxelarAssetTransfer({ environment: process.env.NUXT_ENV_AXELAR_ENV });
     this.axelarQuery = new AxelarQueryAPI({ environment: process.env.NUXT_ENV_AXELAR_ENV });
 
-    this.toChain = this.availableChains['main-chain'][0];
-    this.fromChain = this.availableChains['sub-chains'][0];
+    // Set default chains to Secret Network and Axelar only
+    const secretNetwork = this.availableChains['main-chain']?.find(chain => chain.name === 'Secret Network');
+    const axelar = this.availableChains['sub-chains']?.find(chain => chain.name === 'Axelar');
+    
+    this.toChain = secretNetwork || this.availableChains['main-chain'][0];
+    this.fromChain = axelar || this.availableChains['sub-chains'][0];
   },
   mounted() {
     let self = this;
@@ -168,6 +172,34 @@ var mixin = {
 
     allChains() {
       return [...this.availableChains['sub-chains'], ...this.availableChains['main-chain']];
+    },
+    // Filter chains to only show Secret Network and Axelar
+    filteredMainChains() {
+      if (!this.availableChains['main-chain']) return [];
+      return this.availableChains['main-chain'].filter(chain => 
+        chain.name === 'Secret Network'
+      );
+    },
+    filteredSubChains() {
+      if (!this.availableChains['sub-chains']) return [];
+      return this.availableChains['sub-chains'].filter(chain => 
+        chain.name === 'Axelar'
+      );
+    },
+    // Filtered chains for from/to selectors
+    filteredFromChains() {
+      if (this.fromChainKey === 'main-chain') {
+        return this.filteredMainChains;
+      } else {
+        return this.filteredSubChains;
+      }
+    },
+    filteredToChains() {
+      if (this.toChainKey === 'main-chain') {
+        return this.filteredMainChains;
+      } else {
+        return this.filteredSubChains;
+      }
     },
     showArrowComputed() {
       return this.showArrow || !this.isKeplrConnected; // || !this.isMMConnected;
@@ -1001,6 +1033,15 @@ var mixin = {
     async sendTransfer(amount) {
       try {
         this.axelarStatus = 'Please wait...';
+        
+        // Refresh balance before checking
+        console.log('--- Refreshing balance before transfer ---');
+        console.log('Source Address:', this.sourceAddress);
+        console.log('Sender Account:', this.senderAccount ? this.senderAccount.address : 'null');
+        await this.getBalance();
+        // Wait a bit for balance to update
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         let fee = await this.calcTransferFee(amount);
         if (fee) {
           this.estimatedFee = fee.display;
@@ -1008,22 +1049,90 @@ var mixin = {
           this.estimatedFee = '';
         }
 
+        console.log('--- Balance Check ---');
+        console.log('Bank Balances Map:', this.bankBalances);
+        console.log('Selected Token Transfer Denom:', this.selectedTokenTransferDenom);
+        console.log('Balance for token:', this.bankBalances.get(this.selectedTokenTransferDenom));
+        console.log('Amount to transfer:', amount);
+        console.log('Fee amount:', fee ? fee.amount : 'N/A');
+        console.log('Fee denom:', fee ? fee.denom : 'N/A');
+
         if (this.bankBalances.get(this.selectedTokenTransferDenom) === undefined) {
-          this.info_error = 'Insufficient balance';
+          this.info_error = 'Insufficient balance - token balance not found. Please refresh your balance.';
           this.axelarStatus = '';
           return;
         }
 
-        if (BigInt(this.bankBalances.get(this.selectedTokenTransferDenom)) < BigInt(amount)) {
-          this.info_error = 'Insufficient balance';
-          this.axelarStatus = '';
-          return;
-        }
+        // Check if we have enough for fees (uaxl)
+        const feeDenom = this.fromChain.chainInfo.stakeCurrency.coinMinimalDenom; // uaxl
+        const feeBalance = this.bankBalances.get(feeDenom);
+        
+        // Calculate estimated fee in uaxl (gasLimit * gasPrice * buffer)
+        // This is used throughout the function for fee checks
+        const gasLimit = 500_000;
+        const gasPrice = 0.1;
+        const estimatedFeeUaxl = Math.ceil(gasLimit * gasPrice * 1.1); // ~55000 uaxl with 10% buffer
+        
+        console.log('Fee denom balance:', feeBalance, feeDenom);
+        console.log('Transfer amount:', amount, this.selectedTokenTransferDenom);
+        console.log('Estimated fee in uaxl:', estimatedFeeUaxl);
+        console.log('All bank balances:', Array.from(this.bankBalances.entries()));
+        
+        // Special case: If sending the native token (uaxl), we need amount + fees
+        const isSendingNativeToken = this.selectedTokenTransferDenom === feeDenom;
+        
+        if (isSendingNativeToken) {
+          // When sending native token, spendable balance must cover: amount + fees
+          const totalNeeded = BigInt(amount) + BigInt(estimatedFeeUaxl);
+          if (!feeBalance || BigInt(feeBalance) < totalNeeded) {
+            this.info_error = `Insufficient ${feeDenom}. Need ${amount} ${feeDenom} for transfer + ~${estimatedFeeUaxl} ${feeDenom} for fees = ${totalNeeded.toString()} ${feeDenom}. Available: ${feeBalance || 0} ${feeDenom}`;
+            this.axelarStatus = '';
+            return;
+          }
+        } else {
+          // When sending non-native token, check token balance and fee balance separately
+          if (BigInt(this.bankBalances.get(this.selectedTokenTransferDenom)) < BigInt(amount)) {
+            this.info_error = 'Insufficient balance';
+            this.axelarStatus = '';
+            return;
+          }
 
-        if (amount <= fee.amount) {
-          this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
-          this.axelarStatus = '';
-          return;
+          if (amount <= fee.amount) {
+            this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
+            this.axelarStatus = '';
+            return;
+          }
+
+          if (!feeBalance || BigInt(feeBalance) < BigInt(estimatedFeeUaxl)) {
+            // Try to query balance directly as a last check
+            console.log('--- Direct balance query as fallback ---');
+            try {
+              const directBalance = await this.senderAccount.query.bank.allBalances({ address: this.sourceAddress });
+              console.log('Direct balance query result:', directBalance);
+              const directFeeBalance = directBalance.balances?.find(b => b.denom === feeDenom);
+              console.log('Direct fee balance:', directFeeBalance);
+              
+              if (directFeeBalance && BigInt(directFeeBalance.amount) >= BigInt(estimatedFeeUaxl)) {
+                console.log('Direct query shows sufficient balance, updating bankBalances');
+                // Update the balance in the map
+                this.bankBalances.set(feeDenom, directFeeBalance.amount);
+                // Also update the token balance if needed
+                const tokenBalance = directBalance.balances?.find(b => b.denom === this.selectedTokenTransferDenom);
+                if (tokenBalance) {
+                  this.bankBalances.set(this.selectedTokenTransferDenom, tokenBalance.amount);
+                }
+              } else {
+                this.info_error = `Insufficient ${feeDenom} for fees. Required: ${estimatedFeeUaxl} ${feeDenom}, Available: ${directFeeBalance?.amount || feeBalance || 0} ${feeDenom}. Please ensure you have enough ${feeDenom} in account ${this.sourceAddress}`;
+                this.axelarStatus = '';
+                return;
+              }
+            } catch (queryErr) {
+              console.error('Direct balance query failed:', queryErr);
+              this.info_error = `Insufficient ${feeDenom} for fees. Required: ${estimatedFeeUaxl} ${feeDenom}, Available: ${feeBalance || 0} ${feeDenom}. Please refresh your balance or check account ${this.sourceAddress}`;
+              this.axelarStatus = '';
+              return;
+            }
+          }
         }
 
         this.transferInProgress = true;
@@ -1042,10 +1151,25 @@ var mixin = {
           usedAxelarAPI = true;
         }
 
+        // Determine port and channel based on token type
+        const sourcePort = this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_port : this.fromChain.chainInfo.out_port;
+        const sourceChannel = this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_channel : this.fromChain.chainInfo.out_channel;
+
+        console.log('--- IBC Transfer Details (Axelar -> Secret) ---');
+        console.log('From Chain:', this.fromChain.name);
+        console.log('To Chain:', this.toChain.name);
+        console.log('Token:', this.selectedToken.symbol, this.selectedToken.denom);
+        console.log('Token isNative:', this.selectedToken.isNative);
+        console.log('Source Port:', sourcePort);
+        console.log('Source Channel:', sourceChannel);
+        console.log('Receiver Address:', depositAddress);
+        console.log('Amount:', amount);
+        console.log('Denom:', this.selectedTokenTransferDenom);
+
         amount = amount + ''; // convert to string
         const msgTransfer = new MsgTransfer({
-          source_port: this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_port : this.fromChain.chainInfo.out_port,
-          source_channel: this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_channel : this.fromChain.chainInfo.out_channel,
+          source_port: sourcePort,
+          source_channel: sourceChannel,
           token: {
             amount,
             denom: this.selectedTokenTransferDenom
@@ -1060,7 +1184,13 @@ var mixin = {
           memo: "",
         });
 
+        console.log('--- MsgTransfer Object ---');
         console.log(msgTransfer);
+        console.log('--- Account Details ---');
+        console.log('Source Address:', this.sourceAddress);
+        console.log('Sender Account Address:', this.senderAccount ? this.senderAccount.address : 'null');
+        console.log('Fee Denom:', this.fromChain.chainInfo.stakeCurrency.coinMinimalDenom);
+        console.log('Fee Balance in bankBalances:', this.bankBalances.get(this.fromChain.chainInfo.stakeCurrency.coinMinimalDenom));
 
         this.axelarStatus = 'Waiting for user approval...';
 
@@ -1100,7 +1230,10 @@ var mixin = {
         }
 
         if (this.tx_error === '') {
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+          const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
 
           this.ack = 0;
           const ibcResponses = await Promise.all(tx.ibcResponses);
@@ -1129,7 +1262,10 @@ var mixin = {
           this.getBalance();
 
           if (this.tx_error == '') {
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+            const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+            const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${explorerBase}/${chainId}/${txPath}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
             this.transferInProgress = false;
             this.selfCheckApproved = false;
             this.animateProcessing();
@@ -1140,8 +1276,15 @@ var mixin = {
           this.showAxelarError(this.tx_error);
         }
       } catch (err) {
-        console.error(err);
-        this.showAxelarError('Unknown');
+        console.error('--- sendTransfer Error ---');
+        console.error('Error details:', err);
+        console.error('Error message:', err.message);
+        console.error('Error stack:', err.stack);
+        this.transferInProgress = false;
+        this.showProcessAnimation = false;
+        this.selfCheckApproved = false;
+        const errorMsg = err.message || 'Unknown error occurred';
+        this.showAxelarError(errorMsg);
       }
     },
 
@@ -1197,20 +1340,15 @@ var mixin = {
 
       console.log('Should Unwrap:', shouldUnwrap);
 
-      //const depositAddress = this.destinationAddress;
-      const depositAddress = await this.axelarTransfer.getDepositAddress({
-        fromChain: this.fromChain.axelar.chain,
-        toChain: this.toChain.axelar.chain,
-        destinationAddress: this.destinationAddress,
-        asset: this.selectedToken.denom,
-        options: {
-          shouldUnwrapIntoNative: shouldUnwrap
-        }
-      });
+      // Secret -> Axelar only: send directly to the user's selected Axelar address.
+      console.log('--- Sending SNIP-20 Token via IBC (Secret -> Axelar) ---');
+      console.log('Destination:', this.destinationAddress);
+      console.log('To Chain:', this.toChain.axelar.chain);
+      
       this.axelarStatus = 'Waiting for user approval...';
 
       if (this.senderAccount) {
-        let msgToSend = {
+        const sendMsg = new MsgExecuteContract({
           sender: this.sourceAddress,
           contract_address: this.selectedToken.SNIP20_address,
           code_hash: this.selectedToken.SNIP20_code_hash,
@@ -1223,18 +1361,20 @@ var mixin = {
                 toUtf8(
                   JSON.stringify({
                     channel: this.fromChain.chainInfo.out_channel,
-                    remote_address: depositAddress,
-                    timeout: 10 * 60 // 10 minutes
+                    remote_address: this.destinationAddress, // Send to the user's Axelar address
+                    timeout: 10 * 60  // 10 minutes
                   })
                 )
               )
             }
-          }
-        };
+          },
+          sent_funds: [] // No funds sent with the execute message
+        });
 
         try {
-          console.log(msgToSend);
-          let signedTX = await this.senderAccount.tx.signTx([new MsgExecuteContract(msgToSend)], {
+          console.log('Send message:', sendMsg);
+          
+          let signedTX = await this.senderAccount.tx.signTx([sendMsg], {
             gasLimit: 300_000,
             gasPriceInFeeDenom: 0.1,
             feeDenom: 'uscrt'
@@ -1243,28 +1383,41 @@ var mixin = {
           this.axelarStatus = 'Transaction was submitted, please wait...';
           this.animateInput();
           this.tx = '';
+          
+          console.log('Transaction signed, broadcasting...');
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
-              resolveResponses: true, // enable IBC responses resolution (defualt)
-              resolveResponsesTimeoutMs: 720_000, // stop checking after 12 minutes (default is 2 minutes)
-              resolveResponsesCheckIntervalMs: 15_000 // check every 15 seconds (default)
+              resolveResponses: true, // enable IBC responses resolution
+              resolveResponsesTimeoutMs: 720_000, // stop checking after 12 minutes
+              resolveResponsesCheckIntervalMs: 15_000 // check every 15 seconds
             }
           });
 
-          console.log(tx);
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer']}/${this.fromChain.chainInfo.mintscan}/${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs'}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          if (tx.code !== 0) {
+            throw new Error(`Transaction failed: ${tx.rawLog}`);
+          }
+
+          console.log(`✅ Transaction submitted! Tx Hash: ${tx.transactionHash}`);
+          console.log(`Waiting for IBC acknowledgment...`);
+
+          const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+          const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for IBC acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
           this.ack = 0;
+          
           try {
             const ibcResponses = await Promise.all(tx.ibcResponses);
             this.ack = 1;
             if (ibcResponses.length > 0) {
-              console.log(ibcResponses);
-              this.axelarStatus = `<div style="color: lightgreen">Transfer to Axelar complete! Detailed status can be found <a  style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['deposit-account-viewer']}/${depositAddress}" target="_">here</a><br>Your balance will be updated shortly</div>`;
+              console.log('IBC Responses:', ibcResponses);
+              this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${tx.transactionHash}" target="_">View on Axelarscan</a><br>Your balance will be updated shortly</div>`;
               this.transferInProgress = false;
               this.selfCheckApproved = false;
             }
           } catch (ackError) {
-            this.axelarStatus = `<div style="color: orange">Looks like we got timeout, don't worry, detailed status can be found <a  style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['deposit-account-viewer']}/${depositAddress}" target="_">here</a><br>You should receive your funds shortly</div>`;
+            console.error('IBC acknowledgment error:', ackError);
+            this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout. Transaction was submitted successfully.<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${tx.transactionHash}" target="_">Check status on Axelarscan</a><br>You should receive your funds shortly</div>`;
             this.transferInProgress = false;
             this.selfCheckApproved = false;
           }

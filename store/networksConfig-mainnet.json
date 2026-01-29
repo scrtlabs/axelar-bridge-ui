@@ -21,7 +21,7 @@
           "coinMinimalDenom": "uscrt",
           "coinDecimals": 6
         },
-        "mintscan": "secret"
+        "zonescan": "secret"
       },
       "axelar": {
         "Env": "mainnet",
@@ -343,8 +343,8 @@
       "enableForMobile": false,
       "chainInfo": {
         "chainId": "axelar-dojo-1",
-        "rest": "https://lcd-axelar.imperator.co",
-        "rpcUrl": "https://rpc-axelar.imperator.co:443",
+        "rest": "https://axelar-lcd.qubelabs.io",
+        "rpcUrl": "https://axelar-rpc.qubelabs.io:443",
         "hrp": "axelar",
         "coinType": 118,
         "out_port": "transfer",
