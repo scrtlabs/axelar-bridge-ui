@@ -260,7 +260,7 @@
           <!-- From & To Start -->
           <div style="background-color: transparent; display: flex; justify-content: space-between; width: 100%; gap: 10px">
             <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
-              <sub-chain-selector :disabled="transferInProgress" lable="From" v-model="fromChain" :chains="availableChains[fromChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+              <sub-chain-selector :disabled="transferInProgress" lable="From" v-model="fromChain" :chains="filteredFromChains" :icon-size="itemIconSize"></sub-chain-selector>
             </div>
 
             <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
@@ -270,7 +270,7 @@
             </div>
 
             <div style="background-color: transparent; flex-grow: 2; max-width: 40%">
-              <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="availableChains[toChainKey]" :icon-size="itemIconSize"></sub-chain-selector>
+              <sub-chain-selector :disabled="transferInProgress" lable="To" v-model="toChain" :chains="filteredToChains" :icon-size="itemIconSize"></sub-chain-selector>
             </div>
           </div>
           <!-- From & To End -->
