@@ -1,6 +1,6 @@
 import { MetaMaskWallet, SecretNetworkClient } from 'secretjs'
 import { getTokenBalance, getBankBalance, getPermit } from './token'
-import { getPermitMM, connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins } from './metamask'
+import { getPermitMM, connectMM, getMMAccounts, getMMContractBalance, getMMBankBalance, sendMMTokens, checkTxConfirmation, sendCoins, sendToSecret } from './metamask'
 
 const SITE_ENV = process.env.NUXT_ENV_AXELAR_ENV;
 
@@ -211,11 +211,16 @@ export const actions = {
     window.location.reload();
   },
 
-  async getTokenBalance({ commit, state }, payload) {
+  async getTokenBalance({ commit, state, getters }, payload) {
     if (_getTokenDebounce) {
       return;
     }
     _getTokenDebounce = true;
+
+    console.log('--- getTokenBalance START ---');
+    console.log('Contract:', payload.contract);
+    console.log('ChainId:', payload.chainId);
+    console.log('Wallet:', payload.walletAddress);
 
     let contracts = [];
     for (let i = 0; i < chains["main-chain"][0].tokens.length; i++) {
@@ -224,31 +229,36 @@ export const actions = {
         contracts.push(token.SNIP20_address);
       }
     }
+    console.log('Contracts for permit:', contracts);
 
     let permit = null;
 
-    if (getters.isMobile() && window.ethereum !== undefined) {
-      permit = await getPermitMM(payload.account.wallet, chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
-    } else {
-      permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
+    try {
+      if (getters.isMobile && window.ethereum !== undefined) {
+        permit = await getPermitMM(payload.account.wallet, chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
+      } else {
+        permit = await getPermit(chains["main-chain"][0].chainInfo.chainId, contracts ,payload.walletAddress);
+      }
+      console.log('Permit result:', permit ? 'obtained' : 'null');
+    } catch (permitErr) {
+      console.error('Permit error:', permitErr);
     }
 
-    if (getters.isMobile()) {
-      //alert("permit");
-      //alert(JSON.stringify(permit));
-    } else {
-      console.log(permit);
+    try {
+      let balance = await getTokenBalance(
+        payload.account,
+        payload.contract,
+        payload.chainId,
+        payload.walletAddress,
+        permit
+      )
+      console.log('Balance result:', balance);
+      commit('updateBalance', balance);
+    } catch (balErr) {
+      console.error('Balance query error:', balErr);
     }
 
-    let balance = await getTokenBalance(
-      payload.account,
-      payload.contract,
-      payload.chainId,
-      payload.walletAddress,
-      permit
-    )
-    commit('updateBalance', balance);
-
+    console.log('--- getTokenBalance END ---');
     setTimeout(function() {
       _getTokenDebounce = false;
     }, 400);
@@ -320,6 +330,10 @@ export const actions = {
 
   checkTxConfirmation({ commit, state}, receipt) {
     checkTxConfirmation(receipt);
+  },
+
+  async sendToSecret({ commit, state }, payload) {
+    await sendToSecret(payload);
   }
 
 
