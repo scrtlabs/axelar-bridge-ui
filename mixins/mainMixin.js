@@ -60,15 +60,15 @@ var mixin = {
 
       this.$nuxt.$on('MM-TX', async (hash) => {
         self.showAxelarTxIndication = hash;
-        const link = ` <a style="color: lightgreen" target="_" href="https://axelarscan.io/gmp/${hash}">(View on Axelarscan)</a>`;
-        self.axelarStatus = `Transaction submitted, waiting for receipt...${link}`;
+        const link = ` <a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${hash}">(View on Axelarscan)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>`;
+        self.axelarStatus = `Transaction submitted, waiting for receipt...<br>${link}`;
       });
 
       this.$nuxt.$on('MM-confirmation', async (confirmationNumber, receipt) => {});
 
       this.$nuxt.$on('MM-receipt', async (receipt) => {
         self.$store.dispatch('checkTxConfirmation', receipt);
-        const link = self.showAxelarTxIndication ? ` <a style="color: lightgreen" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(View on Axelarscan)</a>` : '';
+        const link = self.showAxelarTxIndication ? ` <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(View on Axelarscan)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>` : '';
         self.axelarStatus = `Waiting for confirmations...${link}`;
       });
 
@@ -87,7 +87,7 @@ var mixin = {
       this.$nuxt.$on('MM-confirmation-update', async (confirmations) => {
         let link = '';
         if (self.showAxelarTxIndication != '') {
-          link = ` <a style="color: lightgreen" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(Detailed status available)</a>`;
+          link = ` <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(Detailed status available)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>`;
         }
         self.axelarStatus = `Waiting for confirmations (${confirmations})... ${link}`;
       });
@@ -99,7 +99,7 @@ var mixin = {
         self.showProcessAnimation = false;
         self.selfCheckApproved = false;
         self.showAxelarTxIndication = '';
-        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds<br><a style="color: lightgreen" target="_" href="https://axelarscan.io/gmp/${tx}">Watch the transaction here</a></div>`;
+        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${tx}">Watch the transaction here</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span></div>`;
       });
 
       this.$nuxt.$on('MM-transfer-indication', async (tx) => {
@@ -599,8 +599,8 @@ var mixin = {
               fromChainId,
               destChainId,
               gasDenom,
-              300000, // gas limit
-              1.5     // multiplier
+              200000, // gas limit (DistributionExecutable typically uses ~150k)
+              1.1     // multiplier
             );
 
             // weiString is always an 18-decimal string (e.g. "535252641763355" = 0.000535 in human units)
@@ -839,14 +839,14 @@ var mixin = {
             : this.toChain.axelar.chain;
 
           // Dynamically estimate the GMP gas fee in native EVM token (wei)
-          let gasFeeWei = '5000000000000000'; // fallback: 0.005 ETH
+          let gasFeeWei = '200000000000000'; // fallback: 0.0002 ETH
           try {
             const estimated = await this.axelarQuery.estimateGasFee(
               this.fromChain.axelar.chain,
               destChain,
               this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth',
-              300000,
-              1.5
+              150000,
+              1.1
             );
             if (estimated && typeof estimated === 'string') {
               gasFeeWei = estimated;
@@ -1482,7 +1482,7 @@ var mixin = {
               // For GMP, use the ORIGINAL user tx hash, not the IBC ack hash
               const gmpHash = '0x' + tx.transactionHash.toLowerCase();
               const axelarscanUrl = `https://axelarscan.io/gmp/${gmpHash}`;
-              this.axelarStatus = `<div style="color: lightgreen">Transfer complete! <a style="color: lightgreen" href="${axelarscanUrl}" target="_">Watch Axelar GMP status here</a></div>`;
+              this.axelarStatus = `<div style="color: lightgreen">Transfer complete! <a style="color: lightgreen; text-decoration: underline;" href="${axelarscanUrl}" target="_">Watch Axelar GMP status here</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span></div>`;
             } else {
               const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
               const txPath = 'transactions';
@@ -1703,7 +1703,7 @@ var mixin = {
                 // Axelarscan indexes GMP by the source transaction hash
                 const gmpHash = '0x' + tx.transactionHash.toLowerCase();
                 const axelarscanUrl = `https://axelarscan.io/gmp/${gmpHash}`;
-                this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen" href="${axelarscanUrl}" target="_">View on Axelarscan</a><br>Your balance will be updated shortly</div>`;
+                this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen; text-decoration: underline;" href="${axelarscanUrl}" target="_">View on Axelarscan</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span><br>Your balance will be updated shortly</div>`;
               } else {
                 this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen" href="${explorerBase}/${this.fromChain.chainInfo.zonescan}/${txPath}/${ibcHash}" target="_">View on Explorer</a><br>Your balance will be updated shortly</div>`;
               }
@@ -1715,7 +1715,7 @@ var mixin = {
             console.error('IBC acknowledgment error:', ackError);
             if (isToEvm) {
                const gmpHash = '0x' + tx.transactionHash.toLowerCase();
-               this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout.<br><a style="color: orange" href="https://axelarscan.io/gmp/${gmpHash}" target="_">Check status on Axelarscan</a><br>You should receive your funds shortly</div>`;
+               this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout.<br><a style="color: orange; text-decoration: underline;" href="https://axelarscan.io/gmp/${gmpHash}" target="_">Check status on Axelarscan</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span><br>You should receive your funds shortly</div>`;
             } else {
                this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout.<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Check status on Explorer</a><br>You should receive your funds shortly</div>`;
             }

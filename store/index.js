@@ -390,7 +390,11 @@ export const getters = {
     return state.balance
   },
   getChains(state) {
-    return chains
+    // Filter out non-EVM chains but keep Axelar
+    return {
+      "main-chain": chains["main-chain"],
+      "sub-chains": chains["sub-chains"].filter(c => c.type !== 'cosmos' || c.name === 'Axelar')
+    };
   },
   // getSubChains(state) {
   //   let subChains = [];
