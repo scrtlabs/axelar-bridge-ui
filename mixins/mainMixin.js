@@ -600,7 +600,7 @@ var mixin = {
               destChainId,
               gasDenom,
               200000, // gas limit (DistributionExecutable typically uses ~150k)
-              1.1     // multiplier
+              1.3     // multiplier
             );
 
             // weiString is always an 18-decimal string (e.g. "535252641763355" = 0.000535 in human units)
@@ -845,8 +845,8 @@ var mixin = {
               this.fromChain.axelar.chain,
               destChain,
               this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth',
-              150000,
-              1.1
+              200000,
+              1.3
             );
             if (estimated && typeof estimated === 'string') {
               gasFeeWei = estimated;
