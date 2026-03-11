@@ -98,17 +98,7 @@
       style="position: relative; flex-direction: column; display: flex; justify-content: flex-start; align-items: center; width: 100vw; height: 100vh"
     >
 
-      <!-- Squid Router Migration Banner -->
-      <div class="squid-banner">
-        <div class="squid-banner-content">
-          <div class="squid-banner-left">
-            <div class="squid-banner-title">⚠️ Service Update</div>
-            <div class="squid-banner-message">
-              <strong>Bridging from Secret to EVM chains is not yet available</strong>. We are working to resolve the issue with Axelar team.
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Banner removed: Secret to EVM bridging is now enabled -->
 
       <lottie-wrapper
         style="position: absolute; top: 410px; left: 90px; z-index: 2"
@@ -390,7 +380,6 @@
           <div class="transfer-info">
             <div style="margin-top: -28px; margin-bottom: 3px; color: orange; font-weight: bold; font-size: 16px; font-family: 'BalsamiqSans-Regular">Info:</div>
             <div v-if="estimatedFee" style="font-size: 14px">Transfer fee: {{ estimatedFee }}</div>
-            <div v-if="estimatedTime != -1" style="font-size: 14px">Estimated Time: {{ estimatedTime }} minutes</div>
             <div v-if="!transferInProgress && maxTransfer != ''" style="font-size: 14px">Maximum Transfer Amount: {{ maxTransfer }}</div>
             <div style="font-size: 14px;" v-html="axelarStatus"></div>
             <div v-if="tx == ''"></div>
@@ -563,10 +552,7 @@ export default {
   box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
 }
 
-/* Adjust main content to account for banner */
-.main-section-wrapper {
-  margin-top: 90px !important;
-}
+/* No banner offset needed */
 
 .input-coin {
   position: absolute;

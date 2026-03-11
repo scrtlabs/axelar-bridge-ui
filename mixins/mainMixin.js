@@ -10,6 +10,7 @@ import commonMixin from './commonMixin';
 //const Web3 = require('web3');
 import { checkIfTokenInKeplr } from '../store/token.js';
 import tokenListForMigration from '../store/migration.json';
+const Web3 = require('web3');
 
 var mixin = {
   mixins: [commonMixin],
@@ -32,7 +33,9 @@ var mixin = {
 
       this.$nuxt.$on('secretjs-loaded', async () => {
         if (self.toChain.type === 'cosmos') {
-          self.destinationAddress = self.receiverAccount.address;
+          if (self.receiverAccount) {
+            self.destinationAddress = self.receiverAccount.address;
+          }
         } else if (self.toChain.type === 'evm') {
           self.destinationAddress = self.MMAccounts[0];
         }
@@ -56,14 +59,17 @@ var mixin = {
       this.audio['unwrap'] = new Audio(require('~/assets/audio/unwrap.mp3'));
 
       this.$nuxt.$on('MM-TX', async (hash) => {
-        self.axelarStatus = 'Transaction was submitted, please wait...';
+        self.showAxelarTxIndication = hash;
+        const link = ` <a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${hash}">(View on Axelarscan)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>`;
+        self.axelarStatus = `Transaction submitted, waiting for receipt...<br>${link}`;
       });
 
       this.$nuxt.$on('MM-confirmation', async (confirmationNumber, receipt) => {});
 
       this.$nuxt.$on('MM-receipt', async (receipt) => {
         self.$store.dispatch('checkTxConfirmation', receipt);
-        self.axelarStatus = `Waiting for confirmations 0 / 64 ~ 96... `;
+        const link = self.showAxelarTxIndication ? ` <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(View on Axelarscan)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>` : '';
+        self.axelarStatus = `Waiting for confirmations...${link}`;
       });
 
       this.$nuxt.$on('MM-error', async (error, receipt) => {
@@ -81,9 +87,9 @@ var mixin = {
       this.$nuxt.$on('MM-confirmation-update', async (confirmations) => {
         let link = '';
         if (self.showAxelarTxIndication != '') {
-          link = ` <a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${self.showAxelarTxIndication}">(Detailed status available)</a>`;
+          link = ` <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${self.showAxelarTxIndication}">(Detailed status available)</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span>`;
         }
-        self.axelarStatus = `Waiting for confirmations ${confirmations} / 64 ~ 96... ${link}`;
+        self.axelarStatus = `Waiting for confirmations (${confirmations})... ${link}`;
       });
 
       this.$nuxt.$on('MM-transfer-complete', async (tx) => {
@@ -93,7 +99,7 @@ var mixin = {
         self.showProcessAnimation = false;
         self.selfCheckApproved = false;
         self.showAxelarTxIndication = '';
-        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds<br><a style="color: lightgreen" target="_" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${tx}">Watch the transaction here</a></div>`;
+        self.axelarStatus = `<div style="color: lightgreen">Transfer complete! <br><a style="color: lightgreen; text-decoration: underline;" target="_" href="https://axelarscan.io/gmp/${tx}">Watch the transaction here</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span></div>`;
       });
 
       this.$nuxt.$on('MM-transfer-indication', async (tx) => {
@@ -101,7 +107,14 @@ var mixin = {
       });
 
       this.$nuxt.$on('MM-connected', async () => {
-        this.activeMMChainId = window.ethereum.networkVersion;
+        // Query chain ID directly since provider properties may be unavailable
+        try {
+          const hexChainId = await window.ethereum.request({ method: 'eth_chainId' });
+          this.activeMMChainId = parseInt(hexChainId, 16);
+        } catch (e) {
+          this.activeMMChainId = window.ethereum.networkVersion || -1;
+        }
+        console.log('[MM] activeMMChainId:', this.activeMMChainId, 'fromChain.chainId:', this.fromChain?.chainInfo?.chainId);
         await this.$store.dispatch('getMMAccounts');
         if (this.toChain.type === 'evm') {
           this.destinationAddress = this.MMAccounts[0];
@@ -176,15 +189,11 @@ var mixin = {
     // Filter chains to only show Secret Network and Axelar
     filteredMainChains() {
       if (!this.availableChains['main-chain']) return [];
-      return this.availableChains['main-chain'].filter(chain => 
-        chain.name === 'Secret Network'
-      );
+      return this.availableChains['main-chain'];
     },
     filteredSubChains() {
       if (!this.availableChains['sub-chains']) return [];
-      return this.availableChains['sub-chains'].filter(chain => 
-        chain.name === 'Axelar'
-      );
+      return this.availableChains['sub-chains'];
     },
     // Filtered chains for from/to selectors
     filteredFromChains() {
@@ -558,21 +567,91 @@ var mixin = {
     async calcTransferFee(amount) {
       try {
         let microAmount = this.getMicroAmount(this.selectedToken, amount);
-        const result = await this.axelarQuery.getTransferFee(this.fromChain.axelar.chain, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
-        var display = result.fee.amount + ' ' + result.fee.denom;
-        var symbol = result.fee.denom;
+        let fromChainId = this.fromChain.axelar.chain;
+        if (this.selectedToken.isNative && this.fromChain.axelar.native_chain) {
+            fromChainId = this.fromChain.axelar.native_chain;
+        }
+
+        const isToEvm = this.toChain.type === 'evm';
+        const isFromEvm = this.fromChain.type === 'evm';
+        const isGmpToEvm = isToEvm && this.toChain.distributionExecutable;
+        const isGmpFromEvm = isFromEvm && this.fromChain.distributionExecutable;
+        const isGmp = isGmpToEvm || isGmpFromEvm;
+
+        if (isGmp) {
+          // GMP transfers use estimateGasFee (returns wei string, 18 decimals)
+          // EVM→Secret: fee is in native EVM token (ETH, AVAX, etc.) paid as msg.value
+          // Secret→EVM: fee is in the bridged token, deducted via GMP memo
+          const isEvmToSecret = isGmpFromEvm;
+          const tokenDecimals = isEvmToSecret ? 18 : (this.selectedToken.coinDecimals || 6);
+          const symbol = isEvmToSecret
+            ? (this.fromChain.chainInfo.nativeCurrency?.symbol || this.fromChain.chainInfo.stakeCurrency?.coinDenom || 'ETH')
+            : this.selectedToken.symbol;
+          const destChainId = isEvmToSecret
+            ? (this.toChain.axelar.chain)
+            : this.toChain.axelar.chain;
+          const gasDenom = isEvmToSecret
+            ? (this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth')
+            : this.selectedToken.denom;
+
+          try {
+            const weiString = await this.axelarQuery.estimateGasFee(
+              fromChainId,
+              destChainId,
+              gasDenom,
+              200000, // gas limit (DistributionExecutable typically uses ~150k)
+              1.3     // multiplier
+            );
+
+            // weiString is always an 18-decimal string (e.g. "535252641763355" = 0.000535 in human units)
+            const feeNormal = parseFloat(weiString) / 1e18;
+            const feeAmountMicro = Math.ceil(feeNormal * Math.pow(10, tokenDecimals));
+
+            let displayVal = parseFloat(feeNormal.toFixed(8));
+            if (displayVal > 1) {
+              displayVal = displayVal.toLocaleString();
+            }
+            const display = displayVal + ' ' + symbol;
+
+            return {
+              amount: feeAmountMicro,
+              normalAmount: feeNormal,
+              display: display,
+              symbol: symbol,
+              denom: this.selectedToken.denom,
+              isGmp: true
+            };
+          } catch (gmpErr) {
+            console.warn('GMP estimateGasFee failed, using fallback:', gmpErr);
+            const gmpConfig = this.fromChain.axelarGmp;
+            const feeAmountMicro = parseInt(gmpConfig?.defaultGasFee || '50000');
+            const feeNormal = feeAmountMicro / Math.pow(10, tokenDecimals);
+            const display = parseFloat(feeNormal.toFixed(8)) + ' ' + symbol;
+
+            return {
+              amount: feeAmountMicro,
+              normalAmount: feeNormal,
+              display: display,
+              symbol: symbol,
+              denom: this.selectedToken.denom,
+              isGmp: true
+            };
+          }
+        }
+
+        // Standard deposit-address transfer: use getTransferFee
+        const result = await this.axelarQuery.getTransferFee(fromChainId, this.toChain.axelar.chain, this.selectedToken.denom, microAmount);
+
+        let display = result.fee.amount + ' ' + result.fee.denom;
+        let symbol = result.fee.denom;
         let normal = 0;
+
         if (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['fee-decimals'].hasOwnProperty(result.fee.denom)) {
           let tokenInfo = axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['fee-decimals'][result.fee.denom];
           normal = parseFloat(result.fee.amount) / Math.pow(10, tokenInfo.decimal);
           symbol = this.selectedToken.symbol;
-          // if (this.selectedToken.isEVMNative) {
-          //   symbol = this.selectedToken.symbol;
-          // } else {
-          //   symbol = tokenInfo.symbol;
-          // }
 
-          display = parseFloat(normal.toFixed(8)); //.toLocaleString() + " " + symbol;
+          display = parseFloat(normal.toFixed(8));
           if (display > 1) {
             display = display.toLocaleString();
           }
@@ -745,6 +824,67 @@ var mixin = {
       this.axelarStatus = 'Please wait...';
       this.info_error = '';
       let microAmount = await this.getMicroAmount(this.selectedToken, amount);
+
+      // Use DistributionExecutable if available (Linea Sepolia, etc.)
+      if (this.fromChain.distributionExecutable) {
+        try {
+          this.transferInProgress = true;
+          this.showProcessAnimation = true;
+          this.axelarStatus = 'Approve token spending in MetaMask...';
+          this.animateInput();
+
+          // Destination chain name for Axelar (e.g., "secret-snip-4")
+          const destChain = this.selectedToken.isNative
+            ? this.toChain.axelar.native_chain
+            : this.toChain.axelar.chain;
+
+          // Dynamically estimate the GMP gas fee in native EVM token (wei)
+          let gasFeeWei = '200000000000000'; // fallback: 0.0002 ETH
+          try {
+            const estimated = await this.axelarQuery.estimateGasFee(
+              this.fromChain.axelar.chain,
+              destChain,
+              this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth',
+              200000,
+              1.3
+            );
+            if (estimated && typeof estimated === 'string') {
+              gasFeeWei = estimated;
+            }
+          } catch (e) {
+            console.warn('estimateGasFee for EVM failed, using fallback:', e);
+          }
+
+          // Derive the Axelar denom for the sendTo contract call
+          // "USDC.axl" → "axlUSDC", "USDT.axl" → "axlUSDT", "SCRT" → "SCRT", "USDC" → "USDC"
+          let evmDenom = this.selectedToken.symbol;
+          if (evmDenom.endsWith('.axl')) {
+            evmDenom = 'axl' + evmDenom.replace('.axl', '');
+          }
+
+          await this.$store.dispatch('sendToSecret', {
+            erc20Address: this.selectedToken.ERC20_address,
+            distributionExecutable: this.fromChain.distributionExecutable,
+            from: this.sourceAddress,
+            amount: microAmount,
+            destinationChain: destChain,
+            destinationAddress: this.destinationAddress,
+            denom: evmDenom,
+            gasFeeWei: gasFeeWei
+          });
+
+          this.axelarStatus = 'Transfer initiated! Waiting for confirmation...';
+        } catch (err) {
+          console.log('sendToSecret Error: ', err);
+          this.transferInProgress = false;
+          this.selfCheckApproved = false;
+          this.showProcessAnimation = false;
+          this.axelarStatus = '';
+        }
+        return;
+      }
+
+      // Fallback: use Axelar SDK deposit address (for chains without DistributionExecutable)
       let fee = await this.calcTransferFee(amount);
       let maxAmount = await this.getMaxTransfer();
       if (fee) {
@@ -765,9 +905,8 @@ var mixin = {
         this.axelarStatus = '';
         return;
       }
-      let minAmount = fee['normalAmount'] * 2;
-      if (parseFloat(amount) < minAmount) {
-        this.info_error = `Minimum transfer is (${minAmount} ${fee.symbol})`;
+      if (parseFloat(amount) <= fee.normalAmount) {
+        this.info_error = `Minimum transfer should cover the fees (${fee.normalAmount} ${fee.symbol})`;
         this.axelarStatus = '';
         return;
       }
@@ -819,11 +958,19 @@ var mixin = {
       }
     },
 
-    autoFill() {
-      if (this.toChain.type === 'evm' && this.isMMConnected) {
-        // EVM
-        this.destinationAddress = this.MMAccounts[0];
-      } else {
+    async autoFill() {
+      if (this.toChain.type === 'evm') {
+        if (this.isMMConnected) {
+          this.destinationAddress = this.MMAccounts[0];
+        } else if (window.ethereum) {
+          try {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            if (accounts && accounts.length > 0) {
+              this.destinationAddress = accounts[0];
+            }
+          } catch (e) { console.error('AutoFill MM error:', e); }
+        }
+      } else if (this.receiverAccount) {
         this.destinationAddress = this.receiverAccount.address;
       }
       this.$refs.destinationAddress.blur();
@@ -1015,11 +1162,16 @@ var mixin = {
         this.sendFromEVM(this.amount);
       }
       if (this.fromChain.type === 'cosmos') {
-        if (this.fromChain.chainInfo.out_port === 'transfer' || this.selectedToken.isNative) {
-          // To secret
+        const isToEvm = this.toChain.type === 'evm';
+        const hasSNIP20 = this.selectedToken.SNIP20_address && this.selectedToken.SNIP20_address !== '';
+        if (isToEvm && hasSNIP20) {
+          // SNIP-20 tokens to EVM use GMP via sendWasm
+          this.sendWasm(microAmount);
+        } else if (this.fromChain.chainInfo.out_port === 'transfer' || this.selectedToken.isNative) {
+          // Native tokens or IBC transfers use MsgTransfer (deposit-address)
           this.sendTransfer(microAmount);
         } else {
-          this.sendWasm(microAmount); // from secret
+          this.sendWasm(microAmount); // SNIP-20 to non-EVM cosmos
         }
       }
     },
@@ -1097,8 +1249,8 @@ var mixin = {
             return;
           }
 
-          if (amount <= fee.amount) {
-            this.info_error = `Minimun transfer should cover the fees (${fee.amount} ${fee.denom})`;
+          if (parseFloat(amount) <= fee.amount) {
+            this.info_error = `Minimum transfer should cover the fees (${fee.normalAmount} ${fee.symbol})`;
             this.axelarStatus = '';
             return;
           }
@@ -1141,21 +1293,76 @@ var mixin = {
 
         var depositAddress = this.destinationAddress;
         let usedAxelarAPI = false;
-        if (this.fromChain.name.toLowerCase() !== 'axelar') {
-          depositAddress = await this.axelarTransfer.getDepositAddress({
-            fromChain: this.fromChain.axelar.chain,
-            toChain: this.toChain.axelar.chain,
-            destinationAddress: this.destinationAddress,
-            asset: this.selectedToken.denom
-          });
-          usedAxelarAPI = true;
+        let transferMemo = '';
+        const isToEvm = this.toChain.type === 'evm';
+
+        if (isToEvm && this.toChain.distributionExecutable) {
+          // Native token → EVM: send directly to Axelar gateway with GMP memo
+          const mainChain = this.availableChains['main-chain'][0];
+          const gmpConfig = mainChain.axelarGmp;
+          depositAddress = gmpConfig.gatewayAddress;
+
+          // Build GMP payload: ABI-encode the destination EVM address
+          let payload = null;
+          let memoType = 3; // 3 = SendToken
+          let gmpDestAddress = this.destinationAddress;
+
+          if (this.toChain.distributionExecutable) {
+            try {
+              const web3 = new Web3();
+              const encodedHex = web3.eth.abi.encodeParameter('address', this.destinationAddress);
+              const hexStr = encodedHex.startsWith('0x') ? encodedHex.slice(2) : encodedHex;
+              payload = [];
+              for (let i = 0; i < hexStr.length; i += 2) {
+                payload.push(parseInt(hexStr.substr(i, 2), 16));
+              }
+              memoType = 2; // 2 = callContractWithToken
+              gmpDestAddress = this.toChain.distributionExecutable;
+            } catch (encodeErr) {
+              console.error('Error encoding payload:', encodeErr);
+            }
+          }
+
+          const gmpMemo = {
+            destination_chain: this.toChain.axelar.chain,
+            destination_address: gmpDestAddress,
+            payload: payload,
+            type: memoType,
+            fee: {
+              amount: fee ? String(fee.amount) : String(gmpConfig.defaultGasFee),
+              recipient: gmpConfig.gasServiceAddress
+            }
+          };
+          transferMemo = JSON.stringify(gmpMemo);
+          console.log('GMP Memo for native transfer:', transferMemo);
+        } else if (this.fromChain.name.toLowerCase() !== 'axelar') {
+          // Non-EVM destination: use deposit address
+          try {
+            const fromChainId = (this.selectedToken.isNative && this.fromChain.axelar.native_chain)
+              ? this.fromChain.axelar.native_chain
+              : this.fromChain.axelar.chain;
+            depositAddress = await this.axelarTransfer.getDepositAddress({
+              fromChain: fromChainId,
+              toChain: this.toChain.axelar.chain,
+              destinationAddress: this.destinationAddress,
+              asset: this.selectedToken.denom
+            });
+            usedAxelarAPI = true;
+          } catch (depositErr) {
+            console.error('getDepositAddress failed:', depositErr);
+            this.info_error = `Failed to get deposit address from Axelar: ${depositErr.message || 'Unknown error'}`;
+            this.axelarStatus = '';
+            this.transferInProgress = false;
+            this.showProcessAnimation = false;
+            return;
+          }
         }
 
         // Determine port and channel based on token type
         const sourcePort = this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_port : this.fromChain.chainInfo.out_port;
         const sourceChannel = this.selectedToken.isNative ? this.fromChain.chainInfo.out_native_channel : this.fromChain.chainInfo.out_channel;
 
-        console.log('--- IBC Transfer Details (Axelar -> Secret) ---');
+        console.log('--- IBC Transfer Details ---');
         console.log('From Chain:', this.fromChain.name);
         console.log('To Chain:', this.toChain.name);
         console.log('Token:', this.selectedToken.symbol, this.selectedToken.denom);
@@ -1165,6 +1372,7 @@ var mixin = {
         console.log('Receiver Address:', depositAddress);
         console.log('Amount:', amount);
         console.log('Denom:', this.selectedTokenTransferDenom);
+        console.log('Memo:', transferMemo);
 
         amount = amount + ''; // convert to string
         const msgTransfer = new MsgTransfer({
@@ -1181,7 +1389,7 @@ var mixin = {
           timeout_timestamp: String(Math.floor(Date.now() / 1000) + 10 * 60), // 10 minutes
           sender: this.sourceAddress,
           receiver: depositAddress,
-          memo: "",
+          memo: transferMemo,
         });
 
         console.log('--- MsgTransfer Object ---');
@@ -1230,10 +1438,17 @@ var mixin = {
         }
 
         if (this.tx_error === '') {
-          const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
+          // Find the packet acknowledgment or send event
+          let ibcHash = tx.transactionHash;
+          if (tx.ibcResponses && tx.ibcResponses.length > 0) {
+            try {
+              ibcHash = tx.ibcResponses[0].tx.transactionHash;
+            } catch (e) {}
+          }
+
           const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
-          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
-          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
+          const txPath = 'transactions';
+          this.axelarStatus = `<div style="color: orange">Received TX, waiting for ibc acknowledgment...<br><a style="color: orange" href="${explorerBase}/${this.fromChain.chainInfo.zonescan}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
 
           this.ack = 0;
           const ibcResponses = await Promise.all(tx.ibcResponses);
@@ -1262,10 +1477,17 @@ var mixin = {
           this.getBalance();
 
           if (this.tx_error == '') {
-            const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
-            const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
-            const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
-            this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${explorerBase}/${chainId}/${txPath}/${ibcResponses[0].tx.transactionHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            const isToEvm = this.toChain.type === 'evm';
+            if (isToEvm) {
+              // For GMP, use the ORIGINAL user tx hash, not the IBC ack hash
+              const gmpHash = '0x' + tx.transactionHash.toLowerCase();
+              const axelarscanUrl = `https://axelarscan.io/gmp/${gmpHash}`;
+              this.axelarStatus = `<div style="color: lightgreen">Transfer complete! <a style="color: lightgreen; text-decoration: underline;" href="${axelarscanUrl}" target="_">Watch Axelar GMP status here</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span></div>`;
+            } else {
+              const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
+              const txPath = 'transactions';
+              this.axelarStatus = `<div style="color: lightgreen">Transfer complete! You will receive your coins in a few seconds.<br><a  style="color: lightgreen" href="${explorerBase}/${this.fromChain.chainInfo.zonescan}/${txPath}/${ibcHash}" target="_">Watch the ibc acknowledgment here</a></div>`;
+            }
             this.transferInProgress = false;
             this.selfCheckApproved = false;
             this.animateProcessing();
@@ -1317,9 +1539,8 @@ var mixin = {
         }
       }
 
-      let minAmount = fee.amount * 2;
-      if (parseFloat(amount) < minAmount) {
-        this.info_error = `Minimum transfer is (${fee['normalAmount'] * 2} ${fee.symbol})`;
+      if (amount <= fee.amount) {
+        this.info_error = `Minimum transfer should cover the fees (${fee.normalAmount} ${fee.symbol})`;
         this.axelarStatus = '';
         return;
       }
@@ -1340,35 +1561,95 @@ var mixin = {
 
       console.log('Should Unwrap:', shouldUnwrap);
 
-      // Secret -> Axelar only: send directly to the user's selected Axelar address.
-      console.log('--- Sending SNIP-20 Token via IBC (Secret -> Axelar) ---');
+      // Determine if this is Secret -> EVM (needs GMP memo) or Secret -> Cosmos (direct IBC)
+      const isToEvm = this.toChain.type === 'evm';
+      const mainChain = this.availableChains['main-chain'][0];
+      const gmpConfig = mainChain.axelarGmp;
+
+      console.log('--- Sending SNIP-20 Token via IBC ---');
       console.log('Destination:', this.destinationAddress);
       console.log('To Chain:', this.toChain.axelar.chain);
+      console.log('Is EVM destination:', isToEvm);
       
       this.axelarStatus = 'Waiting for user approval...';
 
       if (this.senderAccount) {
+        // Build the SNIP-20 send message
+        let sendMsgInner = {
+          channel: this.fromChain.chainInfo.out_channel,
+          remote_address: this.destinationAddress,
+          timeout: 10 * 60  // 10 minutes
+        };
+        let sendMemo = undefined;
+
+        if (isToEvm && gmpConfig) {
+          // Secret -> EVM: route through Axelar GMP
+          // Send to Axelar gateway, with GMP memo for cross-chain routing
+          sendMsgInner.remote_address = gmpConfig.gatewayAddress;
+
+          // Build GMP payload: ABI-encode the destination EVM address
+          let payload = null;
+          let memoType = 3; // 3 = SendToken (no contract call)
+          let destinationAddress = this.destinationAddress;
+
+          // If the destination chain has a DistributionExecutable contract, use callContractWithToken
+          if (this.toChain.distributionExecutable) {
+            try {
+              const web3 = new Web3();
+              const encodedHex = web3.eth.abi.encodeParameter('address', this.destinationAddress);
+              // Convert hex string to byte array (strip 0x prefix)
+              const hexStr = encodedHex.startsWith('0x') ? encodedHex.slice(2) : encodedHex;
+              payload = [];
+              for (let i = 0; i < hexStr.length; i += 2) {
+                payload.push(parseInt(hexStr.substr(i, 2), 16));
+              }
+              memoType = 2; // 2 = callContractWithToken
+              destinationAddress = this.toChain.distributionExecutable;
+            } catch (encodeErr) {
+              console.error('Error encoding payload:', encodeErr);
+            }
+          }
+
+          const gmpMemo = {
+            destination_chain: this.toChain.axelar.chain,
+            destination_address: destinationAddress,
+            payload: payload,
+            type: memoType,
+            fee: {
+              amount: fee ? String(fee.amount) : String(gmpConfig.defaultGasFee),
+              recipient: gmpConfig.gasServiceAddress
+            }
+          };
+
+          sendMemo = JSON.stringify(gmpMemo);
+          console.log('GMP Memo:', sendMemo);
+        }
+
+        // Build the send msg object
+        const sendMsgPayload = {
+          recipient: this.fromChain.chainInfo.out_port.replace('wasm.', ''),
+          recipient_code_hash: this.fromChain.chainInfo.ICS_code_hash,
+          amount,
+          msg: toBase64(
+            toUtf8(
+              JSON.stringify(sendMsgInner)
+            )
+          )
+        };
+
+        // Add GMP memo if sending to EVM
+        if (sendMemo) {
+          sendMsgPayload.memo = sendMemo;
+        }
+
         const sendMsg = new MsgExecuteContract({
           sender: this.sourceAddress,
           contract_address: this.selectedToken.SNIP20_address,
           code_hash: this.selectedToken.SNIP20_code_hash,
           msg: {
-            send: {
-              recipient: this.fromChain.chainInfo.out_port.replace('wasm.', ''),
-              recipient_code_hash: this.fromChain.chainInfo.ICS_code_hash,
-              amount,
-              msg: toBase64(
-                toUtf8(
-                  JSON.stringify({
-                    channel: this.fromChain.chainInfo.out_channel,
-                    remote_address: this.destinationAddress, // Send to the user's Axelar address
-                    timeout: 10 * 60  // 10 minutes
-                  })
-                )
-              )
-            }
+            send: sendMsgPayload
           },
-          sent_funds: [] // No funds sent with the execute message
+          sent_funds: []
         });
 
         try {
@@ -1387,9 +1668,9 @@ var mixin = {
           console.log('Transaction signed, broadcasting...');
           let tx = await this.senderAccount.tx.broadcastSignedTx(signedTX, {
             ibcTxsOptions: {
-              resolveResponses: true, // enable IBC responses resolution
-              resolveResponsesTimeoutMs: 720_000, // stop checking after 12 minutes
-              resolveResponsesCheckIntervalMs: 15_000 // check every 15 seconds
+              resolveResponses: true,
+              resolveResponsesTimeoutMs: 720_000,
+              resolveResponsesCheckIntervalMs: 15_000
             }
           });
 
@@ -1402,7 +1683,7 @@ var mixin = {
 
           const chainId = this.fromChain.chainInfo.zonescan || this.fromChain.chainInfo.mintscan;
           const explorerBase = this.fromChain.chainInfo.zonescan ? 'https://zonescan.io' : axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['cosmos-block-explorer'];
-          const txPath = this.fromChain.chainInfo.zonescan ? 'transactions' : (axelarConfig[process.env.NUXT_ENV_AXELAR_ENV] == 'testnet' ? 'tx' : 'txs');
+          const txPath = 'transactions';
           this.axelarStatus = `<div style="color: orange">Received TX, waiting for IBC acknowledgment...<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Watch the transaction here</a></div>`;
           this.ack = 0;
           
@@ -1411,13 +1692,33 @@ var mixin = {
             this.ack = 1;
             if (ibcResponses.length > 0) {
               console.log('IBC Responses:', ibcResponses);
-              this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${tx.transactionHash}" target="_">View on Axelarscan</a><br>Your balance will be updated shortly</div>`;
+              
+              let ibcHash = tx.transactionHash;
+              try {
+                ibcHash = ibcResponses[0].tx.transactionHash;
+              } catch (e) {}
+              
+              if (isToEvm) {
+                // For GMP, use the ORIGINAL user tx hash, not the IBC ack hash
+                // Axelarscan indexes GMP by the source transaction hash
+                const gmpHash = '0x' + tx.transactionHash.toLowerCase();
+                const axelarscanUrl = `https://axelarscan.io/gmp/${gmpHash}`;
+                this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen; text-decoration: underline;" href="${axelarscanUrl}" target="_">View on Axelarscan</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span><br>Your balance will be updated shortly</div>`;
+              } else {
+                this.axelarStatus = `<div style="color: lightgreen">Transfer to ${this.toChain.name} complete!<br><a style="color: lightgreen" href="${explorerBase}/${this.fromChain.chainInfo.zonescan}/${txPath}/${ibcHash}" target="_">View on Explorer</a><br>Your balance will be updated shortly</div>`;
+              }
+              
               this.transferInProgress = false;
               this.selfCheckApproved = false;
             }
           } catch (ackError) {
             console.error('IBC acknowledgment error:', ackError);
-            this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout. Transaction was submitted successfully.<br><a style="color: orange" href="${axelarConfig[process.env.NUXT_ENV_AXELAR_ENV]['transaction-viewer']}/${tx.transactionHash}" target="_">Check status on Axelarscan</a><br>You should receive your funds shortly</div>`;
+            if (isToEvm) {
+               const gmpHash = '0x' + tx.transactionHash.toLowerCase();
+               this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout.<br><a style="color: orange; text-decoration: underline;" href="https://axelarscan.io/gmp/${gmpHash}" target="_">Check status on Axelarscan</a><br><span style="font-size: 11px; color: #bbb;">(If stuck, you can manually add gas on Axelarscan)</span><br>You should receive your funds shortly</div>`;
+            } else {
+               this.axelarStatus = `<div style="color: orange">IBC acknowledgment timeout.<br><a style="color: orange" href="${explorerBase}/${chainId}/${txPath}/${tx.transactionHash}" target="_">Check status on Explorer</a><br>You should receive your funds shortly</div>`;
+            }
             this.transferInProgress = false;
             this.selfCheckApproved = false;
           }
@@ -1454,7 +1755,7 @@ var mixin = {
       this.toChain = tmp;
 
       if (this.toChain.type === 'cosmos') {
-        this.destinationAddress = this.receiverAccount.address;
+        this.destinationAddress = this.receiverAccount ? this.receiverAccount.address : '';
       } else if (this.toChain.type == 'evm') {
         this.destinationAddress = this.MMAccounts[0];
       }

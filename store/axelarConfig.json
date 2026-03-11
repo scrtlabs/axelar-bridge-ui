@@ -5,11 +5,26 @@
     "deposit-account-viewer": "https://testnet.axelarscan.io/account",
     "cosmos-block-explorer": "https://testnet.ping.pub",
     "fee-decimals": {
-      "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uausdc": { "decimal": 6, "symbol": "axlUSDC"},
-      "eth-wei": { "decimal": 18, "symbol": "WETH"},
-      "wbnb-wei": { "decimal": 18, "symbol": "BNB"},
-      "wmatic-wei": { "decimal": 18, "symbol": "WMATIC"}
+      "uaxl": {
+        "decimal": 6,
+        "symbol": "AXL"
+      },
+      "uausdc": {
+        "decimal": 6,
+        "symbol": "axlUSDC"
+      },
+      "eth-wei": {
+        "decimal": 18,
+        "symbol": "WETH"
+      },
+      "wbnb-wei": {
+        "decimal": 18,
+        "symbol": "BNB"
+      },
+      "wmatic-wei": {
+        "decimal": 18,
+        "symbol": "WMATIC"
+      }
     }
   },
   "mainnet": {
@@ -18,20 +33,62 @@
     "deposit-account-viewer": "https://axelarscan.io/account",
     "cosmos-block-explorer": "https://www.mintscan.io",
     "fee-decimals": {
-      "uaxl": { "decimal": 6, "symbol": "AXL"},
-      "uusdc": { "decimal": 6, "symbol": "axlUSDC"},
-      "uusdt": { "decimal": 6, "symbol": "axlUSDT"},
-      "dai-wei": { "decimal": 18, "symbol": "axlDAI"},
-      "eth-wei": { "decimal": 18, "symbol": "axlWETH"},
-      "weth-wei": { "decimal": 18, "symbol": "axlWETH"},
-      "wbnb-wei": { "decimal": 18, "symbol": "axlBNB"},
-      "busd-wei": { "decimal": 18, "symbol": "axlBUSD"},
-      "frax-wei": { "decimal": 18, "symbol": "axlFRAX"},
-      "uni-wei": { "decimal": 18, "symbol": "axlUNI"},
-      "wbtc-satoshi": { "decimal": 8, "symbol": "axlWBTC"},
-      "wsteth-wei": { "decimal": 18, "symbol": "axlwstETH"},
-      "link-wei": { "decimal": 18, "symbol": "axlLINK"}
-
+      "uaxl": {
+        "decimal": 6,
+        "symbol": "AXL"
+      },
+      "uusdc": {
+        "decimal": 6,
+        "symbol": "axlUSDC"
+      },
+      "uusdt": {
+        "decimal": 6,
+        "symbol": "axlUSDT"
+      },
+      "dai-wei": {
+        "decimal": 18,
+        "symbol": "axlDAI"
+      },
+      "eth-wei": {
+        "decimal": 18,
+        "symbol": "axlWETH"
+      },
+      "weth-wei": {
+        "decimal": 18,
+        "symbol": "axlWETH"
+      },
+      "wbnb-wei": {
+        "decimal": 18,
+        "symbol": "axlBNB"
+      },
+      "busd-wei": {
+        "decimal": 18,
+        "symbol": "axlBUSD"
+      },
+      "frax-wei": {
+        "decimal": 18,
+        "symbol": "axlFRAX"
+      },
+      "uni-wei": {
+        "decimal": 18,
+        "symbol": "axlUNI"
+      },
+      "wbtc-satoshi": {
+        "decimal": 8,
+        "symbol": "axlWBTC"
+      },
+      "wsteth-wei": {
+        "decimal": 18,
+        "symbol": "axlwstETH"
+      },
+      "link-wei": {
+        "decimal": 18,
+        "symbol": "axlLINK"
+      },
+      "uscrt": {
+        "decimal": 6,
+        "symbol": "SCRT"
+      }
     }
   }
 }

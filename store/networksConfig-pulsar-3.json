@@ -6,13 +6,13 @@
       "type": "cosmos",
       "chainInfo": {
         "chainId": "pulsar-3",
-        "rest": "https://api.pulsar3.scrttestnet.com",
+        "rest": "https://pulsar.lcd.secretnodes.com",
         "rpcUrl": "http://rpc.testnet.secretsaturn.net:26657",
         "hrp": "secret",
         "coinType": 529,
-        "out_port": "wasm.secret1vfht4c30h4st7e254ww86p6whwyy0uux2ns5ck",
-        "ICS_code_hash": "2976a2577999168b89021ecb2e09c121737696f71c4342f9a922ce8654e98662",
-        "out_channel": "channel-1",
+        "out_port": "wasm.secret159eam800uznannzpvc3k26jv50dquhlh4nqvsm",
+        "ICS_code_hash": "ba26d9bcba2901300a53343b7aa9e71095afa149ae18ee1772a64d1a7e5add2f",
+        "out_channel": "channel-7",
         "stakeCurrency": {
           "coinDenom": "SCRT",
           "coinMinimalDenom": "uscrt",
@@ -21,9 +21,14 @@
         "mintscan": "secret"
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "secret-snip-3",
-          "transferTime": -1
+        "Env": "testnet",
+        "chain": "secret-snip-4",
+        "transferTime": -1
+      },
+      "axelarGmp": {
+        "gatewayAddress": "axelar1dv4u5k73pzqrxlzujxg3qp8kvc3pje7jtdvu72npnt5zhq05ejcsn5qme5",
+        "gasServiceAddress": "axelar1zl3rxpp70lmte2xr6c4lgske2fyuj3hupcsvcd",
+        "defaultGasFee": "50000"
       },
       "tokens": [
         {
@@ -49,7 +54,7 @@
           "fromImage": "suausdc.png",
           "toImage": "uausdc.png",
           "animation": "unwrap/unwrap-usdc.json",
-          "SNIP20_address": "secret1l3jm9e8rtgkyar9pzteqjflgvycnjn5sectpha",
+          "SNIP20_address": "secret16djc4wdvtwa84p5pxz4qrux97gtd8u52xp36cj",
           "SNIP20_code_hash": "638a3e1d50175fbcb8373cf801565283e3eb23d88a9b7b7f99fcc5eb1e6b561e"
         },
         {
@@ -88,13 +93,13 @@
       "type": "cosmos",
       "chainInfo": {
         "chainId": "axelar-testnet-lisbon-3",
-        "rest": "https://axelartest-lcd.quantnode.tech",
-        "rpcUrl": "https://axelar-rpc.norm.io",
+        "rest": "https://axelar-testnet-lcd.polkachu.com",
+        "rpcUrl": "https://axelar-testnet-rpc.polkachu.com",
         "hrp": "axelar",
         "coinType": 118,
         "out_port": "transfer",
         "ICS_code_hash": "",
-        "out_channel": "channel-285",
+        "out_channel": "channel-650",
         "stakeCurrency": {
           "coinDenom": "AXL",
           "coinMinimalDenom": "uaxl",
@@ -103,9 +108,9 @@
         "mintscan": "axelar"
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "axelarnet",
-          "transferTime": -1
+        "Env": "testnet",
+        "chain": "axelarnet",
+        "transferTime": -1
       },
       "tokens": [
         {
@@ -159,24 +164,70 @@
       ]
     },
     {
+      "name": "Linea Sepolia",
+      "icon": "ethereum.logo.svg",
+      "type": "evm",
+      "chainInfo": {
+        "chainId": "59141",
+        "rpcUrls": [
+          "https://rpc.sepolia.linea.build"
+        ],
+        "nativeCurrency": {
+          "name": "Ethereum",
+          "symbol": "ETH",
+          "decimals": 18
+        },
+        "chainName": "Linea Sepolia",
+        "blockExplorerUrls": [
+          "https://sepolia.lineascan.build"
+        ]
+      },
+      "axelar": {
+        "Env": "testnet",
+        "chain": "linea-sepolia",
+        "transferTime": 5
+      },
+      "distributionExecutable": "0x48bb02aD80644d35a986689112589930923BD923",
+      "tokens": [
+        {
+          "symbol": "aUSDC",
+          "denom": "uausdc",
+          "description": "Axelar USDC",
+          "isEVMNative": false,
+          "coinDecimals": 6,
+          "icon": "uausdc.logo.svg",
+          "fromImage": "uausdc.png",
+          "toImage": "suausdc.png",
+          "animation": "wrap/wrap-usdc.json",
+          "SNIP20_address": "",
+          "SNIP20_code_hash": "",
+          "ERC20_address": "0x254d06f33bDc5b8ee05b2ea472107E300226659A"
+        }
+      ]
+    },
+    {
       "name": "Ethereum",
       "icon": "ethereum.logo.svg",
       "type": "evm",
       "chainInfo": {
         "chainId": "11155111",
-        "rpcUrls": ["https://1rpc.io/sepolia"],
+        "rpcUrls": [
+          "https://1rpc.io/sepolia"
+        ],
         "nativeCurrency": {
           "name": "Ethereum",
           "symbol": "ETH",
           "decimals": 18
         },
         "chainName": "Sepolia test network",
-        "blockExplorerUrls": ["https://sepolia.etherscan.io"]
+        "blockExplorerUrls": [
+          "https://sepolia.etherscan.io"
+        ]
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "ethereum-sepolia",
-          "transferTime": 15
+        "Env": "testnet",
+        "chain": "ethereum-sepolia",
+        "transferTime": 15
       },
       "tokens": [
         {
@@ -227,19 +278,23 @@
       "type": "evm",
       "chainInfo": {
         "chainId": "97",
-        "rpcUrls": ["https://data-seed-prebsc-1-s1.binance.org:8545"],
+        "rpcUrls": [
+          "https://data-seed-prebsc-1-s1.binance.org:8545"
+        ],
         "nativeCurrency": {
           "name": "Binance Coin",
           "symbol": "BNB",
           "decimals": 18
         },
         "chainName": "BNB Chain Testnet",
-        "blockExplorerUrls": ["https://testnet.bscscan.com"]
+        "blockExplorerUrls": [
+          "https://testnet.bscscan.com"
+        ]
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "binance",
-          "transferTime": 2
+        "Env": "testnet",
+        "chain": "binance",
+        "transferTime": 2
       },
       "tokens": [
         {
@@ -290,19 +345,23 @@
       "type": "evm",
       "chainInfo": {
         "chainId": "43113",
-        "rpcUrls": ["https://api.avax-test.network/ext/bc/C/rpc"],
+        "rpcUrls": [
+          "https://api.avax-test.network/ext/bc/C/rpc"
+        ],
         "nativeCurrency": {
           "name": "Avalanche",
           "symbol": "AVAX",
           "decimals": 18
         },
         "chainName": "Avalanche Testnet",
-        "blockExplorerUrls": ["https://testnet.snowtrace.io/"]
+        "blockExplorerUrls": [
+          "https://testnet.snowtrace.io/"
+        ]
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "avalanche",
-          "transferTime": 2
+        "Env": "testnet",
+        "chain": "avalanche",
+        "transferTime": 2
       },
       "tokens": [
         {
@@ -341,9 +400,9 @@
         "mintscan": "osmosis"
       },
       "axelar": {
-          "Env": "testnet",
-          "chain": "osmosis-7",
-          "transferTime": -1
+        "Env": "testnet",
+        "chain": "osmosis-7",
+        "transferTime": -1
       },
       "tokens": [
         {
