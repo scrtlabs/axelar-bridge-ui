@@ -515,7 +515,7 @@ var mixin = {
       //   } catch (err) {}
       // }
     },
-    fromChain(newChain, oldChain) {
+    async fromChain(newChain, oldChain) {
       if (newChain.type === 'evm') {
         this.connectMM();
       } else if (newChain.type === 'cosmos') {
@@ -529,9 +529,16 @@ var mixin = {
           this.estimatedTime = -1;
         }
       }
+
+      if (this.selectedToken) {
+        try {
+          let result = await this.calcTransferFee(this.amount == '' ? '0' : this.amount);
+          if (result) this.estimatedFee = result.display;
+        } catch (err) { console.warn('Fee recalc on fromChain change:', err); }
+      }
     },
 
-    toChain(newChain, oldChain) {
+    async toChain(newChain, oldChain) {
       if (newChain.type === 'evm') {
         // EVM
         if (this.isMMConnected) {
@@ -558,6 +565,13 @@ var mixin = {
         if (this.fromChain.axelar.transferTime == -1) {
           this.estimatedTime = -1;
         }
+      }
+
+      if (this.selectedToken) {
+        try {
+          let result = await this.calcTransferFee(this.amount == '' ? '0' : this.amount);
+          if (result) this.estimatedFee = result.display;
+        } catch (err) { console.warn('Fee recalc on toChain change:', err); }
       }
     }
   },
@@ -591,42 +605,110 @@ var mixin = {
             ? (this.toChain.axelar.chain)
             : this.toChain.axelar.chain;
           const gasDenom = isEvmToSecret
-            ? (this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth')
+            ? (this.fromChain.chainInfo.nativeCurrency?.symbol?.toLowerCase() || this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth')
             : this.selectedToken.denom;
 
           try {
-            const weiString = await this.axelarQuery.estimateGasFee(
-              fromChainId,
-              destChainId,
-              gasDenom,
-              200000, // gas limit (DistributionExecutable typically uses ~150k)
-              1.3     // multiplier
-            );
+            if (isEvmToSecret) {
+              // Simple estimateGasFee returns the fee in native token wei (AVAX, ETH, BNB, etc.)
+              // No USD conversion or CoinGecko needed
+              const feeWei = await this.axelarQuery.estimateGasFee(
+                fromChainId,
+                destChainId,
+                gasDenom,
+                200000,
+                1.3
+              );
 
-            // weiString is always an 18-decimal string (e.g. "535252641763355" = 0.000535 in human units)
-            const feeNormal = parseFloat(weiString) / 1e18;
-            const feeAmountMicro = Math.ceil(feeNormal * Math.pow(10, tokenDecimals));
+              const feeAmountMicro = typeof feeWei === 'string' ? parseInt(feeWei) : parseInt(String(feeWei));
+              const feeNormal = feeAmountMicro / Math.pow(10, tokenDecimals);
 
-            let displayVal = parseFloat(feeNormal.toFixed(8));
-            if (displayVal > 1) {
-              displayVal = displayVal.toLocaleString();
+              console.log(`EVM→Secret fee: ${feeNormal} ${symbol} (${feeAmountMicro} wei)`);
+
+              // Fallback if API returned garbage
+              if (isNaN(feeNormal) || feeNormal <= 0) {
+                const fallbackFee = 0.015;
+                const fallbackMicro = Math.ceil(fallbackFee * Math.pow(10, tokenDecimals));
+                return {
+                  amount: fallbackMicro,
+                  normalAmount: fallbackFee,
+                  display: fallbackFee + ' ' + symbol,
+                  symbol: symbol,
+                  denom: this.selectedToken.denom,
+                  isGmp: true
+                };
+              }
+
+              let displayVal = parseFloat(feeNormal.toFixed(8));
+              if (displayVal > 1) {
+                displayVal = displayVal.toLocaleString();
+              }
+
+              return {
+                amount: feeAmountMicro,
+                normalAmount: feeNormal,
+                display: displayVal + ' ' + symbol,
+                symbol: symbol,
+                denom: this.selectedToken.denom,
+                isGmp: true
+              };
+            } else {
+              // Secret -> EVM: Bridged token fee via detailed query
+              const detailedFee = await this.axelarQuery.estimateGasFee(
+                fromChainId,
+                destChainId,
+                gasDenom,
+                200000, // gas limit
+                1.3,    // multiplier 
+                "0",
+                { showDetailedFees: true }
+              );
+
+              // The API response already provides fees in source token units — no USD conversion needed.
+              // - source_base_fee: Axelar network fee, already in source token (e.g. 0.021037 USDC)
+              // - executionFeeWithMultiplier: destination gas cost in 18-decimal source token units
+              const apiResponse = (detailedFee.apiResponse && detailedFee.apiResponse.result) ? detailedFee.apiResponse.result : (detailedFee.apiResponse || detailedFee);
+
+              // Base fee from Axelar (already in source token human-readable units)
+              const baseFeeInToken = parseFloat(apiResponse?.source_base_fee || 0);
+
+              // Execution fee from SDK (18-decimal source token units → human-readable)
+              const executionFeeInToken = parseFloat(detailedFee.executionFeeWithMultiplier || '0') / 1e18;
+
+              // Total with a small buffer for price fluctuations
+              let requiredTokenAmount = (baseFeeInToken + executionFeeInToken) * 1.1;
+
+              console.log(`Axelar fee breakdown: base=${baseFeeInToken}, exec=${executionFeeInToken}, total=${requiredTokenAmount} ${symbol}`);
+
+              // Fallback if API returned garbage
+              if (isNaN(requiredTokenAmount) || requiredTokenAmount <= 0) {
+                  requiredTokenAmount = this.selectedToken.symbol.includes('USD') || this.selectedToken.symbol.includes('DAI') ? 1.5 : 0.05;
+              }
+
+              // Get source token USD price from API for display
+              const sourceTokenPriceUsd = apiResponse?.source_token?.token_price?.usd || 1.0;
+              const feeUsd = (requiredTokenAmount * sourceTokenPriceUsd).toFixed(2);
+
+              const feeAmountMicro = Math.ceil(requiredTokenAmount * Math.pow(10, tokenDecimals));
+              const displayVal = parseFloat(requiredTokenAmount.toFixed(6));
+              const display = displayVal + ' ' + symbol + ' (~$' + feeUsd + ')';
+
+              return {
+                amount: feeAmountMicro,
+                normalAmount: displayVal,
+                display: display,
+                symbol: symbol,
+                denom: this.selectedToken.denom,
+                isGmp: true
+              };
             }
-            const display = displayVal + ' ' + symbol;
-
-            return {
-              amount: feeAmountMicro,
-              normalAmount: feeNormal,
-              display: display,
-              symbol: symbol,
-              denom: this.selectedToken.denom,
-              isGmp: true
-            };
           } catch (gmpErr) {
             console.warn('GMP estimateGasFee failed, using fallback:', gmpErr);
             const gmpConfig = this.fromChain.axelarGmp;
             const feeAmountMicro = parseInt(gmpConfig?.defaultGasFee || '50000');
             const feeNormal = feeAmountMicro / Math.pow(10, tokenDecimals);
-            const display = parseFloat(feeNormal.toFixed(8)) + ' ' + symbol;
+            const feeUsdFallback = (feeNormal * 1.0).toFixed(2); // assume ~$1 per token for fallback
+            const display = parseFloat(feeNormal.toFixed(8)) + ' ' + symbol + ' (~$' + feeUsdFallback + ')';
 
             return {
               amount: feeAmountMicro,
@@ -838,21 +920,19 @@ var mixin = {
             ? this.toChain.axelar.native_chain
             : this.toChain.axelar.chain;
 
-          // Dynamically estimate the GMP gas fee in native EVM token (wei)
-          let gasFeeWei = '200000000000000'; // fallback: 0.0002 ETH
+          // Use the GMP gas fee from calcTransferFee (simple estimateGasFee → native token wei)
+          // No CoinGecko or USD conversion needed — Axelar SDK handles it
+          let gasFeeWei = this.fromChain.axelar.chain === 'ethereum' ? '200000000000000' : '2000000000000000';
           try {
-            const estimated = await this.axelarQuery.estimateGasFee(
-              this.fromChain.axelar.chain,
-              destChain,
-              this.fromChain.chainInfo.stakeCurrency?.coinMinimalDenom || 'eth',
-              200000,
-              1.3
-            );
-            if (estimated && typeof estimated === 'string') {
-              gasFeeWei = estimated;
+            const feeResult = await this.calcTransferFee(amount);
+            if (feeResult && feeResult.isGmp && feeResult.amount) {
+              gasFeeWei = String(feeResult.amount);
+              console.log('[sendFromEVM] Using computed fee:', gasFeeWei, 'wei (~', feeResult.normalAmount, feeResult.symbol, ')');
+            } else {
+              console.warn('[sendFromEVM] calcTransferFee did not return GMP fee, using fallback');
             }
           } catch (e) {
-            console.warn('estimateGasFee for EVM failed, using fallback:', e);
+            console.warn('[sendFromEVM] calcTransferFee failed, using fallback:', e);
           }
 
           // Derive the Axelar denom for the sendTo contract call
