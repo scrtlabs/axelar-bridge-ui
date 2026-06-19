@@ -55,7 +55,7 @@
 
             </div>
 
-            <v-btn color="orange" :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
+            <v-btn color="orange" :disabled="true || tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
             <div v-if="tokenMigrationError != ''" style="margin-top: 5px; color: rgb(238, 132, 132)">{{ tokenMigrationError }}</div>
 
             </template>
@@ -154,7 +154,7 @@
               <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%">
-              <v-btn  :disabled="!isKeplrConnected" @click="showMigrationDialog = true">Migrate</v-btn>
+              <v-btn  :disabled="true || !isKeplrConnected" @click="showMigrationDialog = true">Migrate</v-btn>
             </div>
           </div>
 
@@ -248,7 +248,7 @@
             </div>
 
             <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center">
-              <v-btn @click="swapChains(true)" :disabled="disableUI" icon width="70" height="70">
+              <v-btn @click="swapChains(true)" :disabled="true || disableUI" icon width="70" height="70">
                 <img :src="require('~/assets/images/swap-button.webp')" width="60" height="60" alt="swap token button" />
               </v-btn>
             </div>
@@ -390,7 +390,7 @@
             </div>
           </div>
           <div style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+            <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="true || !selfCheckApproved || !isMetaMaskChainCorrect || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
             <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
               <template v-slot:label>
                 <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>

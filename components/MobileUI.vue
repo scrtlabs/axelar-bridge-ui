@@ -178,7 +178,7 @@
       </div>
 
       <div style="padding-bottom: 20px; margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-        <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="!selfCheckApproved || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
+        <v-btn class="styled-button" style="font-family: Banana; font-size: 16px; z-index: 999" @click="send" :disabled="true || !selfCheckApproved || !isValidTransferAsset || transferInProgress || disableUI">{{ transferInProgress ? "Processing..." : "Transfer" }}</v-btn>
         <v-checkbox v-if="!selfCheckApproved" color="green" dense :ripple="false" hide-details style="margin-top: -3px;" v-model="selfCheckApproved">
           <template v-slot:label>
             <span style="font-size: 12px; margin-left: -6px">I approve that all the information above is correct</span>

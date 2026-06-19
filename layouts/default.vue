@@ -1,6 +1,15 @@
 <template>
   <v-app dark style="background-color: transparent !important">
     <v-main>
+      <v-alert
+        type="error"
+        prominent
+        border="left"
+        style="position: relative; z-index: 99999; margin: 20px; text-align: center; border-radius: 8px; font-weight: bold;"
+      >
+        The Secret Tunnel is currently not operational due to a security incident. 
+        Please see <a href="https://x.com/SecretNetwork/status/2067964632472355145" target="_blank" style="color: white; text-decoration: underline;">our latest Twitter update</a> for details.
+      </v-alert>
       <Nuxt />
     </v-main>
     <v-dialog v-model="dialog" width="800px">
