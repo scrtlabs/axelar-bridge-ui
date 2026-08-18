@@ -55,7 +55,7 @@
 
             </div>
 
-            <v-btn color="orange" :disabled="true || tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
+            <v-btn color="orange" :disabled="tokenMigrationInProgress || tokenMigrationBalance < 1 || migrationAmount <= 0" @click="doMigration()" rounded>{{ tokenMigrationInProgress ? "Processing..." : "Migrate" }}</v-btn>
             <div v-if="tokenMigrationError != ''" style="margin-top: 5px; color: rgb(238, 132, 132)">{{ tokenMigrationError }}</div>
 
             </template>
@@ -154,7 +154,7 @@
               <img :src="require('~/assets/images/swap-button.webp')" width="24" height="24" style="margin-left: 10px; margin-right: 10px" alt="info icon" />
             </div>
             <div style="padding: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%">
-              <v-btn  :disabled="true || !isKeplrConnected" @click="showMigrationDialog = true">Migrate</v-btn>
+              <v-btn  :disabled="!isKeplrConnected" @click="showMigrationDialog = true">Migrate</v-btn>
             </div>
           </div>
 
